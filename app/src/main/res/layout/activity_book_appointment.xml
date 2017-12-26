@@ -1,0 +1,39 @@
+<RelativeLayout
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:paddingLeft="10dip"
+    android:paddingTop="10dip"
+    android:paddingBottom="10dip"
+    android:layout_gravity="center_horizontal"
+    android:gravity="center"
+    xmlns:android="http://schemas.android.com/apk/res/android">
+
+<DatePicker
+    android:layout_width="wrap_content"
+    android:layout_height="wrap_content"
+    android:id="@+id/datepicker"></DatePicker>
+
+
+    <Spinner
+        android:id="@+id/fromspinner"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_below="@+id/datepicker"
+
+         />
+    <Spinner
+        android:id="@+id/tospinner"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_below="@+id/datepicker"
+        android:layout_toRightOf="@+id/fromspinner"
+        android:layout_marginLeft="10dp"
+        />
+
+    <Button
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Book"
+        android:layout_below="@+id/tospinner"
+        android:id="@+id/btnbook"/>
+</RelativeLayout>

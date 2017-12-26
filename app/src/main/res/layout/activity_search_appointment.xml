@@ -1,0 +1,22 @@
+<RelativeLayout
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:paddingLeft="10dip"
+    android:paddingTop="10dip"
+    android:paddingBottom="10dip"
+    xmlns:android="http://schemas.android.com/apk/res/android">
+<EditText
+    android:id="@+id/editsearch"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:hint="Search Appointments"/>
+    <Button
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_below="@+id/editsearch"
+        android:text="Next"
+        android:id="@+id/btnnxt"/>
+
+
+
+</RelativeLayout>
