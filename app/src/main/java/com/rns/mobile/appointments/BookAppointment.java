@@ -1,5 +1,9 @@
 package com.rns.mobile.appointments;
 
+import android.app.AlertDialog;
+import android.content.DialogInterface;
+import android.content.Intent;
+import android.net.Uri;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.view.View;
@@ -14,7 +18,12 @@ import java.util.List;
 public class BookAppointment extends AppCompatActivity {
     Button book;
     Spinner from,to;
-
+    private static final String[] fromtime = new String[] {
+          "Select From",  "10", "11", "12", "1", "2","3","4","5","6"
+    };
+    private static final String[] totime = new String[] {
+            "Select to",  "10", "11", "12", "1", "2","3","4","5","6"
+    };
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -23,7 +32,8 @@ public class BookAppointment extends AppCompatActivity {
         book=(Button)findViewById(R.id.btnbook);
         from=(Spinner)findViewById(R.id.fromspinner);
         to=(Spinner)findViewById(R.id.tospinner);
-        List<String> list = new ArrayList<String>();
+      /*  List<String> list = new ArrayList<String>();
+        list.add("select from time");
         list.add("10");
         list.add("11");
         list.add("1");
@@ -31,30 +41,52 @@ public class BookAppointment extends AppCompatActivity {
         list.add("3");
         list.add("4");
         list.add("5");
-        list.add("6");
+        list.add("6");*/
         ArrayAdapter<String> dataAdapter = new ArrayAdapter<String>(this,
-                android.R.layout.simple_spinner_item, list);
+                android.R.layout.simple_spinner_item, fromtime);
         dataAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
         from.setAdapter(dataAdapter);
 
-        List<String> list2 = new ArrayList<String>();
-        list2.add("11");
-        list2.add("12");
-        list2.add("1");
-        list2.add("2");
-        list2.add("3");
-        list2.add("4");
-        list2.add("5");
+
 
         ArrayAdapter<String> dataAdapter2 = new ArrayAdapter<String>(this,
-                android.R.layout.simple_spinner_item, list2);
+                android.R.layout.simple_spinner_item, totime);
         dataAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
         to.setAdapter(dataAdapter2);
         book.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                Toast.makeText(BookAppointment.this,"Appoiontment your book from "+ from.getSelectedItem().toString()+" to "+ to.getSelectedItem().toString(),Toast.LENGTH_LONG).show();
+                try {
+                    showDialog();
+                } catch (Exception e) {
+                    e.printStackTrace();
+                }
             }
         });
     }
+
+    public void showDialog() throws Exception
+    {
+        AlertDialog.Builder builder = new AlertDialog.Builder(BookAppointment.this);
+
+        builder.setMessage("Booking Success ");
+
+        builder.setPositiveButton("Ok", new DialogInterface.OnClickListener()
+        {
+            @Override
+            public void onClick(DialogInterface dialog, int which)
+            {
+               Intent intent= new Intent(BookAppointment.this,MainActivity.class);
+               startActivity(intent);
+               finish();
+
+                dialog.dismiss();
+            }
+        });
+
+
+
+        builder.show();
+    }
+
 }

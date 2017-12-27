@@ -1,3 +1,7 @@
+<ScrollView android:layout_height="match_parent"
+    android:layout_width="match_parent"
+    xmlns:android="http://schemas.android.com/apk/res/android">
+    xmlns:android="http://schemas.android.com/apk/res/android" />
 <RelativeLayout
     android:layout_width="match_parent"
     android:layout_height="match_parent"
@@ -5,35 +9,45 @@
     android:paddingTop="10dip"
     android:paddingBottom="10dip"
     android:layout_gravity="center_horizontal"
-    android:gravity="center"
+
     xmlns:android="http://schemas.android.com/apk/res/android">
 
-<DatePicker
-    android:layout_width="wrap_content"
-    android:layout_height="wrap_content"
-    android:id="@+id/datepicker"></DatePicker>
+    <DatePicker
+        android:id="@+id/datepicker"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignParentTop="true"></DatePicker>
 
 
     <Spinner
         android:id="@+id/fromspinner"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_below="@+id/datepicker"
+         android:layout_below="@+id/datepicker"
+        android:layout_above="@+id/btnbook"
+        android:layout_marginTop="20dp"
+        android:layout_marginEnd="30dp"
+        android:layout_marginRight="30dp"
+        android:layout_toLeftOf="@+id/btnbook"
+        android:layout_toStartOf="@+id/btnbook" />
 
-         />
     <Spinner
         android:id="@+id/tospinner"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_below="@+id/datepicker"
-        android:layout_toRightOf="@+id/fromspinner"
-        android:layout_marginLeft="10dp"
-        />
+        android:layout_alignEnd="@+id/datepicker"
+        android:layout_alignRight="@+id/datepicker"
+        android:layout_marginTop="20dp"
+        android:layout_marginEnd="30dp"
+        android:layout_marginRight="66dp" />
 
     <Button
+        android:id="@+id/btnbook"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="Book"
-        android:layout_below="@+id/tospinner"
-        android:id="@+id/btnbook"/>
+       android:layout_below="@+id/tospinner"
+        android:layout_centerHorizontal="true"
+        android:text="Book" />
 </RelativeLayout>
+</ScrollView>

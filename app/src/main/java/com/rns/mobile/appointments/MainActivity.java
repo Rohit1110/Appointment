@@ -27,11 +27,14 @@ public class MainActivity extends AppCompatActivity {
         ArrayList list=new ArrayList();
 
        Appointment appointment=new Appointment();
+        for(int i=0; i<5; i++) {
+            appointment.setName("Rohit"+i);
+            appointment.setTime("11-12 am");
+            appointment.setPhone("123456789");
+            list.add(appointment);
+        }
 
-        appointment.setName("Rohit");
-        appointment.setTime("11-12 am");
-        appointment.setPhone("123456789");
-        list.add(appointment);
+
 
         System.out.println("Length"+list.size());
       Appointment_Adapter adapter=new Appointment_Adapter(MainActivity.this,list);
