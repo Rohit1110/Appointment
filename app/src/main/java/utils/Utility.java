@@ -3,6 +3,7 @@ package utils;
 import android.app.AlertDialog;
 import android.content.Context;
 import android.content.DialogInterface;
+import android.content.Intent;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.net.ConnectivityManager;
@@ -10,6 +11,8 @@ import android.net.NetworkInfo;
 import android.util.Log;
 
 
+import com.rns.mobile.appointments.BookAppointment;
+import com.rns.mobile.appointments.Main2Activity;
 
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
@@ -79,28 +82,28 @@ public class Utility {
     }
 
 
-    public static Bitmap loadBitmap(Context context, String picName){
-        Bitmap b = null;
-        FileInputStream fis=null;
-        try {
-            fis = context.openFileInput(picName);
-            b = BitmapFactory.decodeStream(fis);
-        }
-        catch (FileNotFoundException e) {
-            Log.d("tag", "file not found");
-            e.printStackTrace();
-        }
-        catch (IOException e) {
-            Log.d("tag", "io exception");
-            e.printStackTrace();
-        } finally {
-            try {
-                fis.close();
-            } catch (IOException e) {
-                e.printStackTrace();
+    public void showDialog(String msg,) throws Exception
+    {
+        AlertDialog.Builder builder = new AlertDialog.Builder(BookAppointment.this);
+
+        builder.setMessage("Booking Success ");
+
+        builder.setPositiveButton("Ok", new DialogInterface.OnClickListener()
+        {
+            @Override
+            public void onClick(DialogInterface dialog, int which)
+            {
+                Intent intent= new Intent(BookAppointment.this,Main2Activity.class);
+                startActivity(intent);
+                finish();
+
+                dialog.dismiss();
             }
-        }
-        return b;
+        });
+
+
+
+        builder.show();
     }
 
 }

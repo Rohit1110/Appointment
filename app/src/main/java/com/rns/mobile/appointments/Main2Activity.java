@@ -1,12 +1,17 @@
 package com.rns.mobile.appointments;
 
 import android.content.Intent;
+import android.content.res.Resources;
+import android.graphics.Rect;
 import android.os.Bundle;
 import android.support.design.widget.FloatingActionButton;
 import android.support.design.widget.Snackbar;
 import android.support.v7.app.AppCompatActivity;
+import android.support.v7.widget.DefaultItemAnimator;
+import android.support.v7.widget.GridLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.Toolbar;
+import android.util.TypedValue;
 import android.view.View;
 
 import java.util.ArrayList;
@@ -16,29 +21,35 @@ import model.Appointment;
 
 public class Main2Activity extends AppCompatActivity {
     RecyclerView appointmentlist;
+    ArrayList<Appointment> list;
+    Appointment_Adapter adapter;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main2);
+        appointmentlist=(RecyclerView)findViewById(R.id.recycler_view);
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
 
-        ArrayList list=new ArrayList();
+        list =new ArrayList<>();
 
-        Appointment appointment=new Appointment();
-        for(int i=0; i<5; i++) {
-            appointment.setName("Rohit"+i);
-            appointment.setTime("11-12 am");
-            appointment.setPhone("123456789");
-            list.add(appointment);
-        }
+
 
 
 
         System.out.println("Length"+list.size());
-        Appointment_Adapter adapter=new Appointment_Adapter(Main2Activity.this,list);
+
+         adapter=new Appointment_Adapter(this,list);
+        RecyclerView.LayoutManager mLayoutManager = new GridLayoutManager(this, 1);
+        appointmentlist.setLayoutManager(mLayoutManager);
+
         appointmentlist.setAdapter(adapter);
+
+        prepareUserlist();
+
+
+
 
         FloatingActionButton fab = (FloatingActionButton) findViewById(R.id.fab);
         fab.setOnClickListener(new View.OnClickListener() {
@@ -49,5 +60,43 @@ public class Main2Activity extends AppCompatActivity {
             }
         });
     }
+    private void prepareUserlist() {
+
+
+        Appointment a = new Appointment("Rohit Jadhav", "10.30-11.30");
+        list.add(a);
+
+        a = new Appointment("Rohit Jadhav", "10.30-11.30");
+        list.add(a);
+
+        a = new Appointment("Rohit Jadhav", "10.30-11.30");
+        list.add(a);
+
+        a = new Appointment("Rohit Jadhav", "10.30-11.30");
+        list.add(a);
+
+        a = new Appointment("Rohit Jadhav", "10.30-11.30");
+        list.add(a);
+
+        a = new Appointment("Rohit Jadhav", "10.30-11.30");
+        list.add(a);
+
+        a = new Appointment("Rohit Jadhav", "10.30-11.30");
+        list.add(a);
+
+        a = new Appointment("Rohit Jadhav", "10.30-11.30");
+        list.add(a);
+
+        a = new Appointment("Rohit Jadhav", "10.30-11.30");
+        list.add(a);
+
+        a = new Appointment("Rohit Jadhav", "10.30-11.30");
+        list.add(a);
+
+        adapter.notifyDataSetChanged();
+    }
+
+
+
 
 }

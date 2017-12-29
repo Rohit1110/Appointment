@@ -30,8 +30,8 @@ public class BookAppointment extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_book_appointment);
         book=(Button)findViewById(R.id.btnbook);
-        from=(Spinner)findViewById(R.id.fromspinner);
-        to=(Spinner)findViewById(R.id.tospinner);
+        //from=(Spinner)findViewById(R.id.fromspinner);
+        //to=(Spinner)findViewById(R.id.tospinner);
       /*  List<String> list = new ArrayList<String>();
         list.add("select from time");
         list.add("10");
@@ -42,7 +42,7 @@ public class BookAppointment extends AppCompatActivity {
         list.add("4");
         list.add("5");
         list.add("6");*/
-        ArrayAdapter<String> dataAdapter = new ArrayAdapter<String>(this,
+      /*  ArrayAdapter<String> dataAdapter = new ArrayAdapter<String>(this,
                 android.R.layout.simple_spinner_item, fromtime);
         dataAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
         from.setAdapter(dataAdapter);
@@ -52,15 +52,12 @@ public class BookAppointment extends AppCompatActivity {
         ArrayAdapter<String> dataAdapter2 = new ArrayAdapter<String>(this,
                 android.R.layout.simple_spinner_item, totime);
         dataAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
-        to.setAdapter(dataAdapter2);
+        to.setAdapter(dataAdapter2);*/
         book.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                try {
-                    showDialog();
-                } catch (Exception e) {
-                    e.printStackTrace();
-                }
+                Intent intent=new Intent(BookAppointment.this,Book.class);
+                startActivity(intent);
             }
         });
     }
@@ -76,7 +73,7 @@ public class BookAppointment extends AppCompatActivity {
             @Override
             public void onClick(DialogInterface dialog, int which)
             {
-               Intent intent= new Intent(BookAppointment.this,MainActivity.class);
+               Intent intent= new Intent(BookAppointment.this,Main2Activity.class);
                startActivity(intent);
                finish();
 

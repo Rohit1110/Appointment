@@ -149,7 +149,7 @@ public class PhoneAuthActivity extends AppCompatActivity implements
                             edit.putString("userphone",user.getPhoneNumber());
                             edit.commit();
 
-                            startActivity(new Intent(PhoneAuthActivity.this, MainActivity.class));
+                            startActivity(new Intent(PhoneAuthActivity.this, Main2Activity.class));
                             finish();
                         } else {
                             Log.w(TAG, "signInWithCredential:failure", task.getException());
@@ -203,7 +203,7 @@ public class PhoneAuthActivity extends AppCompatActivity implements
         super.onStart();
         FirebaseUser currentUser = mAuth.getCurrentUser();
         if (currentUser != null) {
-            startActivity(new Intent(PhoneAuthActivity.this, MainActivity.class));
+            startActivity(new Intent(PhoneAuthActivity.this, Main2Activity.class));
             finish();
         }
     }

@@ -1,40 +1,57 @@
-<RelativeLayout
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:card_view="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
-    android:layout_height="match_parent"
-    android:paddingLeft="10dip"
-    android:paddingTop="10dip"
-    android:paddingBottom="10dip"
-    xmlns:android="http://schemas.android.com/apk/res/android">
+    android:layout_height="wrap_content"
+   >
 
-    <TextView
-        android:id="@+id/txttime"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:textSize="16sp"
-        android:text="No Data"
-        android:layout_margin="10dp"
-        android:textColor="#212121" />
+    <android.support.v7.widget.CardView
+        android:id="@+id/card_view"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:layout_gravity="center"
+        android:elevation="3dp"
+        card_view:cardCornerRadius="@dimen/card_album_radius">
+        <RelativeLayout
+            android:layout_width="match_parent"
+            android:layout_height="match_parent">
+            <TextView
+                android:id="@+id/txtname"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
 
-    <TextView
-        android:id="@+id/txtname"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:textSize="14sp"
-        android:text="No Data"
-        android:layout_below="@+id/txttime"
-        android:textColor="#757575"/>
+                android:paddingLeft="@dimen/album_title_padding"
+                android:paddingRight="@dimen/album_title_padding"
+                android:paddingTop="@dimen/album_title_padding"
+                android:layout_margin="3dp"
+                android:textColor="@color/album_title"
+                android:textSize="@dimen/album_title" />
 
-    <TextView
-        android:id="@+id/txtphone"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_alignBaseline="@+id/txtname"
-        android:layout_alignBottom="@+id/txtname"
-        android:layout_marginLeft="52dp"
-        android:layout_marginStart="52dp"
-        android:layout_toEndOf="@+id/txttime"
-        android:layout_toRightOf="@+id/txttime"
-        android:text="No Data"
-        android:textColor="#757575"
-        android:textSize="14sp" />
-</RelativeLayout>
+            <ImageView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_alignParentEnd="true"
+                android:layout_alignParentRight="true"
+                android:src="@android:drawable/ic_delete" />
+            <TextView
+                android:id="@+id/txtdesc"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_below="@id/txtname"
+                android:layout_margin="3dp"
+                android:text="descriptions"
+                android:paddingLeft="@dimen/album_title_padding"
+                android:paddingRight="@dimen/album_title_padding"
+                android:textSize="@dimen/songs_count" />
+
+            <TextView
+                android:id="@+id/txttime"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_below="@id/txtdesc"
+                android:layout_margin="3dp"
+                android:paddingLeft="@dimen/album_title_padding"
+                android:paddingRight="@dimen/album_title_padding"
+                android:textSize="@dimen/songs_count" />
+        </RelativeLayout>
+    </android.support.v7.widget.CardView>
+</LinearLayout>

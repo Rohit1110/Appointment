@@ -12,42 +12,38 @@
 
     xmlns:android="http://schemas.android.com/apk/res/android">
 
-    <DatePicker
-        android:id="@+id/datepicker"
-        android:layout_width="wrap_content"
+
+    <LinearLayout
+        android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_alignParentTop="true"></DatePicker>
+        android:orientation="vertical"
+        android:id="@+id/llayout"
+        android:layout_marginBottom="5dp">
+
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="Rohit jadhav"
+            android:textSize="15sp"
+            android:layout_marginBottom="5dp"/>
+
+        <DatePicker
+            android:id="@+id/datepicker"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignParentTop="true"></DatePicker>
+
+    </LinearLayout>
 
 
-    <Spinner
-        android:id="@+id/fromspinner"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-         android:layout_below="@+id/datepicker"
-        android:layout_above="@+id/btnbook"
-        android:layout_marginTop="20dp"
-        android:layout_marginEnd="30dp"
-        android:layout_marginRight="30dp"
-        android:layout_toLeftOf="@+id/btnbook"
-        android:layout_toStartOf="@+id/btnbook" />
 
-    <Spinner
-        android:id="@+id/tospinner"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_below="@+id/datepicker"
-        android:layout_alignEnd="@+id/datepicker"
-        android:layout_alignRight="@+id/datepicker"
-        android:layout_marginTop="20dp"
-        android:layout_marginEnd="30dp"
-        android:layout_marginRight="66dp" />
 
     <Button
         android:id="@+id/btnbook"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-       android:layout_below="@+id/tospinner"
+       android:layout_below="@+id/llayout"
         android:layout_centerHorizontal="true"
-        android:text="Book" />
+        android:text="Next" />
 </RelativeLayout>
 </ScrollView>
