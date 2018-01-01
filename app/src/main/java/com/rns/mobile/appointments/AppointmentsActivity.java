@@ -25,7 +25,7 @@ import model.User;
 import utils.FirebaseUtil;
 
 public class AppointmentsActivity extends AppCompatActivity {
-    private RecyclerView appointmentlist;
+    private RecyclerView recyclerView;
     private List<Appointment> list;
     private AppointmentsAdapter adapter;
     private User user;
@@ -36,7 +36,7 @@ public class AppointmentsActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main2);
-        appointmentlist = (RecyclerView) findViewById(R.id.recycler_view);
+        recyclerView = (RecyclerView) findViewById(R.id.recycler_view);
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
 
@@ -46,8 +46,8 @@ public class AppointmentsActivity extends AppCompatActivity {
         phoneNumber = FirebaseUtil.getMobile();
         adapter = new AppointmentsAdapter(this, list);
         RecyclerView.LayoutManager mLayoutManager = new GridLayoutManager(this, 1);
-        appointmentlist.setLayoutManager(mLayoutManager);
-
+        recyclerView.setLayoutManager(mLayoutManager);
+        recyclerView.setAdapter(adapter);
         prepareAppointmentsList();
 
 
@@ -78,6 +78,7 @@ public class AppointmentsActivity extends AppCompatActivity {
                         list.add(appointment);
                     }
                     System.out.println("Appointments list size => " + list.size());
+
                     adapter.notifyDataSetChanged();
                 }
             }
