@@ -39,7 +39,7 @@ public class SelectDateAcitivity extends AppCompatActivity {
             @Override
             public void onClick(View v) {
                 Intent intent = new Intent(SelectDateAcitivity.this, BookAppointmentActivity.class);
-                if(appointment != null) {
+                if(appointment == null) {
                     appointment = new Appointment();
                 }
                 appointment.setDate(Utility.getDate(selectedDate));

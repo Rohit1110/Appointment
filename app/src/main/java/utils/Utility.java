@@ -94,14 +94,23 @@ public class Utility {
 
     public static String getDate(DatePicker datePicker) {
         int day = datePicker.getDayOfMonth();
+        String dayString = "" + day;
+        if(day < 10) {
+            dayString = "0" + day;
+        }
         int month = datePicker.getMonth() + 1;
+        String monthString = "" + month;
+        if(month < 10) {
+            monthString = "0" + month;
+        }
         int year = datePicker.getYear();
-        return year + "-" + month + "-" + day;
+        return year + "-" + monthString + "-" + dayString;
     }
 
     public static Appointment extractAppointment(Activity context) {
         String appJson = context.getIntent().getStringExtra("appointment");
         if (appJson != null) {
+            System.out.println("" + appJson);
             return new Gson().fromJson(appJson, Appointment.class);
         }
         return null;
