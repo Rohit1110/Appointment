@@ -34,7 +34,7 @@ public class MainActivity extends AppCompatActivity {
         System.out.println("#### LOADING PROFILE FOR USER " + phoneNumber + ".. ###");
 
         Utility.showProgress(dialog, MainActivity.this);
-        FirebaseUtil.db.collection(FirebaseUtil.DOC_USERS).document("9423040642").get().addOnCompleteListener(new OnCompleteListener<DocumentSnapshot>() {
+        FirebaseUtil.db.collection(FirebaseUtil.DOC_USERS).document(phoneNumber).get().addOnCompleteListener(new OnCompleteListener<DocumentSnapshot>() {
             @Override
             public void onComplete(@NonNull Task<DocumentSnapshot> task) {
                 Utility.hideProgress(dialog);
