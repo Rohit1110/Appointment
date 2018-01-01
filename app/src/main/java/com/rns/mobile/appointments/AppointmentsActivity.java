@@ -68,6 +68,7 @@ public class AppointmentsActivity extends AppCompatActivity {
             @Override
             public void onEvent(QuerySnapshot documentSnapshots, FirebaseFirestoreException e) {
                 //Utility.hideProgress(dialog);
+                System.out.println("Appointments snapshot completed!" + documentSnapshots.size());
                 if (!documentSnapshots.isEmpty()) {
                     for (DocumentSnapshot doc : documentSnapshots) {
                         Appointment appointment = doc.toObject(Appointment.class);
@@ -76,6 +77,7 @@ public class AppointmentsActivity extends AppCompatActivity {
                         }
                         list.add(appointment);
                     }
+                    System.out.println("Appointments list size => " + list.size());
                     adapter.notifyDataSetChanged();
                 }
             }
