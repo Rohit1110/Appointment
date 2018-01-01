@@ -25,7 +25,7 @@
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>-->
         </activity>
-        <activity android:name=".SearchAppointment"/>
+        <activity android:name=".SearchAppointmentActivity"/>
         <activity android:name=".SelectDateAcitivity"/>
         <activity
             android:name=".AppointmentsActivity"

@@ -1,5 +1,6 @@
 package com.rns.mobile.appointments;
 
+import android.app.ProgressDialog;
 import android.content.Intent;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
@@ -7,17 +8,20 @@ import android.support.annotation.Nullable;
 import android.support.v7.app.AppCompatActivity;
 
 import com.google.android.gms.tasks.OnCompleteListener;
+import com.google.android.gms.tasks.OnFailureListener;
 import com.google.android.gms.tasks.Task;
 import com.google.firebase.firestore.DocumentSnapshot;
 import com.google.gson.Gson;
 
 import model.User;
 import utils.FirebaseUtil;
+import utils.Utility;
 
 public class MainActivity extends AppCompatActivity {
 
     private String phoneNumber;
     private User user;
+    private ProgressDialog dialog;
 
     @Override
     public void onCreate(@Nullable Bundle savedInstanceState) {
@@ -27,11 +31,13 @@ public class MainActivity extends AppCompatActivity {
         //TODO: read from auth
         phoneNumber = FirebaseUtil.getMobile();
 
-        System.out.println("#### LOADING PROFILE .. ###");
+        System.out.println("#### LOADING PROFILE FOR USER " + phoneNumber + ".. ###");
 
+        Utility.showProgress(dialog, MainActivity.this);
         FirebaseUtil.db.collection(FirebaseUtil.DOC_USERS).document("9423040642").get().addOnCompleteListener(new OnCompleteListener<DocumentSnapshot>() {
             @Override
             public void onComplete(@NonNull Task<DocumentSnapshot> task) {
+                Utility.hideProgress(dialog);
                 if(task.isSuccessful()) {
                     DocumentSnapshot doc = task.getResult();
                     if(doc == null || !doc.exists()) {
@@ -51,6 +57,13 @@ public class MainActivity extends AppCompatActivity {
                 } else {
                     System.out.println("No document found for this number!!" + task.getException());
                 }
+            }
+        }).addOnFailureListener(new OnFailureListener() {
+            @Override
+            public void onFailure(@NonNull Exception e) {
+                Utility.hideProgress(dialog);
+                System.out.println("### ERROR IN READING PROFILE ---" + e);
+                e.printStackTrace();
             }
         });
     }

@@ -29,10 +29,7 @@ public class SelectDateAcitivity extends AppCompatActivity {
         appointmentPhone = (TextView) findViewById(R.id.txt_appointment_phone);
         selectedDate = (DatePicker) findViewById(R.id.datepicker);
 
-        String appJson = getIntent().getStringExtra("appointment");
-        if (appJson != null) {
-            appointment = new Gson().fromJson(appJson, Appointment.class);
-        }
+        appointment = Utility.extractAppointment(SelectDateAcitivity.this);
 
         if(appointment != null) {
             appointmentPhone.setText(appointment.getPhone());
@@ -51,6 +48,5 @@ public class SelectDateAcitivity extends AppCompatActivity {
             }
         });
     }
-
 
 }

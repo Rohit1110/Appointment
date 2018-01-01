@@ -1,5 +1,6 @@
 package utils;
 
+import android.app.Activity;
 import android.app.AlertDialog;
 import android.app.ProgressDialog;
 import android.content.Context;
@@ -9,8 +10,12 @@ import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
 import android.widget.DatePicker;
 
+import com.google.gson.Gson;
+
 import java.io.FileOutputStream;
 import java.io.IOException;
+
+import model.Appointment;
 
 /**
  * Created by Rohit on 11/27/2017.
@@ -92,6 +97,14 @@ public class Utility {
         int month = datePicker.getMonth() + 1;
         int year = datePicker.getYear();
         return year + "-" + month + "-" + day;
+    }
+
+    public static Appointment extractAppointment(Activity context) {
+        String appJson = context.getIntent().getStringExtra("appointment");
+        if (appJson != null) {
+            return new Gson().fromJson(appJson, Appointment.class);
+        }
+        return null;
     }
 
 }

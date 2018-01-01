@@ -12,7 +12,7 @@ import com.google.gson.Gson;
 
 import model.Appointment;
 
-public class SearchAppointment extends AppCompatActivity {
+public class SearchAppointmentActivity extends AppCompatActivity {
     private Button next;
     private AutoCompleteTextView search;
     private static final String[] COUNTRIES = new String[]{"Dentist", "Aurtho", "homeopathi", "entc", "Aurvedik"};
@@ -29,7 +29,7 @@ public class SearchAppointment extends AppCompatActivity {
         next.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                Intent intent = new Intent(SearchAppointment.this, SelectDateAcitivity.class);
+                Intent intent = new Intent(SearchAppointmentActivity.this, SelectDateAcitivity.class);
                 Appointment appointment = new Appointment();
                 appointment.setPhone(search.getText().toString());
                 intent.putExtra("appointment", new Gson().toJson(appointment));

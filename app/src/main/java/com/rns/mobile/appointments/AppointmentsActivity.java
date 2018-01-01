@@ -55,7 +55,7 @@ public class AppointmentsActivity extends AppCompatActivity {
         fab.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                Intent intent = new Intent(AppointmentsActivity.this, SearchAppointment.class);
+                Intent intent = new Intent(AppointmentsActivity.this, SearchAppointmentActivity.class);
                 startActivity(intent);
             }
         });

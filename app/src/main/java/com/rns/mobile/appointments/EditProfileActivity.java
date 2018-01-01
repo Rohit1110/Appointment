@@ -42,7 +42,7 @@ public class EditProfileActivity extends AppCompatActivity {
     @Override
     public void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_profile__user);
+        setContentView(R.layout.activity_profile_user);
 
         String userJson = getIntent().getStringExtra("user");
         phoneNumber = FirebaseUtil.getMobile();
