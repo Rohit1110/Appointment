@@ -26,14 +26,14 @@
             </intent-filter>-->
         </activity>
         <activity android:name=".SearchAppointment"/>
-        <activity android:name=".BookAppointment"/>
+        <activity android:name=".SelectDateAcitivity"/>
         <activity
             android:name=".AppointmentsActivity"
             android:label="@string/title_activity_main2"
             android:theme="@style/AppTheme.NoActionBar">
 
         </activity>
-        <activity android:name=".Book"></activity>
+        <activity android:name=".BookAppointmentActivity"></activity>
         <activity android:name=".EditProfileActivity"/>
     </application>
 

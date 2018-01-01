@@ -1,7 +1,5 @@
 package model;
 
-import java.util.Date;
-
 /**
  * Created by Rohit on 12/26/2017.
  */
@@ -12,13 +10,17 @@ public class Appointment {
     private String endTime;
     private String name;
     private String phone;
-    private Date date;
+    private String date;
 
-    public Date getDate() {
+    public Appointment() {
+
+    }
+
+    public String getDate() {
         return date;
     }
 
-    public void setDate(Date date) {
+    public void setDate(String date) {
         this.date = date;
     }
 

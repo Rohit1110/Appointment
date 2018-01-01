@@ -1,7 +1,3 @@
-<ScrollView android:layout_height="match_parent"
-    android:layout_width="match_parent"
-    xmlns:android="http://schemas.android.com/apk/res/android">
-    xmlns:android="http://schemas.android.com/apk/res/android" />
 <RelativeLayout
     android:layout_width="match_parent"
     android:layout_height="match_parent"
@@ -13,37 +9,64 @@
     xmlns:android="http://schemas.android.com/apk/res/android">
 
 
+<LinearLayout
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:orientation="vertical"
+    android:id="@+id/llayout"
+    android:layout_marginBottom="5dp">
+
+    <TextView
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="Rohit jadhav"
+        android:textSize="15sp"
+        android:layout_marginBottom="5dp"/>
+    <TextView
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="29- dec -2017"
+        android:textSize="12sp"
+        android:layout_marginBottom="5dp"/>
+</LinearLayout>
+
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:orientation="vertical"
-        android:id="@+id/llayout"
+        android:orientation="horizontal"
+        android:layout_below="@+id/llayout"
+        android:gravity="center"
+        android:layout_margin="5dp"
+        android:id="@+id/lilayout"
         android:layout_marginBottom="5dp">
 
-        <TextView
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:text="Rohit jadhav"
-            android:textSize="15sp"
-            android:layout_marginBottom="5dp"/>
-
-        <DatePicker
-            android:id="@+id/datepicker"
+        <android.support.v7.widget.AppCompatSpinner
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_alignParentTop="true"></DatePicker>
+            android:layout_margin="5dp"
+            android:layout_weight="0.5"
+            android:id="@+id/fromtime">
+
+        </android.support.v7.widget.AppCompatSpinner>
+        <android.support.v7.widget.AppCompatSpinner
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_weight="0.5"
+            android:id="@+id/totime">
+
+        </android.support.v7.widget.AppCompatSpinner>
+
 
     </LinearLayout>
 
-
-
-
     <Button
-        android:id="@+id/btnbook"
+        android:id="@+id/appointmentbtn"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-       android:layout_below="@+id/llayout"
+        android:layout_below="@+id/lilayout"
         android:layout_centerHorizontal="true"
-        android:text="Next" />
+        android:layout_marginTop="16dp"
+
+        android:text="Book Appointment" />
+
 </RelativeLayout>
-</ScrollView>

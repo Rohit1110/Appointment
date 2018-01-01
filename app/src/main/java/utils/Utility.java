@@ -7,6 +7,7 @@ import android.content.DialogInterface;
 import android.graphics.Bitmap;
 import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
+import android.widget.DatePicker;
 
 import java.io.FileOutputStream;
 import java.io.IOException;
@@ -85,5 +86,12 @@ public class Utility {
         }
     }
 
+
+    public static String getDate(DatePicker datePicker) {
+        int day = datePicker.getDayOfMonth();
+        int month = datePicker.getMonth() + 1;
+        int year = datePicker.getYear();
+        return year + "-" + month + "-" + day;
+    }
 
 }
