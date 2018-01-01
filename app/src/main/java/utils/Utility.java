@@ -1,21 +1,13 @@
 package utils;
 
 import android.app.AlertDialog;
+import android.app.ProgressDialog;
 import android.content.Context;
 import android.content.DialogInterface;
-import android.content.Intent;
 import android.graphics.Bitmap;
-import android.graphics.BitmapFactory;
 import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
-import android.util.Log;
 
-
-import com.rns.mobile.appointments.BookAppointment;
-import com.rns.mobile.appointments.Main2Activity;
-
-import java.io.FileInputStream;
-import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.IOException;
 
@@ -25,17 +17,20 @@ import java.io.IOException;
 
 public class Utility {
 
+    public static final String[] TIME_SLOTS_FROM = new String[]{"Select From", "0:00", "0:30", "1:00", "1:30", "2:00", "2:30", "3:00", "3:30", "4:00", "4:30", "5:00", "5:30", "6:00", "6:30", "7:00", "7:30", "8:00", "8:30", "9:00", "9:30", "10:00", "10:30", "11:00", "11.30", "12:00", "12:30", "13:00", "13:30", "14:00", "14:30", "15:00", "15:30", "16:00", "16:30", "17:00", "17.30", "18:00", "18:30", "19:00", "19:30", "20:00", "20:30", "21:00", "21:30", "22:00", "22:30", "23:00", "23.30", "24:00"};
 
-      public static void createAlert(Context context, String message) {
+    public static final String[] TIME_SLOTS_TO = new String[]{"Select To", "0:00", "0:30", "1:00", "1:30", "2:00", "2:30", "3:00", "3:30", "4:00", "4:30", "5:00", "5:30", "6:00", "6:30", "7:00", "7:30", "8:00", "8:30", "9:00", "9:30", "10:00", "10:30", "11:00", "11.30", "12:00", "12:30", "13:00", "13:30", "14:00", "14:30", "15:00", "15:30", "16:00", "16:30", "17:00", "17.30", "18:00", "18:30", "19:00", "19:30", "20:00", "20:30", "21:00", "21:30", "22:00", "22:30", "23:00", "23.30", "24:00"};
+
+
+    public static void createAlert(Context context, String message) {
         AlertDialog.Builder alertDialogBuilder = new AlertDialog.Builder(context);
         alertDialogBuilder.setMessage(message);
-        alertDialogBuilder.setPositiveButton("ok",
-                new DialogInterface.OnClickListener() {
-                    @Override
-                    public void onClick(DialogInterface arg0, int arg1) {
+        alertDialogBuilder.setPositiveButton("ok", new DialogInterface.OnClickListener() {
+            @Override
+            public void onClick(DialogInterface arg0, int arg1) {
 
-                    }
-                });
+            }
+        });
 
 
         AlertDialog alertDialog = alertDialogBuilder.create();
@@ -46,34 +41,28 @@ public class Utility {
     public static void saveFile(Context context, Bitmap b, String picName) throws IOException {
         FileOutputStream fos;
 
-            fos = context.openFileOutput(picName, Context.MODE_PRIVATE);
-            b.compress(Bitmap.CompressFormat.PNG, 100, fos);
+        fos = context.openFileOutput(picName, Context.MODE_PRIVATE);
+        b.compress(Bitmap.CompressFormat.PNG, 100, fos);
 
-            fos.close();
+        fos.close();
 
     }
 //Internet Connection Check
 
-    public static  boolean isInternetOn(Context ctx) {
+    public static boolean isInternetOn(Context ctx) {
 
         // get Connectivity Manager object to check connection
-        ConnectivityManager connec =
-                (ConnectivityManager)ctx.getSystemService(Context.CONNECTIVITY_SERVICE);
+        ConnectivityManager connec = (ConnectivityManager) ctx.getSystemService(Context.CONNECTIVITY_SERVICE);
 
         // Check for network connections
-        if ( connec.getNetworkInfo(0).getState() == NetworkInfo.State.CONNECTED ||
-                connec.getNetworkInfo(0).getState() == NetworkInfo.State.CONNECTING ||
-                connec.getNetworkInfo(1).getState() == NetworkInfo.State.CONNECTING ||
-                connec.getNetworkInfo(1).getState() == NetworkInfo.State.CONNECTED ) {
+        if (connec.getNetworkInfo(0).getState() == NetworkInfo.State.CONNECTED || connec.getNetworkInfo(0).getState() == NetworkInfo.State.CONNECTING || connec.getNetworkInfo(1).getState() == NetworkInfo.State.CONNECTING || connec.getNetworkInfo(1).getState() == NetworkInfo.State.CONNECTED) {
 
             // if connected with internet
 
 
             return true;
 
-        } else if (
-                connec.getNetworkInfo(0).getState() == NetworkInfo.State.DISCONNECTED ||
-                        connec.getNetworkInfo(1).getState() == NetworkInfo.State.DISCONNECTED  ) {
+        } else if (connec.getNetworkInfo(0).getState() == NetworkInfo.State.DISCONNECTED || connec.getNetworkInfo(1).getState() == NetworkInfo.State.DISCONNECTED) {
 
 
             return false;
@@ -81,29 +70,20 @@ public class Utility {
         return false;
     }
 
-
-    public void showDialog(String msg,) throws Exception
-    {
-        AlertDialog.Builder builder = new AlertDialog.Builder(BookAppointment.this);
-
-        builder.setMessage("Booking Success ");
-
-        builder.setPositiveButton("Ok", new DialogInterface.OnClickListener()
-        {
-            @Override
-            public void onClick(DialogInterface dialog, int which)
-            {
-                Intent intent= new Intent(BookAppointment.this,Main2Activity.class);
-                startActivity(intent);
-                finish();
-
-                dialog.dismiss();
-            }
-        });
-
-
-
-        builder.show();
+    public static void showProgress(ProgressDialog dialog, Context context) {
+        if (dialog == null) {
+            dialog = new ProgressDialog(context);
+        }
+        dialog.setTitle("Loading ..");
+        //dialog.setMessage("");
+        dialog.show();
     }
+
+    public static void hideProgress(ProgressDialog dialog) {
+        if(dialog != null) {
+            dialog.dismiss();
+        }
+    }
+
 
 }

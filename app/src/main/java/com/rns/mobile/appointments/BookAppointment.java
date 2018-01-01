@@ -3,17 +3,11 @@ package com.rns.mobile.appointments;
 import android.app.AlertDialog;
 import android.content.DialogInterface;
 import android.content.Intent;
-import android.net.Uri;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.view.View;
-import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.Spinner;
-import android.widget.Toast;
-
-import java.util.ArrayList;
-import java.util.List;
 
 public class BookAppointment extends AppCompatActivity {
     Button book;
@@ -73,7 +67,7 @@ public class BookAppointment extends AppCompatActivity {
             @Override
             public void onClick(DialogInterface dialog, int which)
             {
-               Intent intent= new Intent(BookAppointment.this,Main2Activity.class);
+               Intent intent= new Intent(BookAppointment.this,AppointmentsActivity.class);
                startActivity(intent);
                finish();
 

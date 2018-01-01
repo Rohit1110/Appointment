@@ -1,60 +1,66 @@
 package com.rns.mobile.appointments;
 
 import android.content.Intent;
-import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
-import android.support.v7.widget.GridLayoutManager;
-import android.support.v7.widget.RecyclerView;
-import android.view.View;
-import android.widget.Button;
-import android.widget.ListView;
+import android.support.annotation.NonNull;
+import android.support.annotation.Nullable;
+import android.support.v7.app.AppCompatActivity;
 
+import com.google.android.gms.tasks.OnCompleteListener;
+import com.google.android.gms.tasks.Task;
+import com.google.firebase.firestore.DocumentSnapshot;
+import com.google.gson.Gson;
 
-import java.util.ArrayList;
-
-import adapter.Appointment_Adapter;
-import model.Appointment;
+import model.User;
+import utils.FirebaseUtil;
 
 public class MainActivity extends AppCompatActivity {
-    ListView appointmentlist;
-    Button add;
-    RecyclerView recyclerView;
 
-    /*{
+    private String phoneNumber;
+    private User user;
+
+    @Override
+    public void onCreate(@Nullable Bundle savedInstanceState) {
+
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
-        appointmentlist=(ListView)findViewById(R.id.listappoint);
-        recyclerView=(RecyclerView)findViewById(R.id.recycler_view);
-        add=(Button)findViewById(R.id.btnadd);
-        System.out.println("Rohit123");
-        ArrayList<Appointment> list=new ArrayList();
+        //TODO: read from auth
+        phoneNumber = FirebaseUtil.getMobile();
 
-       Appointment appointment=new Appointment();
-        for(int i=0; i<5; i++) {
-            appointment.setName("Rohit"+i);
-            appointment.setTime("11-12 am");
-            appointment.setPhone("123456789");
-            list.add(appointment);
-        }
+        System.out.println("#### LOADING PROFILE .. ###");
 
-
-
-        System.out.println("Length"+list.size());
-      Appointment_Adapter adapter=new Appointment_Adapter(this,list);
-
-       *//* RecyclerView.LayoutManager mLayoutManager = new GridLayoutManager(this, 2);
-        recyclerView.setLayoutManager(mLayoutManager);*//*
-        recyclerView.setAdapter(adapter);
-
-        add.setOnClickListener(new View.OnClickListener() {
+        FirebaseUtil.db.collection(FirebaseUtil.DOC_USERS).document("9423040642").get().addOnCompleteListener(new OnCompleteListener<DocumentSnapshot>() {
             @Override
-            public void onClick(View v) {
-                Intent i= new Intent(MainActivity.this,SearchAppointment.class);
-                startActivity(i);
+            public void onComplete(@NonNull Task<DocumentSnapshot> task) {
+                if(task.isSuccessful()) {
+                    DocumentSnapshot doc = task.getResult();
+                    if(doc == null || !doc.exists()) {
+                        System.out.println("No document found for this number!" + phoneNumber);
+                        showEditProfile();
+                    } else {
+                        System.out.println("Document found!");
+                        user = doc.toObject(User.class);
+                        if(user == null || user.getFirstName() == null || user.getFirstName().trim().length() == 0) {
+                            showEditProfile();
+                        } else {
+                            Intent i = new Intent(MainActivity.this, AppointmentsActivity.class);
+                            i.putExtra("user", new Gson().toJson(user));
+                            startActivity(i);
+                        }
+                    }
+                } else {
+                    System.out.println("No document found for this number!!" + task.getException());
+                }
             }
         });
+    }
+
+    private void showEditProfile() {
+        Intent i = new Intent(MainActivity.this, EditProfileActivity.class);
+        i.putExtra("user", new Gson().toJson(user));
+        startActivity(i);
+
+    }
 
 
-
-    }*/
 }
