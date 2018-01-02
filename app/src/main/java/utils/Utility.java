@@ -16,6 +16,7 @@ import java.io.FileOutputStream;
 import java.io.IOException;
 
 import model.Appointment;
+import model.User;
 
 /**
  * Created by Rohit on 11/27/2017.
@@ -23,10 +24,10 @@ import model.Appointment;
 
 public class Utility {
 
-    public static final String[] TIME_SLOTS_FROM = new String[]{"Select From", "0:00", "0:30", "1:00", "1:30", "2:00", "2:30", "3:00", "3:30", "4:00", "4:30", "5:00", "5:30", "6:00", "6:30", "7:00", "7:30", "8:00", "8:30", "9:00", "9:30", "10:00", "10:30", "11:00", "11.30", "12:00", "12:30", "13:00", "13:30", "14:00", "14:30", "15:00", "15:30", "16:00", "16:30", "17:00", "17.30", "18:00", "18:30", "19:00", "19:30", "20:00", "20:30", "21:00", "21:30", "22:00", "22:30", "23:00", "23.30", "24:00"};
-
-    public static final String[] TIME_SLOTS_TO = new String[]{"Select To", "0:00", "0:30", "1:00", "1:30", "2:00", "2:30", "3:00", "3:30", "4:00", "4:30", "5:00", "5:30", "6:00", "6:30", "7:00", "7:30", "8:00", "8:30", "9:00", "9:30", "10:00", "10:30", "11:00", "11.30", "12:00", "12:30", "13:00", "13:30", "14:00", "14:30", "15:00", "15:30", "16:00", "16:30", "17:00", "17.30", "18:00", "18:30", "19:00", "19:30", "20:00", "20:30", "21:00", "21:30", "22:00", "22:30", "23:00", "23.30", "24:00"};
-
+    public static final String[] TIME_SLOTS = new String[]{"00:00", "00:30", "01:00", "01:30", "02:00", "02:30", "03:00", "03:30", "04:00", "04:30", "05:00", "05:30", "06:00", "06:30", "07:00", "07:30", "08:00", "08:30", "09:00", "09:30", "10:00", "10:30", "11:00", "11:30", "12:00", "12:30", "13:00", "13:30", "14:00", "14:30", "15:00", "15:30", "16:00", "16:30", "17:00", "17:30", "18:00", "18:30", "19:00", "19:30", "20:00", "20:30", "21:00", "21:30", "22:00", "22:30", "23:00", "23:30", "24:00"};
+    //public static final String[] TIME_SLOTS_TO = new String[]{"Select To", "0:00", "0:30", "1:00", "1:30", "2:00", "2:30", "3:00", "3:30", "4:00", "4:30", "5:00", "5:30", "6:00", "6:30", "7:00", "7:30", "8:00", "8:30", "9:00", "9:30", "10:00", "10:30", "11:00", "11:30", "12:00", "12:30", "13:00", "13:30", "14:00", "14:30", "15:00", "15:30", "16:00", "16:30", "17:00", "17:30", "18:00", "18:30", "19:00", "19:30", "20:00", "20:30", "21:00", "21:30", "22:00", "22:30", "23:00", "23:30", "24:00"};
+    public static final String INTENT_VAR_OTHER_USER = "otherUser";
+    public static final String INTENT_VAR_APPOINTMENT = "appointment";
 
     public static void createAlert(Context context, String message) {
         AlertDialog.Builder alertDialogBuilder = new AlertDialog.Builder(context);
@@ -76,17 +77,17 @@ public class Utility {
         return false;
     }
 
-    public static void showProgress(ProgressDialog dialog, Context context) {
-        if (dialog == null) {
-            dialog = new ProgressDialog(context);
-        }
+    public static ProgressDialog showProgress(Context context) {
+        ProgressDialog dialog = new ProgressDialog(context);
         dialog.setTitle("Loading ..");
         //dialog.setMessage("");
         dialog.show();
+        return dialog;
     }
 
     public static void hideProgress(ProgressDialog dialog) {
-        if(dialog != null) {
+        System.out.println("Hiding dialog .." + dialog);
+        if (dialog != null) {
             dialog.dismiss();
         }
     }
@@ -95,12 +96,12 @@ public class Utility {
     public static String getDate(DatePicker datePicker) {
         int day = datePicker.getDayOfMonth();
         String dayString = "" + day;
-        if(day < 10) {
+        if (day < 10) {
             dayString = "0" + day;
         }
         int month = datePicker.getMonth() + 1;
         String monthString = "" + month;
-        if(month < 10) {
+        if (month < 10) {
             monthString = "0" + month;
         }
         int year = datePicker.getYear();
@@ -108,10 +109,19 @@ public class Utility {
     }
 
     public static Appointment extractAppointment(Activity context) {
-        String appJson = context.getIntent().getStringExtra("appointment");
+        String appJson = context.getIntent().getStringExtra(INTENT_VAR_APPOINTMENT);
         if (appJson != null) {
             System.out.println("" + appJson);
             return new Gson().fromJson(appJson, Appointment.class);
+        }
+        return null;
+    }
+
+    public static User extractUser(Activity context) {
+        String userJson = context.getIntent().getStringExtra(INTENT_VAR_OTHER_USER);
+        if (userJson != null) {
+            System.out.println("" + userJson);
+            return new Gson().fromJson(userJson, User.class);
         }
         return null;
     }

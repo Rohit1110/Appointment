@@ -12,6 +12,7 @@ public class User {
     private String businessName;
     private String startTime;
     private String endTime;
+    private String phone;
 
 
     public String getFirstName() {
@@ -60,5 +61,13 @@ public class User {
 
     public void setEndTime(String endTime) {
         this.endTime = endTime;
+    }
+
+    public String getPhone() {
+        return phone;
+    }
+
+    public void setPhone(String phone) {
+        this.phone = phone;
     }
 }

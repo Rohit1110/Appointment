@@ -37,9 +37,8 @@ public class Appointment {
         return startTime;
     }
 
-    public void setStartTime(String startTime)
-    {
-        System.out.println("startTime in Model: " + startTime );
+    public void setStartTime(String startTime) {
+        System.out.println("startTime in Model: " + startTime);
         this.startTime = startTime;
     }
 
@@ -48,13 +47,13 @@ public class Appointment {
     }
 
     public void setEndTime(String endTime) {
-        System.out.println("endTime in Model: " + endTime );
+        System.out.println("endTime in Model: " + endTime);
         this.endTime = endTime;
     }
 
     public void setName(String name) {
 
-        System.out.println("name in Model: " + name );
+        System.out.println("name in Model: " + name);
         this.name = name;
     }
 
@@ -70,6 +69,5 @@ public class Appointment {
     public String getPhone() {
         return phone;
     }
-
 
 }

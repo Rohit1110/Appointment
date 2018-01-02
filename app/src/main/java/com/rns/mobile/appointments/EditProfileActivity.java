@@ -74,20 +74,20 @@ public class EditProfileActivity extends AppCompatActivity {
         etStartTime = (Spinner) findViewById(R.id.et_start_time);
         etEndTime = (Spinner) findViewById(R.id.et_end_time);
 
-        ArrayAdapter<String> fromAdapter = new ArrayAdapter<String>(this, android.R.layout.simple_spinner_item, Utility.TIME_SLOTS_FROM);
+        ArrayAdapter<String> fromAdapter = new ArrayAdapter<String>(this, android.R.layout.simple_spinner_item, Utility.TIME_SLOTS);
         fromAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
         etStartTime.setAdapter(fromAdapter);
 
         if (user != null && user.getStartTime() != null) {
-            etStartTime.setSelection(Arrays.asList(Utility.TIME_SLOTS_FROM).indexOf(user.getStartTime()));
+            etStartTime.setSelection(Arrays.asList(Utility.TIME_SLOTS).indexOf(user.getStartTime()));
         }
 
-        ArrayAdapter<String> toAdapter = new ArrayAdapter<String>(this, android.R.layout.simple_spinner_item, Utility.TIME_SLOTS_TO);
+        ArrayAdapter<String> toAdapter = new ArrayAdapter<String>(this, android.R.layout.simple_spinner_item, Utility.TIME_SLOTS);
         toAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
         etEndTime.setAdapter(toAdapter);
 
         if (user != null && user.getEndTime() != null) {
-            etStartTime.setSelection(Arrays.asList(Utility.TIME_SLOTS_FROM).indexOf(user.getEndTime()));
+            etStartTime.setSelection(Arrays.asList(Utility.TIME_SLOTS).indexOf(user.getEndTime()));
         }
 
         btnSaveProfile = (Button) findViewById(R.id.btn_save_profile);
