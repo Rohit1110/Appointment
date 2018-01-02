@@ -18,6 +18,7 @@ import android.util.Log;
 import android.view.View;
 import android.widget.AutoCompleteTextView;
 import android.widget.Button;
+import android.widget.ListView;
 
 import com.google.gson.Gson;
 
@@ -41,6 +42,7 @@ public class SearchAppointmentActivity extends AppCompatActivity {
     private Usercontact a;
     private ProgressDialog dialog;
 
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -50,12 +52,14 @@ public class SearchAppointmentActivity extends AppCompatActivity {
         next = (Button) findViewById(R.id.btnnxt);
         search = (AutoCompleteTextView) findViewById(R.id.editsearch);
         recyclerView_contact = (RecyclerView) findViewById(R.id.contact_reclyclerview);
+
         list = new ArrayList<>();
         dialog = Utility.showProgress(SearchAppointmentActivity.this);
         adapter = new ContactListAdapter(this, list);
         RecyclerView.LayoutManager mLayoutManager = new GridLayoutManager(this, 1);
         recyclerView_contact.setLayoutManager(mLayoutManager);
         recyclerView_contact.setAdapter(adapter);
+
 
         next.setOnClickListener(new View.OnClickListener() {
             @Override

@@ -7,4 +7,12 @@
     <string name="resend_phone_auth">Resend</string>
     <string name="hint_code_number">+91</string>
     <string name="title_activity_main2">Appointments</string>
+
+
+    <string-array name="sports_array">
+        <item>10.30-11.00</item>
+        <item>11.00-11.30</item>
+        <item>11.30-12.00</item>
+
+    </string-array>
 </resources>

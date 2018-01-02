@@ -18,20 +18,19 @@
         android:layout_alignParentTop="true"
         android:gravity="left"
         android:text="Number"
-        android:textAppearance="@style/TextAppearance.AppCompat.Headline"
+        android:textAppearance="@style/TextAppearance.AppCompat.Light.SearchResult.Title"
         android:textColor="#212121" />
 
     <TextView
-        android:id="@+id/txtnumber"
+        android:id="@+id/txttime"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_alignParentEnd="true"
         android:layout_alignParentRight="true"
-        android:layout_alignParentTop="true"
-        android:layout_marginEnd="90dp"
-        android:layout_marginRight="90dp"
+        android:paddingRight="@dimen/card_margin"
         android:text="Name"
-        android:textColor="#757575" />
+        android:textAppearance="@style/TextAppearance.AppCompat.Light.SearchResult.Title"
+        android:textColor="#212121" />
 
     <TextView
         android:id="@+id/txtdecriptions"
@@ -45,13 +44,14 @@
         android:textColor="#212121" />
 
     <TextView
-        android:id="@+id/txttime"
+        android:id="@+id/txtdate"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_below="@+id/txtdecriptions"
-
-        android:gravity="left"
-        android:text="time"
+        android:layout_below="@+id/txttime"
+        android:layout_alignParentRight="true"
+        android:paddingRight="@dimen/card_margin"
+        android:gravity="right"
+        android:text="Date"
 
         android:textColor="#212121" />
 

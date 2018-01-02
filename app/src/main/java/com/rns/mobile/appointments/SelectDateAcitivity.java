@@ -6,8 +6,10 @@ import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.v7.app.AppCompatActivity;
 import android.view.View;
+import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.DatePicker;
+import android.widget.ListView;
 import android.widget.Spinner;
 import android.widget.TextView;
 
@@ -32,6 +34,9 @@ public class SelectDateAcitivity extends AppCompatActivity {
     private DatePicker selectedDate;
     private ProgressDialog dialog;
     private User otherUser;
+    ListView availableslots;
+    private ArrayAdapter<String> adapter;
+    String[] available={"10.30-11.00","11.00-11.30","11.30-12.0"};
 
 
     @Override
@@ -40,8 +45,13 @@ public class SelectDateAcitivity extends AppCompatActivity {
         setContentView(R.layout.activity_date_select);
         book = (Button) findViewById(R.id.btnbook);
         appointmentPhone = (TextView) findViewById(R.id.txt_appointment_phone);
-        selectedDate = (DatePicker) findViewById(R.id.datepicker);
-
+        //selectedDate = (DatePicker) findViewById(R.id.datepicker);
+        availableslots=(ListView)findViewById(R.id.list_availableslot);
+       // String[] Slots = getResources().getStringArray();
+        adapter = new ArrayAdapter<String>(this,
+                android.R.layout.simple_list_item_multiple_choice, available);
+        availableslots.setChoiceMode(ListView.CHOICE_MODE_MULTIPLE);
+        availableslots.setAdapter(adapter);
         appointment = Utility.extractAppointment(SelectDateAcitivity.this);
 
         if (appointment != null && appointment.getPhone() != null) {
@@ -84,7 +94,7 @@ public class SelectDateAcitivity extends AppCompatActivity {
                 if (appointment == null) {
                     appointment = new Appointment();
                 }
-                appointment.setDate(Utility.getDate(selectedDate));
+               // appointment.setDate(Utility.getDate(selectedDate));
                 intent.putExtra(Utility.INTENT_VAR_APPOINTMENT, new Gson().toJson(appointment));
                 if(otherUser != null) {
                     intent.putExtra(Utility.INTENT_VAR_OTHER_USER, new Gson().toJson(otherUser));

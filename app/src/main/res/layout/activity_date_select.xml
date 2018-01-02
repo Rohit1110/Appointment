@@ -16,26 +16,75 @@
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:orientation="vertical"
+        android:orientation="horizontal"
         android:id="@+id/llayout"
         android:layout_marginBottom="5dp">
 
         <TextView
             android:id="@+id/txt_appointment_phone"
-            android:layout_width="match_parent"
+            android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:text="User phone"
             android:textSize="15sp"
             android:layout_marginBottom="5dp"/>
 
-        <DatePicker
+       <!-- <DatePicker
             android:id="@+id/datepicker"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_alignParentTop="true"></DatePicker>
+            android:layout_alignParentTop="true"></DatePicker>-->
 
     </LinearLayout>
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal"
+        android:id="@+id/lilayout"
+        android:layout_below="@+id/llayout"
+        android:layout_marginLeft="20dp"
+        android:layout_marginBottom="5dp">
 
+        <TextView
+            android:id="@+id/selecteddate"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center_vertical"
+            android:text="02 jan 2017"
+             />
+
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:gravity="right"
+            >
+
+            <TextView
+                android:id="@+id/txttoday"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_margin="10dp"
+                android:gravity="center"
+               android:text="Today"/>
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_margin="10dp"
+                android:gravity="center"
+                android:text="|" />
+
+
+            <TextView
+                android:id="@+id/txttommarow"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_margin="10dp"
+                android:gravity="center"
+                android:hint="Tomarrow" />
+        </LinearLayout>
+
+    </LinearLayout>
 
 
 
@@ -43,8 +92,34 @@
         android:id="@+id/btnbook"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-       android:layout_below="@+id/llayout"
+       android:layout_below="@+id/lilayout"
         android:layout_centerHorizontal="true"
         android:text="Next" />
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:layout_below="@+id/btnbook"
+        android:orientation="vertical">
+
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+           android:text="Available Slot"
+            android:textStyle="bold"/>
+        <TextView
+            android:id="@+id/txt_uname"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="User Name"
+            android:textStyle="bold"/>
+        <ListView
+            android:id="@+id/list_availableslot"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content">
+
+        </ListView>
+
+
+    </LinearLayout>
 </RelativeLayout>
 </ScrollView>
