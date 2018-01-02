@@ -1,58 +1,67 @@
-<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:card_view="http://schemas.android.com/apk/res-auto"
+<RelativeLayout
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
-   >
+    android:paddingLeft="5dip"
+    android:paddingTop="10dip"
+    android:paddingBottom="10dip"
+    android:background="#ECEFF1"
+    android:layout_margin="@dimen/card_margin"
 
-    <android.support.v7.widget.CardView
-        android:id="@+id/card_view"
-        android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:layout_gravity="center"
-        android:layout_margin="@dimen/card_margin"
-        android:elevation="3dp"
-        card_view:cardCornerRadius="@dimen/card_album_radius">
-        <RelativeLayout
-            android:layout_width="match_parent"
-            android:layout_height="match_parent">
-            <TextView
-                android:id="@+id/txtname"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
+    xmlns:android="http://schemas.android.com/apk/res/android">
 
-                android:paddingLeft="@dimen/album_title_padding"
-                android:paddingRight="@dimen/album_title_padding"
-                android:paddingTop="@dimen/album_title_padding"
-                android:layout_margin="3dp"
-                android:textColor="@color/album_title"
-                android:textSize="@dimen/album_title" />
+    <TextView
+        android:id="@+id/txtname"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignParentLeft="true"
+        android:layout_alignParentStart="true"
+        android:layout_alignParentTop="true"
+        android:gravity="left"
+        android:text="Number"
+        android:textAppearance="@style/TextAppearance.AppCompat.Headline"
+        android:textColor="#212121" />
 
-            <ImageView
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_alignParentEnd="true"
-                android:layout_alignParentRight="true"
-                android:src="@android:drawable/ic_delete" />
-            <TextView
-                android:id="@+id/txtdesc"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_below="@id/txtname"
-                android:layout_margin="3dp"
-                android:text="descriptions"
-                android:paddingLeft="@dimen/album_title_padding"
-                android:paddingRight="@dimen/album_title_padding"
-                android:textSize="@dimen/songs_count" />
+    <TextView
+        android:id="@+id/txtnumber"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignParentEnd="true"
+        android:layout_alignParentRight="true"
+        android:layout_alignParentTop="true"
+        android:layout_marginEnd="90dp"
+        android:layout_marginRight="90dp"
+        android:text="Name"
+        android:textColor="#757575" />
 
-            <TextView
-                android:id="@+id/txttime"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_below="@id/txtdesc"
-                android:layout_margin="3dp"
-                android:paddingLeft="@dimen/album_title_padding"
-                android:paddingRight="@dimen/album_title_padding"
-                android:textSize="@dimen/songs_count" />
-        </RelativeLayout>
-    </android.support.v7.widget.CardView>
-</LinearLayout>
+    <TextView
+        android:id="@+id/txtdecriptions"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+      android:layout_below="@+id/txtname"
+
+        android:gravity="left"
+        android:text="description"
+
+        android:textColor="#212121" />
+
+    <TextView
+        android:id="@+id/txttime"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_below="@+id/txtdecriptions"
+
+        android:gravity="left"
+        android:text="time"
+
+        android:textColor="#212121" />
+
+
+
+
+
+    <!-- <ImageView
+         android:layout_width="match_parent"
+         android:layout_height="match_parent"
+         android:id="@+id/imageView"
+         />-->
+</RelativeLayout>

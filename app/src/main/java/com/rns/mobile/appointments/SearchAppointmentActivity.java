@@ -68,11 +68,9 @@ public class SearchAppointmentActivity extends AppCompatActivity {
             }
         });
 
-        if (isReadContactPermissionGranted()) {
+
             getContactList();
-        } else {
-            isReadContactPermissionGranted();
-        }
+
 
 
     }
@@ -126,20 +124,5 @@ public class SearchAppointmentActivity extends AppCompatActivity {
         }
     }
 
-    public boolean isReadContactPermissionGranted() {
-        if (Build.VERSION.SDK_INT >= 23) {
-            if (checkSelfPermission(Manifest.permission.READ_CONTACTS) == PackageManager.PERMISSION_GRANTED) {
-                Log.v(TAG, "Permission is granted");
-                return true;
-            } else {
 
-                Log.v(TAG, "Permission is revoked");
-                ActivityCompat.requestPermissions(this, new String[]{Manifest.permission.READ_CONTACTS}, 1);
-                return false;
-            }
-        } else { //permission is automatically granted on sdk<23 upon installation
-            Log.v(TAG, "Permission is granted");
-            return true;
-        }
-    }
 }
