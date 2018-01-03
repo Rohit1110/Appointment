@@ -1,16 +1,12 @@
 package com.rns.mobile.appointments;
 
-import android.Manifest;
 import android.app.ProgressDialog;
 import android.content.ContentResolver;
 import android.content.Intent;
-import android.content.pm.PackageManager;
 import android.database.Cursor;
-import android.os.Build;
 import android.os.Bundle;
 import android.provider.ContactsContract;
 import android.support.annotation.NonNull;
-import android.support.v4.app.ActivityCompat;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.GridLayoutManager;
 import android.support.v7.widget.RecyclerView;
@@ -18,7 +14,6 @@ import android.util.Log;
 import android.view.View;
 import android.widget.AutoCompleteTextView;
 import android.widget.Button;
-import android.widget.ListView;
 
 import com.google.gson.Gson;
 
@@ -58,6 +53,15 @@ public class SearchAppointmentActivity extends AppCompatActivity {
         adapter = new ContactListAdapter(this, list);
         RecyclerView.LayoutManager mLayoutManager = new GridLayoutManager(this, 1);
         recyclerView_contact.setLayoutManager(mLayoutManager);
+
+        // Interface implementation.
+        adapter.setOnRecyclerViewItemClickListener(new ContactListAdapter.OnRecyclerViewItemClickListener() {
+            @Override
+            public void onItemClicked(CharSequence text) {
+                Log.d(TAG, "Text is = " + text);
+                search.setText(text);
+            }
+        });
         recyclerView_contact.setAdapter(adapter);
 
 

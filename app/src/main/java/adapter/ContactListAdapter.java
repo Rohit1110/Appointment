@@ -11,7 +11,6 @@ import com.rns.mobile.appointments.R;
 
 import java.util.List;
 
-import model.Appointment;
 import model.Usercontact;
 
 /**
@@ -31,6 +30,22 @@ public class ContactListAdapter extends RecyclerView.Adapter<ContactListAdapter.
             phone = (TextView) itemView.findViewById(R.id.txt_user_phone);
             name = (TextView) itemView.findViewById(R.id.txt_user_contactname);
 
+            this.name.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    // send the text to the listener, i.e Activity.
+                    mListener.onItemClicked(((TextView)v).getText());
+                }
+            });
+
+            this.phone.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    // send the text to the listener, i.e Activity.
+                    mListener.onItemClicked(((TextView)v).getText());
+                }
+            });
+
         }
     }
     public ContactListAdapter(Context mContext, List<Usercontact> item){
@@ -38,6 +53,19 @@ public class ContactListAdapter extends RecyclerView.Adapter<ContactListAdapter.
         this.item = item;
         System.out.println("item list:" + item);
 
+    }
+
+    // Define listener member variable
+    private static OnRecyclerViewItemClickListener mListener;
+
+    // Define the listener interface
+    public interface OnRecyclerViewItemClickListener {
+        void onItemClicked(CharSequence text);
+    }
+
+    // Define the method that allows the parent activity or fragment to define the listener.
+    public void setOnRecyclerViewItemClickListener(OnRecyclerViewItemClickListener listener) {
+        this.mListener = listener;
     }
 
 

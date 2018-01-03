@@ -4,7 +4,6 @@
     android:paddingLeft="5dip"
     android:paddingTop="10dip"
     android:paddingBottom="10dip"
-    android:background="#ECEFF1"
     android:layout_margin="@dimen/card_margin"
 
     xmlns:android="http://schemas.android.com/apk/res/android">
@@ -29,7 +28,6 @@
         android:layout_alignParentRight="true"
         android:paddingRight="@dimen/card_margin"
         android:text="Name"
-        android:textAppearance="@style/TextAppearance.AppCompat.Light.SearchResult.Title"
         android:textColor="#212121" />
 
     <TextView
@@ -41,7 +39,7 @@
         android:gravity="left"
         android:text="description"
 
-        android:textColor="#212121" />
+        android:textColor="#757575" />
 
     <TextView
         android:id="@+id/txtdate"
@@ -53,7 +51,7 @@
         android:gravity="right"
         android:text="Date"
 
-        android:textColor="#212121" />
+        android:textColor="#757575" />
 
 
 

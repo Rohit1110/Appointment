@@ -8,6 +8,7 @@ import android.content.DialogInterface;
 import android.graphics.Bitmap;
 import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
+import android.support.annotation.NonNull;
 import android.widget.DatePicker;
 
 import com.google.gson.Gson;
@@ -95,16 +96,24 @@ public class Utility {
 
     public static String getDate(DatePicker datePicker) {
         int day = datePicker.getDayOfMonth();
+        int month = datePicker.getMonth();
+        int year = datePicker.getYear();
+        return createDate(day, month, year);
+    }
+
+    @NonNull
+    public static String createDate(int day, int month, int year) {
+        month++;
         String dayString = "" + day;
         if (day < 10) {
             dayString = "0" + day;
         }
-        int month = datePicker.getMonth() + 1;
+
         String monthString = "" + month;
         if (month < 10) {
             monthString = "0" + month;
         }
-        int year = datePicker.getYear();
+
         return year + "-" + monthString + "-" + dayString;
     }
 
