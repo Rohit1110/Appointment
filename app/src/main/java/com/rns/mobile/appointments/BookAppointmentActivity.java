@@ -45,9 +45,6 @@ public class BookAppointmentActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_book_appointment);
-
-
-
         from = (Spinner) findViewById(R.id.fromtime);
         to = (Spinner) findViewById(R.id.totime);
         userPhone = (TextView) findViewById(R.id.txt_book_appointment_phone);

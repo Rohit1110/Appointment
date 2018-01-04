@@ -13,17 +13,22 @@ import android.support.annotation.NonNull;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.GridLayoutManager;
 import android.support.v7.widget.RecyclerView;
+import android.text.Editable;
+import android.text.TextUtils;
+import android.text.TextWatcher;
 import android.util.Log;
 import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.View;
 import android.widget.AutoCompleteTextView;
 import android.widget.Button;
+import android.widget.EditText;
 
 import com.google.gson.Gson;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Locale;
 
 import adapter.ContactListAdapter;
 import model.Appointment;
@@ -33,12 +38,13 @@ import utils.Utility;
 
 public class SearchAppointmentActivity extends AppCompatActivity {
     private Button next;
-    private AutoCompleteTextView search;
+    private EditText search;
     private String TAG = "Appointment Search";
     private static final String[] COUNTRIES = new String[]{"Dentist", "Aurtho", "homeopathi", "entc", "Aurvedik"};
     RecyclerView recyclerView_contact;
     private ContactListAdapter adapter;
     private List<Usercontact> list;
+    private ArrayList<Usercontact> filterList;
     private Usercontact a;
     //private ProgressDialog dialog;
     private Activity ctx;
@@ -55,12 +61,32 @@ public class SearchAppointmentActivity extends AppCompatActivity {
         System.out.println("### SEARCH ACTIVITY LOADED ###");
 
       //  next = (Button) findViewById(R.id.btnnxt);
-        search = (AutoCompleteTextView) findViewById(R.id.editsearch);
+        search = (EditText) findViewById(R.id.editsearch);
         recyclerView_contact = (RecyclerView) findViewById(R.id.contact_reclyclerview);
         list = new ArrayList<>();
+        filterList=new ArrayList<>();
         adapter = new ContactListAdapter(this, list);
         RecyclerView.LayoutManager mLayoutManager = new GridLayoutManager(this, 1);
         recyclerView_contact.setLayoutManager(mLayoutManager);
+        search.addTextChangedListener(new TextWatcher() {
+            @Override
+            public void beforeTextChanged(CharSequence s, int start, int count, int after) {
+
+            }
+
+            @Override
+            public void onTextChanged(CharSequence s, int start, int before, int count) {
+
+                String text = search.getText().toString().toLowerCase(Locale.getDefault());
+                filter(text);
+
+            }
+
+            @Override
+            public void afterTextChanged(Editable s) {
+
+            }
+        });
 
         // Interface implementation.
         adapter.setOnRecyclerViewItemClickListener(new ContactListAdapter.OnRecyclerViewItemClickListener() {
@@ -127,6 +153,7 @@ public class SearchAppointmentActivity extends AppCompatActivity {
 
 
                     }
+                    filterList.addAll(list);
                     pCur.close();
                 }
             }
@@ -168,7 +195,51 @@ public class SearchAppointmentActivity extends AppCompatActivity {
     }
 
 
+    // Do Search...
+    public void filter(final String text) {
 
+        // Searching could be complex..so we will dispatch it to a different thread...
+        new Thread(new Runnable() {
+            @Override
+            public void run() {
+
+                // Clear the filter list
+                filterList.clear();
+
+                // If there is no search value, then add all original list items to filter list
+                if (TextUtils.isEmpty(text)) {
+
+                    filterList.addAll(list);
+
+                } else {
+                    // Iterate in the original List and add it to filter list...
+                    for (Usercontact item : list) {
+                        if (item.getName().toLowerCase().contains(text.toLowerCase()) ||
+                                item.getPhone().toLowerCase().contains(text.toLowerCase())) {
+                            // Adding Matched items
+                            filterList.add(item);
+                        }
+                    }
+                }
+
+                // Set on UI Thread
+                (SearchAppointmentActivity.this).runOnUiThread(new Runnable() {
+                    @Override
+                    public void run() {
+                        // Notify the List that the DataSet has changed...
+                        adapter = new ContactListAdapter(SearchAppointmentActivity.this, filterList);
+                        RecyclerView.LayoutManager mLayoutManager = new GridLayoutManager(SearchAppointmentActivity.this, 1);
+                        recyclerView_contact.setLayoutManager(mLayoutManager);
+                        recyclerView_contact.setAdapter(adapter);
+
+
+                    }
+                });
+
+            }
+        }).start();
+
+    }
 
 }
 
