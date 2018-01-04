@@ -1,16 +1,11 @@
 package com.rns.mobile.appointments;
 
-import android.*;
 import android.app.ProgressDialog;
 import android.content.Intent;
-import android.content.pm.PackageManager;
-import android.os.Build;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
-import android.support.v4.app.ActivityCompat;
 import android.support.v7.app.AppCompatActivity;
-import android.util.Log;
 
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.OnFailureListener;
@@ -57,6 +52,7 @@ public class MainActivity extends AppCompatActivity {
                         if(user == null || user.getFirstName() == null || user.getFirstName().trim().length() == 0) {
                             showEditProfile();
                         } else {
+                            Utility.saveStringToSharedPreferences(new Gson().toJson(user), Utility.INTENT_VAR_USER, MainActivity.this);
                             Intent i = new Intent(MainActivity.this, AppointmentsActivity.class);
                             i.putExtra("user", new Gson().toJson(user));
                             startActivity(i);

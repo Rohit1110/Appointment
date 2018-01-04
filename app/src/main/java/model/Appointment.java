@@ -70,4 +70,8 @@ public class Appointment {
         return phone;
     }
 
+    @Override
+    public String toString() {
+        return date + " -- " + startTime + " to " + endTime;
+    }
 }

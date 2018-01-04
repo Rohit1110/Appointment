@@ -25,7 +25,7 @@ public class SlotsAdapter extends ArrayAdapter<String> {
     @Override
     public void clear() {
         slots = new ArrayList<>();
-        super.clear();
+        //super.clear();
     }
 
     @Override
@@ -43,7 +43,7 @@ public class SlotsAdapter extends ArrayAdapter<String> {
         return "";
     }*/
 
-    
+
     @Override
     public int getPosition(@Nullable String item) {
         return slots.indexOf(item);
