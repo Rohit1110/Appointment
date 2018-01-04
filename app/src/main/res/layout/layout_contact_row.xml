@@ -10,11 +10,12 @@
         android:layout_height="match_parent"
         android:layout_gravity="center"
         android:background="@android:color/white"
-        android:elevation="3dp"
+
         card_view:cardCornerRadius="@dimen/card_album_radius">
         <RelativeLayout
             android:layout_width="match_parent"
             android:layout_height="match_parent">
+
             <TextView
                 android:id="@+id/txt_user_contactname"
                 android:layout_width="wrap_content"

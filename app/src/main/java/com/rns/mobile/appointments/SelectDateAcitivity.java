@@ -10,6 +10,9 @@ import android.content.Intent;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.v7.app.AppCompatActivity;
+import android.view.Menu;
+import android.view.MenuInflater;
+import android.view.MenuItem;
 import android.view.View;
 import android.widget.ArrayAdapter;
 import android.widget.Button;
@@ -57,7 +60,7 @@ public class SelectDateAcitivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_date_select);
-        book = (Button) findViewById(R.id.btnbook);
+       // book = (Button) findViewById(R.id.btnbook);
         setdate = (TextView) findViewById(R.id.selecteddate);
         long date = System.currentTimeMillis();
 
@@ -171,39 +174,28 @@ public class SelectDateAcitivity extends AppCompatActivity {
             appointmentPhone.setText(appointment.getName());
         }
 
-        book.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-               /* Intent intent = new Intent(SelectDateAcitivity.this, BookAppointmentActivity.class);
-                if (appointment == null) {
-                    appointment = new Appointment();
-                }
-                // appointment.setDate(Utility.getDate(selectedDate));
-                intent.putExtra(Utility.INTENT_VAR_APPOINTMENT, new Gson().toJson(appointment));
-                if (otherUser != null) {
-                    intent.putExtra(Utility.INTENT_VAR_OTHER_USER, new Gson().toJson(otherUser));
-                }
-                startActivity(intent);*/
 
-                AlertDialog alertDialog = new AlertDialog.Builder(SelectDateAcitivity.this).create(); //Read Update
-                alertDialog.setTitle("Book your appointment");
-                alertDialog.setMessage("Appointment book succesfully");
-
-                alertDialog.setButton("Continue..", new DialogInterface.OnClickListener() {
-                    public void onClick(DialogInterface dialog, int which) {
-                        // here you can add functions
-                        Intent i=new Intent(SelectDateAcitivity.this,MainActivity.class);
-                        startActivity(i);
-                    }
-                });
-
-                alertDialog.show();
-            }
-        });
     }
 
+    @Override
+    public boolean onCreateOptionsMenu(Menu menu) {
+        MenuInflater inflater = getMenuInflater();
+        inflater.inflate(R.menu.main, menu);
 
+        return true;
+    }
 
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+        switch(item.getItemId())
+        {
+            case R.id.done:
+                Intent intent = new Intent(SelectDateAcitivity.this,MainActivity.class);
+                startActivity(intent);
+                finish();
+                return(true);
+        }
+        return false;
 
-
+    }
 }
