@@ -29,7 +29,6 @@ public class Appointment {
         this.name = name;
         this.startTime = start;
         this.endTime = end;
-        System.out.println("name: " + name + " time: " + start);
     }
 
     public String getStartTime() {
@@ -70,4 +69,8 @@ public class Appointment {
         return phone;
     }
 
+    @Override
+    public String toString() {
+        return date + " -- " + startTime + " to " + endTime;
+    }
 }
