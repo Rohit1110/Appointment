@@ -32,6 +32,9 @@ public class Utility {
     public static final String INTENT_VAR_OTHER_USER = "otherUser";
     public static final String INTENT_VAR_APPOINTMENT = "appointment";
     public static final String INTENT_VAR_USER = "user";
+    public static final String COUNTRY_CODE = "+91";
+    public static final String SLOT_APPENDER = " - ";
+
 
     public static void createAlert(Context context, String message) {
         AlertDialog.Builder alertDialogBuilder = new AlertDialog.Builder(context);
@@ -153,5 +156,13 @@ public class Utility {
         }
         return null;
     }
+
+    public static String getStringValue(String value) {
+        if(value == null || value.trim().length() == 0) {
+            return "";
+        }
+        return value.trim();
+    }
+
 
 }

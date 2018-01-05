@@ -29,7 +29,6 @@ public class Appointment {
         this.name = name;
         this.startTime = start;
         this.endTime = end;
-        System.out.println("name: " + name + " time: " + start);
     }
 
     public String getStartTime() {

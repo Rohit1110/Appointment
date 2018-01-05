@@ -54,7 +54,7 @@ public class MainActivity extends AppCompatActivity {
                         } else {
                             Utility.saveStringToSharedPreferences(new Gson().toJson(user), Utility.INTENT_VAR_USER, MainActivity.this);
                             Intent i = new Intent(MainActivity.this, AppointmentsActivity.class);
-                            i.putExtra("user", new Gson().toJson(user));
+                            i.putExtra(Utility.INTENT_VAR_USER, new Gson().toJson(user));
                             startActivity(i);
                         }
                     }

@@ -3,20 +3,17 @@ package com.rns.mobile.appointments;
 import android.app.Activity;
 import android.app.ProgressDialog;
 import android.content.ContentResolver;
-import android.content.Context;
 import android.content.Intent;
 import android.database.Cursor;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.provider.ContactsContract;
-import android.support.annotation.NonNull;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.GridLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.util.Log;
 import android.view.Menu;
 import android.view.MenuInflater;
-import android.view.View;
 import android.widget.AutoCompleteTextView;
 import android.widget.Button;
 
@@ -28,8 +25,6 @@ import java.util.List;
 import adapter.ContactListAdapter;
 import model.Appointment;
 import model.Usercontact;
-import utils.PermissionUtil;
-import utils.Utility;
 
 public class SearchAppointmentActivity extends AppCompatActivity {
     private Button next;
@@ -68,7 +63,7 @@ public class SearchAppointmentActivity extends AppCompatActivity {
             public void onItemClicked(CharSequence text) {
                 Intent intent = new Intent(SearchAppointmentActivity.this, SelectDateAcitivity.class);
                 Appointment appointment = new Appointment();
-                appointment.setPhone(text.toString());
+                appointment.setPhone("+918956711498");
                 intent.putExtra("appointment", new Gson().toJson(appointment));
                 startActivity(intent);
             }

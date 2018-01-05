@@ -21,6 +21,7 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.HashSet;
+import java.util.List;
 import java.util.Set;
 
 import adapter.SlotsAdapter;
@@ -40,13 +41,14 @@ public class BookAppointmentActivity extends AppCompatActivity {
     private ProgressDialog dialog;
     private User otherUser;
     private SlotsAdapter dataAdapter, dataAdapter2;
+    private List<String> slotsFromList;
+    private List<String> slotsToList;
+    private User user;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_book_appointment);
-
-
 
         from = (Spinner) findViewById(R.id.fromtime);
         to = (Spinner) findViewById(R.id.totime);
@@ -62,33 +64,43 @@ public class BookAppointmentActivity extends AppCompatActivity {
             selectedDate.setText(appointment.getDate());
         }
 
-        dataAdapter = new SlotsAdapter(this, android.R.layout.simple_spinner_item, Arrays.asList(Utility.TIME_SLOTS));
-        dataAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
-        from.setAdapter(dataAdapter);
+        slotsFromList = new ArrayList<>(Arrays.asList(Utility.TIME_SLOTS));
+        slotsToList = new ArrayList<>(Arrays.asList(Utility.TIME_SLOTS));
 
-
-        dataAdapter2 = new SlotsAdapter(this, android.R.layout.simple_spinner_item, Arrays.asList(Utility.TIME_SLOTS));
-        dataAdapter2.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
-        to.setAdapter(dataAdapter2);
+        setSlotAdapters();
 
         otherUser = Utility.extractUser(BookAppointmentActivity.this);
 
         if (otherUser != null) {
 
-            updateSlots(dataAdapter, dataAdapter2);
+            updateUserSlots(otherUser);
             System.out.println("Fetch User's appointments");
             dialog = Utility.showProgress(BookAppointmentActivity.this);
-            FirebaseUtil.db.collection(FirebaseUtil.DOC_USERS).document(otherUser.getPhone()).collection(FirebaseUtil.DOC_APPOINTMENTS).whereEqualTo("date", appointment.getDate()).get().addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
+            FirebaseUtil.db.collection(FirebaseUtil.DOC_USERS).document(otherUser.getPhone()).collection(FirebaseUtil.DOC_APPOINTMENTS).whereEqualTo("date", appointment.getDate()).orderBy("startTime").get().addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
                 @Override
                 public void onComplete(@NonNull Task<QuerySnapshot> task) {
                     Utility.hideProgress(dialog);
-                    System.out.println("Done fetching users apps!" + task.isSuccessful());
+                    System.out.println("Done fetching users apps!" + task.getResult().size());
                     if(task.isSuccessful()) {
+                        List<String> availableSlots = new ArrayList<>(slotsFromList);
                         for(DocumentSnapshot doc: task.getResult()) {
                             Appointment appointment = doc.toObject(Appointment.class);
                             if(appointment != null) {
-                                if(appointment.getStartTime() != null && dataAdapter.isPresent(appointment.getStartTime())) {
-                                    dataAdapter.remove(appointment.getStartTime());
+                                System.out.println(appointment);
+                                if(appointment.getStartTime() != null && slotsFromList.contains(appointment.getStartTime())) {
+                                    //dataAdapter.remove(appointment.getStartTime());
+                                    Integer index = slotsFromList.indexOf(appointment.getStartTime());
+                                    index++;
+                                    while(index < slotsFromList.size()) {
+                                        String slot = slotsFromList.get(index);
+                                        if(slot.equals(appointment.getEndTime())) {
+                                            break;
+                                        }
+                                        //remove slots in between for big selections
+                                        slotsFromList.remove(slot);
+                                    }
+                                    slotsFromList.remove(appointment.getStartTime());
+                                    slotsToList.remove(appointment.getEndTime());
                                 }
                                 if(appointment.getEndTime() != null && dataAdapter2.isPresent(appointment.getEndTime())) {
                                     dataAdapter2.remove(appointment.getEndTime());
@@ -98,10 +110,19 @@ public class BookAppointmentActivity extends AppCompatActivity {
                     } else {
                         System.out.println("ERROR in fetching users apps =>" + task.getException());
                     }
+                    setSlotAdapters();
                 }
             });
 
+        } else {
+
         }
+
+        /*user = Utility.getUserFromSharedPrefs(BookAppointmentActivity.this);
+
+        if(user != null) {
+
+        }*/
 
         btnBook.setOnClickListener(new View.OnClickListener() {
 
@@ -136,33 +157,37 @@ public class BookAppointmentActivity extends AppCompatActivity {
         });
     }
 
-    private void updateSlots(SlotsAdapter adapter1, SlotsAdapter adapter2) {
-        if (otherUser != null && otherUser.getStartTime() != null && otherUser.getEndTime() != null) {
+    private void updateUserSlots(User user) {
+        if (user != null && user.getStartTime() != null && user.getEndTime() != null) {
             Set<String> validSlots = new HashSet<>();
             for (String slot : Utility.TIME_SLOTS) {
-                if (slot.compareTo(otherUser.getStartTime()) >= 0 && slot.compareTo(otherUser.getEndTime()) <= 0) {
+                if (slot.compareTo(user.getStartTime()) >= 0 && slot.compareTo(user.getEndTime()) <= 0) {
                     validSlots.add(slot);
                 }
             }
 
-            /*for (String slot : Utility.TIME_SLOTS_TO) {
-                if (slot.compareTo(otherUser.getEndTime()) <= 0) {
-                    validSlots.add(slot);
-                }
-            }*/
-            adapter1.clear();
-            adapter2.clear();
-            ArrayList<String> slotsList = new ArrayList<>(validSlots);
-            Collections.sort(slotsList);
-            adapter1.addItems(slotsList);
-            adapter2.addItems(slotsList);
-            adapter1.notifyDataSetChanged();
-            adapter2.notifyDataSetChanged();
-            from.setAdapter(adapter1);
-            to.setAdapter(adapter2);
-            System.out.println("Slots after filtering by other user = >" + validSlots.size() + " -- " + adapter1.getCount() + " Data:" + slotsList);
-
+            slotsFromList = new ArrayList<>(validSlots);
+            slotsToList = new ArrayList<>(validSlots);
+            Collections.sort(slotsFromList);
+            Collections.sort(slotsToList);
+            System.out.println("Slots after filtering by other user = >" + validSlots);
+            //setSlotAdapters(slotsFromList);
         }
+    }
+
+    private void setSlotAdapters() {
+
+        System.out.println("Setting adapters for =>" + slotsFromList);
+        System.out.println(slotsToList);
+
+        dataAdapter = new SlotsAdapter(this, android.R.layout.simple_spinner_item, slotsFromList);
+        dataAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
+        from.setAdapter(dataAdapter);
+
+
+        dataAdapter2 = new SlotsAdapter(this, android.R.layout.simple_spinner_item, slotsToList);
+        dataAdapter2.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
+        to.setAdapter(dataAdapter2);
     }
 
 }
