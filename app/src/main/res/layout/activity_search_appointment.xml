@@ -21,7 +21,6 @@
             android:fitsSystemWindows="true"
             app:expandedTitleMarginEnd="35dp"
             app:expandedTitleMarginStart="20dp"
-            android:background="@android:color/white"
             app:expandedTitleTextAppearance="@android:color/transparent"
             >
 
@@ -29,11 +28,11 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content">
 
-                <AutoCompleteTextView
+               <!-- <AutoCompleteTextView
                     android:id="@+id/editsearch"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:hint="Search Appointments" />
+                    android:hint="Search Appointments" />-->
 
                 <!--<Button
                     android:id="@+id/btnnxt"

@@ -26,7 +26,8 @@
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>-->
         </activity>
-        <activity android:name=".SearchAppointmentActivity"/>
+        <activity android:name=".SearchAppointmentActivity"
+            android:label="@string/searchappointment"></activity>
         <activity android:name=".SelectDateAcitivity"/>
         <activity
             android:name=".AppointmentsActivity"
@@ -34,7 +35,8 @@
             android:theme="@style/AppTheme.NoActionBar">
 
         </activity>
-        <activity android:name=".BookAppointmentActivity"></activity>
+        <activity android:name=".BookAppointmentActivity"
+            android:label="@string/bookappointment"></activity>
         <activity android:name=".EditProfileActivity"/>
     </application>
 
