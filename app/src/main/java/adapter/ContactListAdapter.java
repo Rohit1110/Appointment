@@ -5,10 +5,12 @@ import android.app.LauncherActivity;
 import android.content.Context;
 import android.support.v7.widget.RecyclerView;
 import android.text.TextUtils;
+import android.util.SparseBooleanArray;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.rns.mobile.appointments.R;
 
@@ -28,14 +30,16 @@ public class ContactListAdapter extends RecyclerView.Adapter<ContactListAdapter.
 
 
 
-    public class MyViewHoldercontact extends RecyclerView.ViewHolder {
+    public class MyViewHoldercontact extends RecyclerView.ViewHolder implements View.OnClickListener{
         private TextView phone,name;
+        private SparseBooleanArray selectedItems = new SparseBooleanArray();
         public MyViewHoldercontact(View itemView) {
             super(itemView);
+            itemView.setOnClickListener(this);
             phone = (TextView) itemView.findViewById(R.id.txt_user_phone);
             name = (TextView) itemView.findViewById(R.id.txt_user_contactname);
 
-            this.name.setOnClickListener(new View.OnClickListener() {
+          /*  this.name.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
                     // send the text to the listener, i.e Activity.
@@ -49,7 +53,22 @@ public class ContactListAdapter extends RecyclerView.Adapter<ContactListAdapter.
                     // send the text to the listener, i.e Activity.
                     mListener.onItemClicked(((TextView)v).getText());
                 }
-            });
+            });*/
+
+        }
+
+        @Override
+        public void onClick(View v) {
+            if (selectedItems.get(getAdapterPosition(), false)) {
+                selectedItems.delete(getAdapterPosition());
+                v.setSelected(false);
+
+            }
+            else {
+                selectedItems.put(getAdapterPosition(), true);
+                v.setSelected(true);
+            }
+           // Toast.makeText(mContext, "item clicked"+selectedItems.get(getAdapterPosition()), Toast.LENGTH_SHORT).show();
 
         }
     }
@@ -59,7 +78,7 @@ public class ContactListAdapter extends RecyclerView.Adapter<ContactListAdapter.
        // this.filterList = new List<Usercontact>();
         // we copy the original list to the filter list and use it for setting row values
 
-        System.out.println("item list:" + item);
+        //System.out.println("item list:" + item);
 
     }
 
