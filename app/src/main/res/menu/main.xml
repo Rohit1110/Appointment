@@ -4,7 +4,8 @@
     <item
 
         android:id="@+id/done"
-        android:title="Done"
+        android:title=""
+        android:icon="@mipmap/mark"
         app:showAsAction="ifRoom"/>
 
 </menu>
