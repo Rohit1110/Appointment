@@ -34,6 +34,7 @@ public class Utility {
     public static final String INTENT_VAR_USER = "user";
     public static final String COUNTRY_CODE = "+91";
     public static final String SLOT_APPENDER = " - ";
+    public static final int PHONE_MAX_LENGTH = 10;
 
 
     public static void createAlert(Context context, String message) {
@@ -164,5 +165,11 @@ public class Utility {
         return value.trim();
     }
 
+    public static String removeAllSpaces(String phone) {
+        if(phone == null) {
+            return "";
+        }
+        return phone.trim().replaceAll("\\s+","");
+    }
 
 }

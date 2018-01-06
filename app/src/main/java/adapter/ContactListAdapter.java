@@ -1,24 +1,18 @@
 package adapter;
 
-import android.app.Activity;
-import android.app.LauncherActivity;
 import android.content.Context;
 import android.support.v7.widget.RecyclerView;
-import android.text.TextUtils;
 import android.util.SparseBooleanArray;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.TextView;
-import android.widget.Toast;
 
 import com.rns.mobile.appointments.R;
 
-import java.util.ArrayList;
 import java.util.List;
-import java.util.Locale;
 
-import model.Usercontact;
+import model.UserContact;
 
 /**
  * Created by Rohit on 1/1/2018.
@@ -26,7 +20,7 @@ import model.Usercontact;
 
 public class ContactListAdapter extends RecyclerView.Adapter<ContactListAdapter.MyViewHoldercontact> {
     private Context mContext;
-   private List<Usercontact> item,filterList;
+   private List<UserContact> item,filterList;
 
 
 
@@ -72,10 +66,10 @@ public class ContactListAdapter extends RecyclerView.Adapter<ContactListAdapter.
 
         }
     }
-    public ContactListAdapter(Context mContext, List<Usercontact> item){
+    public ContactListAdapter(Context mContext, List<UserContact> item){
         this.mContext = mContext;
         this.item = item;
-       // this.filterList = new List<Usercontact>();
+       // this.filterList = new List<UserContact>();
         // we copy the original list to the filter list and use it for setting row values
 
         //System.out.println("item list:" + item);
@@ -105,7 +99,7 @@ public class ContactListAdapter extends RecyclerView.Adapter<ContactListAdapter.
     @Override
     public void onBindViewHolder(MyViewHoldercontact holder, int position) {
 
-        Usercontact usercontact = item.get(position);
+        UserContact usercontact = item.get(position);
         holder.name.setText(usercontact.getName());
         holder.phone.setText(usercontact.getPhone());
         System.out.println("name in Adapter " + usercontact.getName());
