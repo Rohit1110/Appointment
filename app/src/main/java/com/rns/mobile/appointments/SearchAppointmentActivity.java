@@ -116,7 +116,11 @@ public class SearchAppointmentActivity extends AppCompatActivity {
         });*/
         recyclerView_contact.setAdapter(adapter);
 
-        recyclerView_contact.addOnItemTouchListener(new RecyclerTouchListener(this, recyclerView_contact, new ClickListener() {
+
+
+        recyclerView_contact.addOnItemTouchListener(new RecyclerTouchListener(this,
+                recyclerView_contact, new ClickListener() {
+
             @Override
             public void onClick(View view, final int position) {
                 //Values are passing to activity & to fragment as well
@@ -128,8 +132,6 @@ public class SearchAppointmentActivity extends AppCompatActivity {
                 search.setText(selectedContact.getPhone());
                 hideicon = false;
                 invalidateOptionsMenu();
-
-
             }
 
             @Override

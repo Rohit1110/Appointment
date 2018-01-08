@@ -6,6 +6,9 @@ import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
+import android.view.Menu;
+import android.view.MenuInflater;
+import android.view.MenuItem;
 import android.view.View;
 import android.widget.ArrayAdapter;
 import android.widget.Button;
@@ -38,6 +41,7 @@ public class EditProfileActivity extends AppCompatActivity {
     private User user;
     private Button btnSaveProfile;
     private String phoneNumber;
+    private boolean hideicon=true;
 
     @Override
     public void onCreate(@Nullable Bundle savedInstanceState) {
@@ -90,7 +94,7 @@ public class EditProfileActivity extends AppCompatActivity {
             etStartTime.setSelection(Arrays.asList(Utility.TIME_SLOTS).indexOf(user.getEndTime()));
         }
 
-        btnSaveProfile = (Button) findViewById(R.id.btn_save_profile);
+    /*    btnSaveProfile = (Button) findViewById(R.id.btn_save_profile);
         btnSaveProfile.setOnClickListener(new View.OnClickListener() {
 
             @Override
@@ -120,7 +124,71 @@ public class EditProfileActivity extends AppCompatActivity {
                     }
                 });
             }
-        });
+        });*/
 
     }
+
+    @Override
+    public boolean onCreateOptionsMenu(Menu menu) {
+        MenuInflater inflater = getMenuInflater();
+        inflater.inflate(R.menu.edit_menu, menu);
+        if (hideicon) {
+            MenuItem item = menu.findItem(R.id.menu_mark);
+            item.setVisible(false);
+            MenuItem items = menu.findItem(R.id.menu_edit);
+            items.setVisible(true);
+            this.invalidateOptionsMenu();
+        } else {
+            MenuItem item = menu.findItem(R.id.menu_mark);
+            item.setVisible(true);
+
+            MenuItem items = menu.findItem(R.id.menu_edit);
+            items.setVisible(false);
+            this.invalidateOptionsMenu();
+        }
+
+        return true;
+    }
+
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+        switch (item.getItemId()) {
+            case R.id.menu_edit:
+                hideicon = false;
+                invalidateOptionsMenu();
+
+                if(user == null) {
+                    user = new User();
+                }
+
+                user.setFirstName(etFirstName.getText().toString());
+                user.setLastName(etLastName.getText().toString());
+                user.setBusinessName(etBusinessName.getText().toString());
+                user.setEmail(etEmail.getText().toString());
+                user.setStartTime(etStartTime.getSelectedItem().toString());
+                user.setEndTime(etEndTime.getSelectedItem().toString());
+                FirebaseUtil.db.collection(FirebaseUtil.DOC_USERS).document(phoneNumber).set(user, SetOptions.merge()).addOnSuccessListener(new OnSuccessListener<Void>() {
+                    @Override
+                    public void onSuccess(Void aVoid) {
+                        Log.d("EDIT", "DocumentSnapshot successfully written!");
+                        Intent i = new Intent(EditProfileActivity.this, AppointmentsActivity.class);
+                        i.putExtra("user", new Gson().toJson(user));
+                        startActivity(i);
+                    }
+                }).addOnFailureListener(new OnFailureListener() {
+                    @Override
+                    public void onFailure(@NonNull Exception e) {
+                        Log.w("EDIT", "Error writing document", e);
+                    }
+                });
+
+
+                 return true;
+        }
+        return false;
+
+    }
+
+
 }
+
