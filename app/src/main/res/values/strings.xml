@@ -9,6 +9,7 @@
     <string name="title_activity_main2">Appointments</string>
     <string name="searchappointment">Select Contact</string>
     <string name="bookappointment">Book Appointment </string>
+    <string name="profile">User Profile</string>
 
 
     <string-array name="sports_array">
