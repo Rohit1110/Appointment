@@ -52,7 +52,11 @@ public class AppointmentsAdapter extends RecyclerView.Adapter<AppointmentsAdapte
     @Override
     public void onBindViewHolder(MyViewHolder holder, int position) {
         Appointment appointment = item.get(position);
-        holder.name.setText(appointment.getPhone());
+        if(!appointment.getName().equals("")){
+            holder.name.setText(appointment.getName());
+        }else{
+            holder.name.setText(appointment.getPhone());
+        }
         holder.date.setText(appointment.getDate());
         holder.time.setText(appointment.getStartTime() + " - " + appointment.getEndTime());
         System.out.println("name in Adapter " + appointment.getName());
