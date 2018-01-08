@@ -12,6 +12,16 @@ public class Appointment {
     private String phone;
     private String date;
 
+    public String getDescription() {
+        return description;
+    }
+
+    public void setDescription(String description) {
+        this.description = description;
+    }
+
+    private String description;
+
     public Appointment() {
 
     }

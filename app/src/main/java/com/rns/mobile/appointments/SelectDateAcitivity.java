@@ -15,6 +15,7 @@ import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.CheckedTextView;
 import android.widget.DatePicker;
+import android.widget.EditText;
 import android.widget.ListView;
 import android.widget.Spinner;
 import android.widget.TextView;
@@ -64,6 +65,7 @@ public class SelectDateAcitivity extends AppCompatActivity {
     private String userPhone;
     private Set<String> selectedSlots;
     private List<String> filteredSlots;
+    EditText reason;
 
 
     @Override
@@ -72,6 +74,7 @@ public class SelectDateAcitivity extends AppCompatActivity {
         setContentView(R.layout.activity_date_select);
         // book = (Button) findViewById(R.id.btnbook);
         setdate = (TextView) findViewById(R.id.selecteddate);
+        reason=(EditText)findViewById(R.id.edit_reason);
 
         long date = System.currentTimeMillis();
         SimpleDateFormat sdf = new SimpleDateFormat(Utility.DATE_FORMAT_DISPLAY);
@@ -209,6 +212,8 @@ public class SelectDateAcitivity extends AppCompatActivity {
     private void bookAppointment() {
         System.out.println("Book appointment clicked!");
         prepareAppointmentSlots();
+        if(!reason.getText().toString().equals(""))
+         appointment.setDescription(reason.getText().toString());
         dialog = Utility.showProgress(SelectDateAcitivity.this);
         FirebaseUtil.db.collection(FirebaseUtil.DOC_USERS).document(userPhone).collection(FirebaseUtil.DOC_APPOINTMENTS).add(appointment).addOnCompleteListener(new OnCompleteListener<DocumentReference>() {
             @Override
