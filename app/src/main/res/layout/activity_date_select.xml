@@ -97,11 +97,11 @@
                 android:textStyle="bold" />
 
             <TextView
-                android:id="@+id/txt_uname"
+                android:id="@+id/txt_slot_selected"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:text="User Name"
-                android:textStyle="bold" />
+                android:text="No slots selected"
+                android:textStyle="bold"/>
 
             <ListView
                 android:id="@+id/list_availableslot"

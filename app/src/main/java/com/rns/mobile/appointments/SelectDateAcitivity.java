@@ -50,7 +50,7 @@ public class SelectDateAcitivity extends AppCompatActivity {
 
     private Button book;
     private Spinner from, to;
-    private TextView appointmentPhone, today, tommarow;
+    private TextView appointmentPhone, today, tomorrow, slotsSelected;
     private TextView setdate;
     private Appointment appointment;
     private DatePicker selectedDate;
@@ -58,7 +58,7 @@ public class SelectDateAcitivity extends AppCompatActivity {
     private User otherUser;
     private ListView availableSlotsListView;
     private ArrayAdapter<String> adapter;
-    Calendar myCalendar = Calendar.getInstance();
+    private Calendar myCalendar = Calendar.getInstance();
     private List<String> slotsList;
     private Set<String> blockedSlots;
     private String userPhone;
@@ -72,9 +72,9 @@ public class SelectDateAcitivity extends AppCompatActivity {
         setContentView(R.layout.activity_date_select);
         // book = (Button) findViewById(R.id.btnbook);
         setdate = (TextView) findViewById(R.id.selecteddate);
-        long date = System.currentTimeMillis();
 
-        SimpleDateFormat sdf = new SimpleDateFormat("dd MMM yyyy");
+        long date = System.currentTimeMillis();
+        SimpleDateFormat sdf = new SimpleDateFormat(Utility.DATE_FORMAT_DISPLAY);
         String dateString = sdf.format(date);
         setdate.setText(dateString);
 
@@ -91,12 +91,12 @@ public class SelectDateAcitivity extends AppCompatActivity {
                     @Override
                     public void onDateSet(DatePicker view, int year, int monthOfYear, int dayOfMonth) {
                         String selectedDateString = Utility.createDate(dayOfMonth, monthOfYear, year);
-                        SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd");
+                        SimpleDateFormat sdf = new SimpleDateFormat(Utility.DATE_FORMAT_USED);
                         Date dates = null;
                         try {
                             dates = sdf.parse(selectedDateString);
                             if (dates != null) {
-                                setdate.setText(new SimpleDateFormat("dd MMM yyyy").format(dates));
+                                setdate.setText(new SimpleDateFormat(Utility.DATE_FORMAT_DISPLAY).format(dates));
                             }
                         } catch (ParseException e) {
                             e.printStackTrace();
@@ -108,26 +108,30 @@ public class SelectDateAcitivity extends AppCompatActivity {
                         }
                     }
                 }, yy, mm, dd);
+                datePicker.getDatePicker().setMinDate(System.currentTimeMillis() - 1000);
                 datePicker.show();
             }
         });
         today = (TextView) findViewById(R.id.txttoday);
-        tommarow = (TextView) findViewById(R.id.txttommarow);
+        tomorrow = (TextView) findViewById(R.id.txttommarow);
         today.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 long date = System.currentTimeMillis();
 
-                SimpleDateFormat sdf = new SimpleDateFormat("dd MMM yyyy");
+                SimpleDateFormat sdf = new SimpleDateFormat(Utility.DATE_FORMAT_DISPLAY);
                 String dateString = sdf.format(date);
                 setdate.setText(dateString);
+
+                appointment.setDate(Utility.formatToUsedDate(dateString));
+                updateUserAppointments();
             }
         });
 
-        tommarow.setOnClickListener(new View.OnClickListener() {
+        tomorrow.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                SimpleDateFormat sdf = new SimpleDateFormat("dd MMM yyyy");
+                SimpleDateFormat sdf = new SimpleDateFormat(Utility.DATE_FORMAT_DISPLAY);
                 GregorianCalendar calendar = new GregorianCalendar();
 
 //Display the date now:
@@ -142,13 +146,16 @@ public class SelectDateAcitivity extends AppCompatActivity {
                 formattedDate = sdf.format(tomorrow);
                 System.out.println(formattedDate);
                 setdate.setText(formattedDate);
+
+                appointment.setDate(Utility.formatToUsedDate(formattedDate));
+                updateUserAppointments();
             }
         });
 
         appointmentPhone = (TextView) findViewById(R.id.txt_appointment_phone);
         //selectedDate = (DatePicker) findViewById(R.id.datepicker);
         availableSlotsListView = (ListView) findViewById(R.id.list_availableslot);
-
+        slotsSelected = (TextView) findViewById(R.id.txt_slot_selected);
         //adapter = new ArrayAdapter<String>(this, android.R.layout.simple_list_item_multiple_choice, slotsList);
         availableSlotsListView.setChoiceMode(ListView.CHOICE_MODE_MULTIPLE);
         availableSlotsListView.setAdapter(adapter);
@@ -162,11 +169,17 @@ public class SelectDateAcitivity extends AppCompatActivity {
         selectedSlots = new HashSet<>();
         System.out.println("Slot list initialized = " + slotsList);
 
-        if (appointment != null && appointment.getName() != null) {
-            appointmentPhone.setText(appointment.getName());
+        if (appointment != null) {
+            if (appointment.getName() != null) {
+                appointmentPhone.setText(appointment.getName());
+            } else {
+                appointmentPhone.setText(appointment.getPhone());
+            }
         }
 
 
+        appointment.setDate(Utility.formatToUsedDate(dateString));
+        updateUserAppointments();
     }
 
 
@@ -318,14 +331,13 @@ public class SelectDateAcitivity extends AppCompatActivity {
         } else {
             System.out.println("ERROR in fetching users apps =>" + task.getException());
         }
+        updateAvailableSlots();
         System.out.println("Blocked slots after user =>" + blockedSlots);
     }
 
     private void blockOtherUserSlots() {
         System.out.println("Blocking other user slots .." + appointment);
         if (appointment != null && appointment.getPhone() != null) {
-            appointmentPhone.setText(appointment.getPhone());
-            appointmentPhone.setText(appointment.getName());
             if (!appointment.getPhone().trim().contains("+")) {
                 appointment.setPhone(Utility.COUNTRY_CODE + appointment.getPhone());
             }
@@ -379,6 +391,9 @@ public class SelectDateAcitivity extends AppCompatActivity {
     private void updateAvailableSlots() {
         Set<String> availableSlots = new HashSet<>();
         for (String slot : slotsList) {
+            if(slotBeforeCurrentTime(slot)) {
+                continue;
+            }
             int index = slotsList.indexOf(slot);
             if ((index + 1) < slotsList.size()) {
                 String slotString = slot + Utility.SLOT_APPENDER + slotsList.get(index + 1);
@@ -396,7 +411,23 @@ public class SelectDateAcitivity extends AppCompatActivity {
         availableSlotsListView.setAdapter(adapter);
 
         availableSlotsListView.setOnItemClickListener(new SlotsSelected());
+        //availableSlotsListView.setOnItemSelectedListener(new SlotsListener);
 
+    }
+
+    private boolean slotBeforeCurrentTime(String slot) {
+        if(appointment.getDate() == null) {
+            return true;
+        }
+        if(Utility.isSameDay(appointment.getDate())) {
+            System.out.println("Same day for " + slot);
+            Date date = Utility.convertToDate(slot, appointment.getDate());
+            System.out.println("Date slot =>" + date);
+            if(date != null && date.getTime() < new Date().getTime()) {
+                return true;
+            }
+        }
+        return false;
     }
 
     public class SlotsSelected implements AdapterView.OnItemClickListener {
@@ -407,12 +438,13 @@ public class SelectDateAcitivity extends AppCompatActivity {
             CheckedTextView ctv = (CheckedTextView) arg1;
             String selectedSlot = ctv.getText().toString();
             if (ctv.isChecked()) {
-                if(validateSlots(selectedSlot)) {
+                if (validateSlots(selectedSlot)) {
                     selectedSlots.add(selectedSlot);
                     System.out.println(selectedSlots);
                     Toast.makeText(SelectDateAcitivity.this, "now it is unchecked", Toast.LENGTH_SHORT).show();
                 } else {
                     ctv.setChecked(false);
+                    ctv.setSelected(false);
                 }
 
             } else {
@@ -420,6 +452,8 @@ public class SelectDateAcitivity extends AppCompatActivity {
                 System.out.println(selectedSlots);
                 Toast.makeText(SelectDateAcitivity.this, "now it is checked", Toast.LENGTH_SHORT).show();
             }
+            setSlotsSelected();
+            //removeInvalidSlots();
         }
     }
 
@@ -428,12 +462,14 @@ public class SelectDateAcitivity extends AppCompatActivity {
             return true;
         }
         //Validate that the current slot is only one unit ahead or behind the max and min selected Slots
-        Integer selectedStart = slotsList.indexOf(selectedSlot.split(Utility.SLOT_APPENDER)[0]);
-        Integer selectedEnd = slotsList.indexOf(selectedSlot.split(Utility.SLOT_APPENDER)[1]);
+        Integer selectedStart = slotsList.indexOf(splitSlot(selectedSlot, 0));
+        Integer selectedEnd = slotsList.indexOf(splitSlot(selectedSlot, 1));
         List<String> list = new ArrayList<>(selectedSlots);
         Collections.sort(list);
-        Integer startIndex = slotsList.indexOf(list.get(0).split(Utility.SLOT_APPENDER)[0]);
-        Integer endIndex = slotsList.indexOf(list.get(list.size() - 1).split(Utility.SLOT_APPENDER)[1]);
+        String startSlot = splitSlot(list.get(0), 0);
+        Integer startIndex = slotsList.indexOf(startSlot);
+        String endSlot = splitSlot(list.get(list.size() - 1), 1);
+        Integer endIndex = slotsList.indexOf(endSlot);
         //Check if current slot is just before the selected first
         Integer diff = (startIndex - selectedEnd);
         if (Math.abs(diff) <= 0) {
@@ -446,6 +482,39 @@ public class SelectDateAcitivity extends AppCompatActivity {
         Utility.createAlert(SelectDateAcitivity.this, "Incorrect slot selection! Please select continuous slots.");
         return false;
     }
+
+    private void setSlotsSelected() {
+        if(selectedSlots == null || selectedSlots.size() == 0) {
+            slotsSelected.setText("No slots selected");
+            return;
+        }
+        List<String> list = new ArrayList<>(selectedSlots);
+        Collections.sort(list);
+        String startSlot = splitSlot(list.get(0), 0);
+        String endSlot = splitSlot(list.get(list.size() - 1), 1);
+        slotsSelected.setText(startSlot + Utility.SLOT_APPENDER + endSlot);
+
+
+    }
+
+    /*private void removeInvalidSlots() {
+        if(filteredSlots == null || selectedSlots == null) {
+            return;
+        }
+
+        for(String slot: filteredSlots) {
+            if(!selectedSlots.contains(slot)) {
+                int position = adapter.getPosition(slot);
+                if(position > 0) {
+                    CheckedTextView ctv = (CheckedTextView) availableSlotsListView.getitem
+                    if(ctv != null) {
+                        ctv.setChecked(false);
+                    }
+                }
+
+            }
+        }
+    }*/
 
     public void prepareAppointmentSlots() {
         if (selectedSlots == null || selectedSlots.size() == 0) {
@@ -460,4 +529,10 @@ public class SelectDateAcitivity extends AppCompatActivity {
 
     }
 
+    private String splitSlot(String slotString, int index) {
+        if(slotString == null) {
+            return "";
+        }
+        return slotString.split(Utility.SLOT_APPENDER) [index];
+    }
 }
