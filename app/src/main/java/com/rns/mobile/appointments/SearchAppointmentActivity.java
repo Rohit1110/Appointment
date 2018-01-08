@@ -19,15 +19,11 @@ import android.util.Log;
 import android.view.GestureDetector;
 import android.view.Menu;
 import android.view.MenuInflater;
-
 import android.view.MenuItem;
 import android.view.MotionEvent;
 import android.view.View;
-
-import android.widget.AutoCompleteTextView;
 import android.widget.Button;
 import android.widget.EditText;
-import android.widget.Toast;
 
 import com.google.gson.Gson;
 
@@ -37,7 +33,8 @@ import java.util.Locale;
 
 import adapter.ContactListAdapter;
 import model.Appointment;
-import model.Usercontact;
+import model.UserContact;
+import utils.Utility;
 
 public class SearchAppointmentActivity extends AppCompatActivity {
     private Button next;
@@ -46,18 +43,19 @@ public class SearchAppointmentActivity extends AppCompatActivity {
     private static final String[] COUNTRIES = new String[]{"Dentist", "Aurtho", "homeopathi", "entc", "Aurvedik"};
     RecyclerView recyclerView_contact;
     private ContactListAdapter adapter;
-    private List<Usercontact> list;
-    private ArrayList<Usercontact> filterList;
-    private Usercontact a;
+    private List<UserContact> list;
+    private ArrayList<UserContact> filterList;
+    private UserContact a;
     //private ProgressDialog dialog;
     private Activity ctx;
     private boolean hideicon = true;
-    String name;
+    private UserContact selectedContact;
 
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+
         //isReadContactPermissionGranted();
         ctx = this;
 
@@ -84,7 +82,6 @@ public class SearchAppointmentActivity extends AppCompatActivity {
             public void onTextChanged(CharSequence s, int start, int before, int count) {
 
 
-
                 String text = search.getText().toString().toLowerCase(Locale.getDefault());
 
                 filter(text);
@@ -94,11 +91,10 @@ public class SearchAppointmentActivity extends AppCompatActivity {
             @Override
             public void afterTextChanged(Editable s) {
 
-                if(isNumeric( s.toString())){
+                if (isNumeric(s.toString())) {
 
 
-                    if(search.getText().toString().length()>=10)
-                    {
+                    if (search.getText().toString().length() >= 10) {
                         hideicon = false;
                         invalidateOptionsMenu();
                     }
@@ -107,9 +103,8 @@ public class SearchAppointmentActivity extends AppCompatActivity {
         });
 
 
-
         // Interface implementation.
-        adapter.setOnRecyclerViewItemClickListener(new ContactListAdapter.OnRecyclerViewItemClickListener() {
+        /*adapter.setOnRecyclerViewItemClickListener(new ContactListAdapter.OnRecyclerViewItemClickListener() {
             @Override
             public void onItemClicked(CharSequence text) {
                 Intent intent = new Intent(SearchAppointmentActivity.this, SelectDateAcitivity.class);
@@ -118,30 +113,31 @@ public class SearchAppointmentActivity extends AppCompatActivity {
                 intent.putExtra("appointment", new Gson().toJson(appointment));
                 startActivity(intent);
             }
-        });
+        });*/
         recyclerView_contact.setAdapter(adapter);
+
 
 
         recyclerView_contact.addOnItemTouchListener(new RecyclerTouchListener(this,
                 recyclerView_contact, new ClickListener() {
+
             @Override
             public void onClick(View view, final int position) {
                 //Values are passing to activity & to fragment as well
               /*  Toast.makeText(SearchAppointmentActivity.this, "Single Click on position        :" + position,
                         Toast.LENGTH_SHORT).show();*/
-                Usercontact a = list.get(position);
-                /*Toast.makeText(SearchAppointmentActivity.this, "Single Click on position        :" + a.getPhone(),
+                selectedContact = filterList.get(position);
+                /*Toast.makeText(SearchAppointmentActivity.this, "Single Click on position        :" + selectedContact.getPhone(),
                         Toast.LENGTH_SHORT).show();*/
-                search.setText(a.getPhone());
-                name=a.getName();
+                search.setText(selectedContact.getPhone());
                 hideicon = false;
                 invalidateOptionsMenu();
             }
 
             @Override
             public void onLongClick(View view, int position) {
-               // Toast.makeText(SearchAppointmentActivity.this, "Long press on position :" + position,
-                       // Toast.LENGTH_LONG).show();
+                // Toast.makeText(SearchAppointmentActivity.this, "Long press on position :" + position,
+                // Toast.LENGTH_LONG).show();
             }
         }));
 
@@ -180,19 +176,32 @@ public class SearchAppointmentActivity extends AppCompatActivity {
 
         return true;
     }
+
     public boolean onOptionsItemSelected(MenuItem item) {
-        switch(item.getItemId())
-        {
+        switch (item.getItemId()) {
             case R.id.actionok:
                 Intent intent = new Intent(SearchAppointmentActivity.this, SelectDateAcitivity.class);
                 Appointment appointment = new Appointment();
-                appointment.setPhone(search.getText().toString());
-                intent.putExtra("appointment", new Gson().toJson(appointment));
+                String phone = Utility.removeAllSpaces(search.getText().toString());
+                //Select last 10 digits to avoid 0 or anything else in phone number
+                if (phone.length() > Utility.PHONE_MAX_LENGTH) {
+                    phone = phone.substring(phone.length() - Utility.PHONE_MAX_LENGTH);
+                }
+                if (phone != null && !phone.trim().contains(Utility.COUNTRY_CODE)) {
+                    phone = Utility.COUNTRY_CODE + phone;
+                }
+                if(selectedContact != null && selectedContact.getName() != null) {
+                    appointment.setName(selectedContact.getName());
+                }
+                appointment.setPhone(phone);
+                System.out.println("Selected appointment is =>" + appointment);
+                intent.putExtra(Utility.INTENT_VAR_APPOINTMENT, new Gson().toJson(appointment));
                 startActivity(intent);
                 return true;
         }
         return false;
     }
+
     private void getContactList() {
 
 
@@ -214,7 +223,7 @@ public class SearchAppointmentActivity extends AppCompatActivity {
                         Log.i(TAG, "Name: " + name);
                         Log.i(TAG, "Phone Number: " + phoneNo);
                         //String  test = exam.getTestName().replaceAll("\\p{P}","");
-                        a = new Usercontact(name, phoneNo.replaceAll("\\p{P}",""));
+                        a = new UserContact(name, phoneNo.replaceAll("\\p{P}", ""));
                         list.add(a);
                         //adapter.notifyDataSetChanged();
 
@@ -283,9 +292,8 @@ public class SearchAppointmentActivity extends AppCompatActivity {
 
                 } else {
                     // Iterate in the original List and add it to filter list...
-                    for (Usercontact item : list) {
-                        if (item.getName().toLowerCase().contains(text.toLowerCase()) ||
-                                item.getPhone().toLowerCase().contains(text.toLowerCase())) {
+                    for (UserContact item : list) {
+                        if (item.getName().toLowerCase().contains(text.toLowerCase()) || comparePhone(item, text)) {
                             // Adding Matched items
                             filterList.add(item);
                         }
@@ -309,6 +317,18 @@ public class SearchAppointmentActivity extends AppCompatActivity {
             }
         }).start();
 
+    }
+
+    private boolean comparePhone(UserContact item, String text) {
+        String phone = item.getPhone().toLowerCase();
+        if (phone.contains(text.toLowerCase())) {
+            return true;
+        }
+        phone = Utility.removeAllSpaces(phone);
+        if (phone.contains(text.toLowerCase())) {
+            return true;
+        }
+        return false;
     }
 
     private class RecyclerTouchListener implements RecyclerView.OnItemTouchListener {
@@ -355,8 +375,7 @@ public class SearchAppointmentActivity extends AppCompatActivity {
         }
     }
 
-    public static boolean isNumeric(String str)
-    {
+    public static boolean isNumeric(String str) {
         return str.matches("-?\\d+(.\\d+)?");
     }
 }

@@ -17,6 +17,10 @@ import com.google.gson.Gson;
 
 import java.io.FileOutputStream;
 import java.io.IOException;
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
+import java.util.Calendar;
+import java.util.Date;
 
 import model.Appointment;
 import model.User;
@@ -34,6 +38,9 @@ public class Utility {
     public static final String INTENT_VAR_USER = "user";
     public static final String COUNTRY_CODE = "+91";
     public static final String SLOT_APPENDER = " - ";
+    public static final int PHONE_MAX_LENGTH = 10;
+    public static final String DATE_FORMAT_DISPLAY = "dd MMM yyyy";
+    public static final String DATE_FORMAT_USED = "yyyy-MM-dd";
 
 
     public static void createAlert(Context context, String message) {
@@ -151,18 +158,68 @@ public class Utility {
     public static User getUserFromSharedPrefs(Activity context) {
         SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(context);
         String myStrValue = prefs.getString(INTENT_VAR_USER, null);
-        if(myStrValue != null) {
+        if (myStrValue != null) {
             return new Gson().fromJson(myStrValue, User.class);
         }
         return null;
     }
 
     public static String getStringValue(String value) {
-        if(value == null || value.trim().length() == 0) {
+        if (value == null || value.trim().length() == 0) {
             return "";
         }
         return value.trim();
     }
 
+    public static String removeAllSpaces(String phone) {
+        if (phone == null) {
+            return "";
+        }
+        return phone.trim().replaceAll("\\s+", "");
+    }
 
+    public static String formatToUsedDate(String dateString) {
+        if (dateString == null) {
+            return null;
+        }
+        try {
+            Date date = new SimpleDateFormat(DATE_FORMAT_DISPLAY).parse(dateString);
+            if (date != null) {
+                return new SimpleDateFormat(DATE_FORMAT_USED).format(date);
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        return null;
+    }
+
+    public static boolean isSameDay(String selectedDate) {
+        Calendar cal1 = Calendar.getInstance();
+        Calendar cal2 = Calendar.getInstance();
+        try {
+            cal1.setTime(new SimpleDateFormat(DATE_FORMAT_USED).parse(selectedDate));
+            return cal1.get(Calendar.YEAR) == cal2.get(Calendar.YEAR) && cal1.get(Calendar.DAY_OF_YEAR) == cal2.get(Calendar.DAY_OF_YEAR);
+        } catch (ParseException e) {
+            e.printStackTrace();
+        }
+        return false;
+
+    }
+
+    public static Date convertToDate(String slot, String date) {
+        if (slot == null || date == null) {
+            return null;
+        }
+        Calendar cal = Calendar.getInstance();
+        try {
+            cal.setTime(new SimpleDateFormat(DATE_FORMAT_USED).parse(date));
+            String[] split = slot.split(":");
+            cal.set(Calendar.HOUR_OF_DAY, new Integer(split[0]));
+            cal.set(Calendar.MINUTE, new Integer(split[1]));
+            return cal.getTime();
+        } catch (ParseException e) {
+            e.printStackTrace();
+        }
+        return null;
+    }
 }

@@ -4,15 +4,17 @@ package model;
  * Created by Rohit on 1/1/2018.
  */
 
-public class Usercontact {
+public class UserContact {
 
     private String name;
     private String phone;
-public Usercontact(String name ,String number){
-    this.name=name;
-    this.phone=number;
 
-}
+    public UserContact(String name, String number) {
+        this.name = name;
+        this.phone = number;
+
+    }
+
     public String getName() {
         return name;
     }
