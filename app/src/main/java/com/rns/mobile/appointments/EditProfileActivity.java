@@ -1,5 +1,6 @@
 package com.rns.mobile.appointments;
 
+import android.app.ProgressDialog;
 import android.content.Intent;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
@@ -41,7 +42,8 @@ public class EditProfileActivity extends AppCompatActivity {
     private User user;
     private Button btnSaveProfile;
     private String phoneNumber;
-    private boolean hideicon=true;
+    private boolean hideicon = true;
+    private ProgressDialog dialog;
 
     @Override
     public void onCreate(@Nullable Bundle savedInstanceState) {
@@ -132,20 +134,7 @@ public class EditProfileActivity extends AppCompatActivity {
     public boolean onCreateOptionsMenu(Menu menu) {
         MenuInflater inflater = getMenuInflater();
         inflater.inflate(R.menu.edit_menu, menu);
-        if (hideicon) {
-            MenuItem item = menu.findItem(R.id.menu_mark);
-            item.setVisible(false);
-            MenuItem items = menu.findItem(R.id.menu_edit);
-            items.setVisible(true);
-            this.invalidateOptionsMenu();
-        } else {
-            MenuItem item = menu.findItem(R.id.menu_mark);
-            item.setVisible(true);
 
-            MenuItem items = menu.findItem(R.id.menu_edit);
-            items.setVisible(false);
-            this.invalidateOptionsMenu();
-        }
 
         return true;
     }
@@ -153,37 +142,44 @@ public class EditProfileActivity extends AppCompatActivity {
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
         switch (item.getItemId()) {
-            case R.id.menu_edit:
-                hideicon = false;
-                invalidateOptionsMenu();
 
-                if(user == null) {
+            case R.id.menu_mark:
+
+                if (user == null) {
                     user = new User();
                 }
+                if (!etFirstName.getText().toString().equals("") && !etLastName.getText().toString().equals("") && !etEmail.getText().toString().equals("")) {
+                    user.setFirstName(etFirstName.getText().toString());
+                    user.setLastName(etLastName.getText().toString());
+                    user.setBusinessName(etBusinessName.getText().toString());
+                    user.setEmail(etEmail.getText().toString());
+                    user.setStartTime(etStartTime.getSelectedItem().toString());
+                    user.setEndTime(etEndTime.getSelectedItem().toString());
+                    dialog = Utility.showProgress(EditProfileActivity.this);
+                    FirebaseUtil.db.collection(FirebaseUtil.DOC_USERS).document(phoneNumber).set(user, SetOptions.merge()).addOnSuccessListener(new OnSuccessListener<Void>() {
+                        @Override
+                        public void onSuccess(Void aVoid) {
+                            Utility.hideProgress(dialog);
+                            Log.d("EDIT", "DocumentSnapshot successfully written!");
+                            Intent i = new Intent(EditProfileActivity.this, AppointmentsActivity.class);
+                            i.putExtra("user", new Gson().toJson(user));
+                            startActivity(i);
+                        }
+                    }).addOnFailureListener(new OnFailureListener() {
+                        @Override
+                        public void onFailure(@NonNull Exception e) {
+                            Log.w("EDIT", "Error writing document", e);
+                        }
+                    });
+                } else {
+                    etFirstName.setError("fill first name");
+                    etLastName.setError("fill last name");
+                    etEmail.setError("fill email");
+                }
 
-                user.setFirstName(etFirstName.getText().toString());
-                user.setLastName(etLastName.getText().toString());
-                user.setBusinessName(etBusinessName.getText().toString());
-                user.setEmail(etEmail.getText().toString());
-                user.setStartTime(etStartTime.getSelectedItem().toString());
-                user.setEndTime(etEndTime.getSelectedItem().toString());
-                FirebaseUtil.db.collection(FirebaseUtil.DOC_USERS).document(phoneNumber).set(user, SetOptions.merge()).addOnSuccessListener(new OnSuccessListener<Void>() {
-                    @Override
-                    public void onSuccess(Void aVoid) {
-                        Log.d("EDIT", "DocumentSnapshot successfully written!");
-                        Intent i = new Intent(EditProfileActivity.this, AppointmentsActivity.class);
-                        i.putExtra("user", new Gson().toJson(user));
-                        startActivity(i);
-                    }
-                }).addOnFailureListener(new OnFailureListener() {
-                    @Override
-                    public void onFailure(@NonNull Exception e) {
-                        Log.w("EDIT", "Error writing document", e);
-                    }
-                });
+                return true;
 
 
-                 return true;
         }
         return false;
 

@@ -72,7 +72,8 @@
                     android:layout_height="wrap_content"
 
                     android:textStyle="bold"
-                    android:textSize="20sp">
+                    android:textSize="20sp"
+                    >
 
                 </EditText>
 
@@ -96,6 +97,7 @@
                     android:id="@+id/et_last_name"
                     android:textSize="20sp"
                     android:textStyle="bold"
+
                     >
 
                 </EditText>
@@ -119,6 +121,7 @@
                     android:id="@+id/et_business_name"
                     android:textSize="20sp"
                     android:textStyle="bold"
+
                     >
 
 
@@ -146,6 +149,7 @@
                     android:id="@+id/et_email"
                     android:textSize="20sp"
                     android:textStyle="bold"
+
                     >
 
                 </EditText>
@@ -173,6 +177,7 @@
 
                     android:textSize="20sp"
                     android:textStyle="bold"
+
                     >
 
                 </android.support.v7.widget.AppCompatSpinner>
@@ -188,7 +193,7 @@
                     android:layout_height="wrap_content"
                     android:gravity="center_vertical"
                     android:textAlignment="gravity"
-                    android:text="   Appointment Window End Time:-"
+                    android:text="Appointment Window End Time:-"
 
                     android:textStyle="bold"
                     />
@@ -201,6 +206,7 @@
 
                     android:textStyle="bold"
                     android:textSize="20sp"
+
                     >
 
                 </android.support.v7.widget.AppCompatSpinner>
@@ -224,6 +230,7 @@
                     android:id="@+id/et_weekoff_day"
                     android:textStyle="bold"
                     android:textSize="20sp"
+
                     >
 
                 </EditText>

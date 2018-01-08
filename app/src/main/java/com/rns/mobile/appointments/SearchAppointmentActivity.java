@@ -198,6 +198,7 @@ public class SearchAppointmentActivity extends AppCompatActivity {
                 intent.putExtra(Utility.INTENT_VAR_APPOINTMENT, new Gson().toJson(appointment));
                 startActivity(intent);
                 return true;
+
         }
         return false;
     }

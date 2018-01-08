@@ -149,8 +149,7 @@ public class PhoneAuthActivity extends AppCompatActivity implements
                             edit.putString("userphone",user.getPhoneNumber());
                             edit.commit();
 
-                            startActivity(new Intent(PhoneAuthActivity.this, AppointmentsActivity.class));
-                            finish();
+                            nextActivity();
                         } else {
                             Log.w(TAG, "signInWithCredential:failure", task.getException());
                             if (task.getException() instanceof FirebaseAuthInvalidCredentialsException) {
@@ -203,9 +202,14 @@ public class PhoneAuthActivity extends AppCompatActivity implements
         super.onStart();
         FirebaseUser currentUser = mAuth.getCurrentUser();
         if (currentUser != null) {
-            startActivity(new Intent(PhoneAuthActivity.this, AppointmentsActivity.class));
-            finish();
+            nextActivity();
         }
+    }
+
+    private void nextActivity() {
+        Intent intent = new Intent(PhoneAuthActivity.this, MainActivity.class);
+        startActivity(intent);
+        finish();
     }
 
     @Override
