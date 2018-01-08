@@ -30,7 +30,7 @@ public class AppointmentsAdapter extends RecyclerView.Adapter<AppointmentsAdapte
             super(itemView);
             time = (TextView) itemView.findViewById(R.id.txttime);
             name = (TextView) itemView.findViewById(R.id.txtname);
-            date=(TextView)itemView.findViewById(R.id.txtdate);
+            date = (TextView) itemView.findViewById(R.id.txtdate);
 
         }
 
@@ -52,9 +52,9 @@ public class AppointmentsAdapter extends RecyclerView.Adapter<AppointmentsAdapte
     @Override
     public void onBindViewHolder(MyViewHolder holder, int position) {
         Appointment appointment = item.get(position);
-        if(!appointment.getName().equals("")){
+        if (appointment.getName() != null && !appointment.getName().trim().equals("")) {
             holder.name.setText(appointment.getName());
-        }else{
+        } else {
             holder.name.setText(appointment.getPhone());
         }
         holder.date.setText(appointment.getDate());
