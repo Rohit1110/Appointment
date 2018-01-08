@@ -3,6 +3,7 @@ package com.rns.mobile.appointments;
 import android.app.Activity;
 import android.app.ProgressDialog;
 import android.content.ContentResolver;
+import android.content.Context;
 import android.content.Intent;
 import android.database.Cursor;
 import android.os.AsyncTask;
@@ -120,6 +121,7 @@ public class SearchAppointmentActivity extends AppCompatActivity {
         });
         recyclerView_contact.setAdapter(adapter);
 
+
         recyclerView_contact.addOnItemTouchListener(new RecyclerTouchListener(this,
                 recyclerView_contact, new ClickListener() {
             @Override
@@ -134,8 +136,6 @@ public class SearchAppointmentActivity extends AppCompatActivity {
                 name=a.getName();
                 hideicon = false;
                 invalidateOptionsMenu();
-
-
             }
 
             @Override

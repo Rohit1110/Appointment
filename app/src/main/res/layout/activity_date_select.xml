@@ -13,7 +13,7 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_marginBottom="5dp"
-            android:orientation="horizontal">
+            android:orientation="vertical">
 
             <TextView
                 android:id="@+id/txt_appointment_phone"
@@ -23,11 +23,7 @@
                 android:text="User phone"
                 android:textSize="15sp" />
 
-            <!-- <DatePicker
-            android:id="@+id/datepicker"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_alignParentTop="true"></DatePicker>-->
+
 
         </LinearLayout>
 
@@ -80,13 +76,20 @@
 
         </LinearLayout>
 
+    <EditText
+        android:id="@+id/edit_reason"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_below="@+id/lilayout"
+        android:hint="Reasean for Appointment (optionnal)"/>
+
 
 
 
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="match_parent"
-            android:layout_below="@+id/lilayout"
+            android:layout_below="@+id/edit_reason"
             android:orientation="vertical">
 
             <TextView
