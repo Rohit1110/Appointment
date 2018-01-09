@@ -6,11 +6,14 @@ import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.v7.app.AppCompatActivity;
+import android.util.Log;
 
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.OnFailureListener;
+import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.android.gms.tasks.Task;
 import com.google.firebase.firestore.DocumentSnapshot;
+import com.google.firebase.firestore.SetOptions;
 import com.google.gson.Gson;
 
 import model.User;
@@ -22,7 +25,7 @@ public class MainActivity extends AppCompatActivity {
     private String phoneNumber;
     private User user;
     private ProgressDialog dialog;
-    private String TAG="MainActivity Appointments";
+    private String TAG = "MainActivity Appointments";
 
     @Override
     public void onCreate(@Nullable Bundle savedInstanceState) {
@@ -41,15 +44,15 @@ public class MainActivity extends AppCompatActivity {
             @Override
             public void onComplete(@NonNull Task<DocumentSnapshot> task) {
                 Utility.hideProgress(dialog);
-                if(task.isSuccessful()) {
+                if (task.isSuccessful()) {
                     DocumentSnapshot doc = task.getResult();
-                    if(doc == null || !doc.exists()) {
+                    if (doc == null || !doc.exists()) {
                         System.out.println("No document found for this number!" + phoneNumber);
                         showEditProfile();
                     } else {
                         System.out.println("Document found!");
                         user = doc.toObject(User.class);
-                        if(user == null || user.getFirstName() == null || user.getFirstName().trim().length() == 0) {
+                        if (user == null || user.getFirstName() == null || user.getFirstName().trim().length() == 0) {
                             showEditProfile();
                         } else {
                             Utility.saveStringToSharedPreferences(new Gson().toJson(user), Utility.INTENT_VAR_USER, MainActivity.this);
@@ -79,7 +82,20 @@ public class MainActivity extends AppCompatActivity {
 
     }
 
+    private void saveToken(String fcmToken) {
+        FirebaseUtil.db.collection(FirebaseUtil.DOC_USERS).document(phoneNumber).update("fcmToken", fcmToken).addOnSuccessListener(new OnSuccessListener<Void>() {
+            @Override
+            public void onSuccess(Void aVoid) {
+                Utility.hideProgress(dialog);
 
+            }
+        }).addOnFailureListener(new OnFailureListener() {
+            @Override
+            public void onFailure(@NonNull Exception e) {
+                Log.w("EDIT", "Error writing document", e);
+            }
+        });
+    }
 
 
 }

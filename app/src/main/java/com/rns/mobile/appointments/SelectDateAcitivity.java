@@ -74,7 +74,7 @@ public class SelectDateAcitivity extends AppCompatActivity {
         setContentView(R.layout.activity_date_select);
         // book = (Button) findViewById(R.id.btnbook);
         setdate = (TextView) findViewById(R.id.selecteddate);
-        reason=(EditText)findViewById(R.id.edit_reason);
+        reason = (EditText) findViewById(R.id.edit_reason);
 
         long date = System.currentTimeMillis();
         SimpleDateFormat sdf = new SimpleDateFormat(Utility.DATE_FORMAT_DISPLAY);
@@ -212,8 +212,10 @@ public class SelectDateAcitivity extends AppCompatActivity {
     private void bookAppointment() {
         System.out.println("Book appointment clicked!");
         prepareAppointmentSlots();
-        if(!reason.getText().toString().equals(""))
-         appointment.setDescription(reason.getText().toString());
+        if (!reason.getText().toString().equals("")) {
+            appointment.setDescription(reason.getText().toString());
+        }
+        appointment.setAppointmentStatus(Utility.APP_STATUS_ACTIVE);
         dialog = Utility.showProgress(SelectDateAcitivity.this);
         FirebaseUtil.db.collection(FirebaseUtil.DOC_USERS).document(userPhone).collection(FirebaseUtil.DOC_APPOINTMENTS).add(appointment).addOnCompleteListener(new OnCompleteListener<DocumentReference>() {
             @Override
@@ -396,7 +398,7 @@ public class SelectDateAcitivity extends AppCompatActivity {
     private void updateAvailableSlots() {
         Set<String> availableSlots = new HashSet<>();
         for (String slot : slotsList) {
-            if(slotBeforeCurrentTime(slot)) {
+            if (slotBeforeCurrentTime(slot)) {
                 continue;
             }
             int index = slotsList.indexOf(slot);
@@ -421,14 +423,14 @@ public class SelectDateAcitivity extends AppCompatActivity {
     }
 
     private boolean slotBeforeCurrentTime(String slot) {
-        if(appointment.getDate() == null) {
+        if (appointment.getDate() == null) {
             return true;
         }
-        if(Utility.isSameDay(appointment.getDate())) {
+        if (Utility.isSameDay(appointment.getDate())) {
             System.out.println("Same day for " + slot);
             Date date = Utility.convertToDate(slot, appointment.getDate());
             System.out.println("Date slot =>" + date);
-            if(date != null && date.getTime() < new Date().getTime()) {
+            if (date != null && date.getTime() < new Date().getTime()) {
                 return true;
             }
         }
@@ -489,7 +491,7 @@ public class SelectDateAcitivity extends AppCompatActivity {
     }
 
     private void setSlotsSelected() {
-        if(selectedSlots == null || selectedSlots.size() == 0) {
+        if (selectedSlots == null || selectedSlots.size() == 0) {
             slotsSelected.setText("No slots selected");
             return;
         }
@@ -535,9 +537,9 @@ public class SelectDateAcitivity extends AppCompatActivity {
     }
 
     private String splitSlot(String slotString, int index) {
-        if(slotString == null) {
+        if (slotString == null) {
             return "";
         }
-        return slotString.split(Utility.SLOT_APPENDER) [index];
+        return slotString.split(Utility.SLOT_APPENDER)[index];
     }
 }

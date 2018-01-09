@@ -41,6 +41,9 @@ public class Utility {
     public static final int PHONE_MAX_LENGTH = 10;
     public static final String DATE_FORMAT_DISPLAY = "dd MMM yyyy";
     public static final String DATE_FORMAT_USED = "yyyy-MM-dd";
+    public static final String APP_STATUS_ACTIVE = "Active";
+    public static final String APP_STATUS_CANCELLED = "Cancelled";
+
 
 
     public static void createAlert(Context context, String message) {

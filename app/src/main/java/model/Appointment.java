@@ -11,6 +11,28 @@ public class Appointment {
     private String name;
     private String phone;
     private String date;
+    private String id;
+    private String appointmentStatus;
+
+    public String getAppointmentStatus() {
+        return appointmentStatus;
+    }
+
+    public void setAppointmentStatus(String appointmentStatus) {
+        this.appointmentStatus = appointmentStatus;
+    }
+
+
+
+    public String getId() {
+        return id;
+    }
+
+    public void setId(String getid) {
+        this.id = getid;
+    }
+
+
 
     public String getDescription() {
         return description;
@@ -34,11 +56,12 @@ public class Appointment {
         this.date = date;
     }
 
-    public Appointment(String name, String start, String end) {
+    public Appointment(String name, String start, String end,String id) {
 
         this.name = name;
         this.startTime = start;
         this.endTime = end;
+        this.id =id;
     }
 
     public String getStartTime() {
