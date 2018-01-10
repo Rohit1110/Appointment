@@ -3,13 +3,17 @@ package utils;
 import android.app.Activity;
 import android.app.AlertDialog;
 import android.app.ProgressDialog;
+import android.content.ContentValues;
 import android.content.Context;
 import android.content.DialogInterface;
+import android.content.Intent;
 import android.content.SharedPreferences;
 import android.graphics.Bitmap;
 import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
+import android.net.Uri;
 import android.preference.PreferenceManager;
+import android.provider.CalendarContract;
 import android.support.annotation.NonNull;
 import android.widget.DatePicker;
 
@@ -43,7 +47,9 @@ public class Utility {
     public static final String DATE_FORMAT_USED = "yyyy-MM-dd";
     public static final String APP_STATUS_ACTIVE = "Active";
     public static final String APP_STATUS_CANCELLED = "Cancelled";
-
+    public static final int REMINDER_DURATION = 1;
+    public static final int REMINDER_BEFORE = -15;
+    private static boolean needReminder=true;
 
 
     public static void createAlert(Context context, String message) {
@@ -217,6 +223,7 @@ public class Utility {
         try {
             cal.setTime(new SimpleDateFormat(DATE_FORMAT_USED).parse(date));
             String[] split = slot.split(":");
+
             cal.set(Calendar.HOUR_OF_DAY, new Integer(split[0]));
             cal.set(Calendar.MINUTE, new Integer(split[1]));
             return cal.getTime();
@@ -224,5 +231,134 @@ public class Utility {
             e.printStackTrace();
         }
         return null;
+    }
+
+
+    //
+
+    public static void startCalendar(Activity activity, Appointment appointment) {
+        System.out.println("Started calendar ...");
+        Date time = convertToDate(appointment.getStartTime(), appointment.getDate());
+        Calendar beginCal = Calendar.getInstance();
+        int year=2018,mnth=0,day=10,hrs=19,min=15;
+        beginCal.set(year, mnth, day, hrs, min);
+        beginCal.add(Calendar.MINUTE, REMINDER_BEFORE);
+        long startTime = beginCal.getTimeInMillis();
+
+        Calendar endCal = Calendar.getInstance();
+        endCal.set(year, mnth, day, 19,30 );
+        long endTime = endCal.getTimeInMillis();
+
+        Intent intent = new Intent(Intent.ACTION_INSERT);
+        intent.setType("vnd.android.cursor.item/event");
+        if (!appointment.getName().equals("")) {
+            intent.putExtra(CalendarContract.Events.TITLE, appointment.getName());
+        } else {
+            intent.putExtra(CalendarContract.Events.TITLE, appointment.getPhone());
+        }
+        intent.putExtra(CalendarContract.Events.DESCRIPTION, "title");
+        intent.putExtra(CalendarContract.Events.EVENT_LOCATION, "pune");
+        intent.putExtra(CalendarContract.EXTRA_EVENT_BEGIN_TIME, beginCal.getTimeInMillis());
+        intent.putExtra(CalendarContract.EXTRA_EVENT_END_TIME, endCal.getTimeInMillis());
+        intent.putExtra(CalendarContract.Events.ALL_DAY, 0);
+        intent.putExtra(CalendarContract.Events.STATUS, 1);
+        intent.putExtra(CalendarContract.Events.VISIBLE, 1);
+        intent.putExtra(CalendarContract.Events.HAS_ALARM, 1);
+        intent.putExtra(CalendarContract.ACTION_EVENT_REMINDER, 1);
+        intent.putExtra(CalendarContract.Reminders.METHOD, CalendarContract.Reminders.METHOD_ALERT);
+        intent.putExtra(CalendarContract.Reminders.MINUTES, REMINDER_DURATION);
+        //intent.putExtra(CalendarContract.Events.intent.putExtra(CalendarContract.Events.RE)
+        activity.startActivity(intent);
+
+    }
+
+
+
+
+   /* public static long addAppointmentsToCalender(Activity activity,String title,
+                                          String desc, String place, int status, long startDate,
+                                          boolean needReminder, boolean needMailService) {*/
+   public static long addAppointmentsToCalender(Activity activity,Appointment appointment) {
+/***************** Event: add event *******************/
+
+       System.out.println("Started calendar ...");
+       Date time = convertToDate(appointment.getStartTime(), appointment.getDate());
+       Calendar beginCal = Calendar.getInstance();
+       beginCal.setTime(time);
+       beginCal.add(Calendar.MINUTE, REMINDER_BEFORE);
+       long startTime = beginCal.getTimeInMillis();
+        long eventID = -1;
+        try {
+            String eventUriString = "content://com.android.calendar/events";
+            ContentValues eventValues = new ContentValues();
+            eventValues.put("calendar_id", 1); // id, We need to choose from
+            // our mobile for primary its 1
+            eventValues.put("title", appointment.getName());
+            eventValues.put("description", appointment.getDescription());
+            eventValues.put("eventLocation", "");
+
+            //long endDate = startTime + 1000 * 10 * 10; // For next 10min
+
+            Calendar endCal = Calendar.getInstance();
+            endCal.setTime(time);
+            long endTime = endCal.getTimeInMillis();
+
+            eventValues.put("dtstart", startTime);
+            eventValues.put("dtend", endTime);
+
+            // values.put("allDay", 1); //If it is bithday alarm or such
+            // kind (which should remind me for whole day) 0 for false, 1
+            // for true
+            eventValues.put("eventStatus", 1); // This information is
+            // sufficient for most
+            // entries tentative (0),
+            // confirmed (1) or canceled
+            // (2):
+            eventValues.put("eventTimezone", "UTC/GMT +5:30");
+ /*
+  * Comment below visibility and transparency column to avoid
+  * java.lang.IllegalArgumentException column visibility is invalid
+  * error
+  */
+            // eventValues.put("allDay", 1);
+            // eventValues.put("visibility", 0); // visibility to default (0),
+            // confidential (1), private
+            // (2), or public (3):
+            // eventValues.put("transparency", 0); // You can control whether
+            // an event consumes time
+            // opaque (0) or transparent (1).
+
+            eventValues.put("hasAlarm", 1); // 0 for false, 1 for true
+
+            Uri eventUri = activity.getApplicationContext()
+                    .getContentResolver()
+                    .insert(Uri.parse(eventUriString), eventValues);
+            eventID = Long.parseLong(eventUri.getLastPathSegment());
+
+            if (needReminder) {
+                /***************** Event: Reminder(with alert) Adding reminder to event ***********        ********/
+
+                String reminderUriString = "content://com.android.calendar/reminders";
+                ContentValues reminderValues = new ContentValues();
+                reminderValues.put("event_id", eventID);
+                reminderValues.put("minutes", 5); // Default value of the
+                // system. Minutes is a integer
+                reminderValues.put("method", 1); // Alert Methods: Default(0),
+                // Alert(1), Email(2),SMS(3)
+
+                Uri reminderUri = activity.getApplicationContext()
+                        .getContentResolver()
+                        .insert(Uri.parse(reminderUriString), reminderValues);
+            }
+
+/***************** Event: Meeting(without alert) Adding Attendies to the meeting *******************/
+
+
+        } catch (Exception ex) {
+            System.out.println("Error in adding event on calendar" + ex.getMessage());
+        }
+
+        return eventID;
+
     }
 }
