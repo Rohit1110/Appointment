@@ -8,7 +8,6 @@ import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.pm.PackageManager;
-import android.media.RingtoneManager;
 import android.os.Build;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
@@ -18,7 +17,6 @@ import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.GridLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.Toolbar;
-import android.support.v7.widget.helper.ItemTouchHelper;
 import android.util.Log;
 import android.view.GestureDetector;
 import android.view.MotionEvent;
@@ -32,8 +30,6 @@ import com.google.firebase.firestore.EventListener;
 import com.google.firebase.firestore.FirebaseFirestoreException;
 import com.google.firebase.firestore.Query;
 import com.google.firebase.firestore.QuerySnapshot;
-import com.google.firebase.firestore.SetOptions;
-import com.google.gson.Gson;
 
 import java.util.ArrayList;
 import java.util.GregorianCalendar;
@@ -90,8 +86,8 @@ public class AppointmentsActivity extends AppCompatActivity {
                                 FirebaseUtil.db.collection(FirebaseUtil.DOC_USERS).document(phoneNumber).collection("appointments").document(id).update("appointmentStatus", Utility.APP_STATUS_CANCELLED).addOnSuccessListener(new OnSuccessListener<Void>() {
                                     @Override
                                     public void onSuccess(Void aVoid) {
-                                        Appointment a = list.remove(pos);
-                                        adapter.notifyItemRemoved(pos);
+                                        /*Appointment a = list.remove(pos);
+                                        adapter.notifyItemRemoved(pos);*/
                                     }
                                 }).addOnFailureListener(new OnFailureListener() {
                                     @Override
@@ -155,7 +151,7 @@ public class AppointmentsActivity extends AppCompatActivity {
                 //Utility.hideProgress(dialog);
                 System.out.println("Appointments snapshot completed!" + documentSnapshots.size());
 
-
+                list.clear();
                 if (documentSnapshots != null && !documentSnapshots.isEmpty()) {
                     for (DocumentSnapshot doc : documentSnapshots) {
                         Appointment appointment = doc.toObject(Appointment.class);
