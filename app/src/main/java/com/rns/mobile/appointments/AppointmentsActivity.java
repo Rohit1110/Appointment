@@ -78,25 +78,24 @@ public class AppointmentsActivity extends AppCompatActivity {
                 alertDialogBuilder.setMessage("Are you sure to cancel this Appointment");
                 final int pos = position;
 
-                alertDialogBuilder.setPositiveButton("yes",
-                        new DialogInterface.OnClickListener() {
-                            @Override
-                            public void onClick(DialogInterface arg0, int arg1) {
+                alertDialogBuilder.setPositiveButton("yes", new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface arg0, int arg1) {
 
-                                FirebaseUtil.db.collection(FirebaseUtil.DOC_USERS).document(phoneNumber).collection("appointments").document(id).update("appointmentStatus", Utility.APP_STATUS_CANCELLED).addOnSuccessListener(new OnSuccessListener<Void>() {
-                                    @Override
-                                    public void onSuccess(Void aVoid) {
+                        FirebaseUtil.db.collection(FirebaseUtil.DOC_USERS).document(phoneNumber).collection("appointments").document(id).update("appointmentStatus", Utility.APP_STATUS_CANCELLED).addOnSuccessListener(new OnSuccessListener<Void>() {
+                            @Override
+                            public void onSuccess(Void aVoid) {
                                         /*Appointment a = list.remove(pos);
                                         adapter.notifyItemRemoved(pos);*/
-                                    }
-                                }).addOnFailureListener(new OnFailureListener() {
-                                    @Override
-                                    public void onFailure(@NonNull Exception e) {
-                                        Log.w("EDIT", "Error writing document", e);
-                                    }
-                                });
+                            }
+                        }).addOnFailureListener(new OnFailureListener() {
+                            @Override
+                            public void onFailure(@NonNull Exception e) {
+                                Log.w("EDIT", "Error writing document", e);
                             }
                         });
+                    }
+                });
 
                 alertDialogBuilder.setNegativeButton("No", new DialogInterface.OnClickListener() {
                     @Override
@@ -159,15 +158,19 @@ public class AppointmentsActivity extends AppCompatActivity {
                         if (appointment == null) {
                             continue;
                         }
-                        if(Utility.APP_STATUS_CANCELLED.equals(appointment.getAppointmentStatus())) {
+                        if (Utility.APP_STATUS_CANCELLED.equals(appointment.getAppointmentStatus())) {
                             continue;
 
                         }
                         appointment.setId(doc.getId());
                         list.add(appointment);
+                        if(Utility.caledarEventExists(AppointmentsActivity.this, appointment)) {
+                            System.out.println("Adding appointment to Calendar =>" + appointment);
+                            Utility.addAppointmentsToCalender(AppointmentsActivity.this, appointment);
+                        }
                     }
                     System.out.println("Appointments list size => " + list.size());
-                     adapter.notifyDataSetChanged();
+                    adapter.notifyDataSetChanged();
 
                 }
             }
@@ -238,12 +241,11 @@ public class AppointmentsActivity extends AppCompatActivity {
         }
     }
 
-    public void scheduleAlarm(View V)
-    {
+    public void scheduleAlarm(View V) {
         // time at which alarm will be scheduled here alarm is scheduled at 1 day from current time,
         // we fetch  the current time in milliseconds and added 1 day time
         // i.e. 24*60*60*1000= 86,400,000   milliseconds in a day
-        Long time = new GregorianCalendar().getTimeInMillis()+24*60*60*1000;
+        Long time = new GregorianCalendar().getTimeInMillis() + 24 * 60 * 60 * 1000;
 
         // create an Intent and set the class which will execute when Alarm triggers, here we have
         // given AlarmReciever in the Intent, the onRecieve() method of this class will execute when
@@ -255,7 +257,7 @@ public class AppointmentsActivity extends AppCompatActivity {
         AlarmManager alarmManager = (AlarmManager) getSystemService(Context.ALARM_SERVICE);
 
         //set the alarm for particular time
-        alarmManager.set(AlarmManager.RTC_WAKEUP,time, PendingIntent.getBroadcast(this,1,  intentAlarm, PendingIntent.FLAG_UPDATE_CURRENT));
+        alarmManager.set(AlarmManager.RTC_WAKEUP, time, PendingIntent.getBroadcast(this, 1, intentAlarm, PendingIntent.FLAG_UPDATE_CURRENT));
         Toast.makeText(this, "Alarm Scheduled for Tommrrow", Toast.LENGTH_LONG).show();
 
     }
