@@ -27,9 +27,9 @@ import android.widget.EditText;
 
 import com.google.gson.Gson;
 
-import java.util.ArrayList;
 import java.util.List;
 import java.util.Locale;
+import java.util.concurrent.CopyOnWriteArrayList;
 
 import adapter.ContactListAdapter;
 import model.Appointment;
@@ -44,7 +44,7 @@ public class SearchAppointmentActivity extends AppCompatActivity {
     RecyclerView recyclerView_contact;
     private ContactListAdapter adapter;
     private List<UserContact> list;
-    private ArrayList<UserContact> filterList;
+    private List<UserContact> filterList;
     private UserContact a;
     //private ProgressDialog dialog;
     private Activity ctx;
@@ -67,8 +67,8 @@ public class SearchAppointmentActivity extends AppCompatActivity {
         //  next = (Button) findViewById(R.id.btnnxt);
         search = (EditText) findViewById(R.id.editsearch);
         recyclerView_contact = (RecyclerView) findViewById(R.id.contact_reclyclerview);
-        list = new ArrayList<>();
-        filterList = new ArrayList<>();
+        list = new CopyOnWriteArrayList<>();
+        filterList = new CopyOnWriteArrayList<>();
         adapter = new ContactListAdapter(this, list);
         RecyclerView.LayoutManager mLayoutManager = new GridLayoutManager(this, 1);
         recyclerView_contact.setLayoutManager(mLayoutManager);
