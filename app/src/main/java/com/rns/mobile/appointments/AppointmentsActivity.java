@@ -1,5 +1,7 @@
 package com.rns.mobile.appointments;
 
+import android.annotation.TargetApi;
+import android.app.Activity;
 import android.app.AlarmManager;
 import android.app.AlertDialog;
 import android.app.PendingIntent;
@@ -13,6 +15,7 @@ import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.design.widget.FloatingActionButton;
 import android.support.v4.app.ActivityCompat;
+import android.support.v4.content.ContextCompat;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.GridLayoutManager;
 import android.support.v7.widget.RecyclerView;
@@ -78,25 +81,24 @@ public class AppointmentsActivity extends AppCompatActivity {
                 alertDialogBuilder.setMessage("Are you sure to cancel this Appointment");
                 final int pos = position;
 
-                alertDialogBuilder.setPositiveButton("yes",
-                        new DialogInterface.OnClickListener() {
-                            @Override
-                            public void onClick(DialogInterface arg0, int arg1) {
+                alertDialogBuilder.setPositiveButton("yes", new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface arg0, int arg1) {
 
-                                FirebaseUtil.db.collection(FirebaseUtil.DOC_USERS).document(phoneNumber).collection("appointments").document(id).update("appointmentStatus", Utility.APP_STATUS_CANCELLED).addOnSuccessListener(new OnSuccessListener<Void>() {
-                                    @Override
-                                    public void onSuccess(Void aVoid) {
+                        FirebaseUtil.db.collection(FirebaseUtil.DOC_USERS).document(phoneNumber).collection("appointments").document(id).update("appointmentStatus", Utility.APP_STATUS_CANCELLED).addOnSuccessListener(new OnSuccessListener<Void>() {
+                            @Override
+                            public void onSuccess(Void aVoid) {
                                         /*Appointment a = list.remove(pos);
                                         adapter.notifyItemRemoved(pos);*/
-                                    }
-                                }).addOnFailureListener(new OnFailureListener() {
-                                    @Override
-                                    public void onFailure(@NonNull Exception e) {
-                                        Log.w("EDIT", "Error writing document", e);
-                                    }
-                                });
+                            }
+                        }).addOnFailureListener(new OnFailureListener() {
+                            @Override
+                            public void onFailure(@NonNull Exception e) {
+                                Log.w("EDIT", "Error writing document", e);
                             }
                         });
+                    }
+                });
 
                 alertDialogBuilder.setNegativeButton("No", new DialogInterface.OnClickListener() {
                     @Override
@@ -159,15 +161,19 @@ public class AppointmentsActivity extends AppCompatActivity {
                         if (appointment == null) {
                             continue;
                         }
-                        if(Utility.APP_STATUS_CANCELLED.equals(appointment.getAppointmentStatus())) {
+                        if (Utility.APP_STATUS_CANCELLED.equals(appointment.getAppointmentStatus())) {
                             continue;
 
                         }
                         appointment.setId(doc.getId());
                         list.add(appointment);
+                        if(!Utility.caledarEventExists(AppointmentsActivity.this, appointment)) {
+                            System.out.println("Adding appointment to Calendar =>" + appointment);
+                            Utility.addAppointmentsToCalender(AppointmentsActivity.this, appointment);
+                        }
                     }
                     System.out.println("Appointments list size => " + list.size());
-                     adapter.notifyDataSetChanged();
+                    adapter.notifyDataSetChanged();
 
                 }
             }
@@ -238,12 +244,11 @@ public class AppointmentsActivity extends AppCompatActivity {
         }
     }
 
-    public void scheduleAlarm(View V)
-    {
+    public void scheduleAlarm(View V) {
         // time at which alarm will be scheduled here alarm is scheduled at 1 day from current time,
         // we fetch  the current time in milliseconds and added 1 day time
         // i.e. 24*60*60*1000= 86,400,000   milliseconds in a day
-        Long time = new GregorianCalendar().getTimeInMillis()+24*60*60*1000;
+        Long time = new GregorianCalendar().getTimeInMillis() + 24 * 60 * 60 * 1000;
 
         // create an Intent and set the class which will execute when Alarm triggers, here we have
         // given AlarmReciever in the Intent, the onRecieve() method of this class will execute when
@@ -255,8 +260,55 @@ public class AppointmentsActivity extends AppCompatActivity {
         AlarmManager alarmManager = (AlarmManager) getSystemService(Context.ALARM_SERVICE);
 
         //set the alarm for particular time
-        alarmManager.set(AlarmManager.RTC_WAKEUP,time, PendingIntent.getBroadcast(this,1,  intentAlarm, PendingIntent.FLAG_UPDATE_CURRENT));
+        alarmManager.set(AlarmManager.RTC_WAKEUP, time, PendingIntent.getBroadcast(this, 1, intentAlarm, PendingIntent.FLAG_UPDATE_CURRENT));
         Toast.makeText(this, "Alarm Scheduled for Tommrrow", Toast.LENGTH_LONG).show();
 
     }
+
+    //Calendar Read permission
+
+    @TargetApi(Build.VERSION_CODES.JELLY_BEAN)
+    public boolean checkPermission() {
+        int currentAPIVersion = Build.VERSION.SDK_INT;
+        if (currentAPIVersion >= android.os.Build.VERSION_CODES.M) {
+            if (ContextCompat.checkSelfPermission(AppointmentsActivity.this, android.Manifest.permission.WRITE_CALENDAR) != PackageManager.PERMISSION_GRANTED) {
+                if (ActivityCompat.shouldShowRequestPermissionRationale((Activity) AppointmentsActivity.this, android.Manifest.permission.WRITE_CALENDAR)) {
+                    AlertDialog.Builder alertBuilder = new AlertDialog.Builder(AppointmentsActivity.this);
+                    alertBuilder.setCancelable(true);
+                    alertBuilder.setTitle("Permission necessary");
+                    alertBuilder.setMessage("Write calendar permission is necessary to write event!!!");
+                    alertBuilder.setPositiveButton(android.R.string.yes, new DialogInterface.OnClickListener() {
+                        @TargetApi(Build.VERSION_CODES.JELLY_BEAN)
+                        public void onClick(DialogInterface dialog, int which) {
+                            ActivityCompat.requestPermissions((Activity) AppointmentsActivity.this, new String[]{android.Manifest.permission.WRITE_CALENDAR}, Utility.MY_PERMISSIONS_REQUEST_WRITE_CALENDAR);
+                        }
+                    });
+                    AlertDialog alert = alertBuilder.create();
+                    alert.show();
+                } else {
+                    ActivityCompat.requestPermissions((Activity) AppointmentsActivity.this, new String[]{android.Manifest.permission.WRITE_CALENDAR}, Utility.MY_PERMISSIONS_REQUEST_WRITE_CALENDAR);
+                }
+                return false;
+            } else {
+                return true;
+            }
+        } else {
+            return true;
+        }
+    }
+
+    @Override
+    public void onRequestPermissionsResult(int requestCode, String[] permissions, int[] grantResults) {
+        switch (requestCode) {
+            case Utility.MY_PERMISSIONS_REQUEST_WRITE_CALENDAR:
+                if (grantResults.length > 0 && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
+
+                } else {
+                    //code for deny
+                }
+                break;
+        }
+    }
+
+
 }

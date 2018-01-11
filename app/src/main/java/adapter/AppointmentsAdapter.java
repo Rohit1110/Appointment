@@ -23,7 +23,8 @@ public class AppointmentsAdapter extends RecyclerView.Adapter<AppointmentsAdapte
 
     public class MyViewHolder extends RecyclerView.ViewHolder {
 
-        TextView time, name, date;
+        private TextView description;
+        private TextView time, name, date;
 
 
         public MyViewHolder(View itemView) {
@@ -31,6 +32,7 @@ public class AppointmentsAdapter extends RecyclerView.Adapter<AppointmentsAdapte
             time = (TextView) itemView.findViewById(R.id.txttime);
             name = (TextView) itemView.findViewById(R.id.txtname);
             date = (TextView) itemView.findViewById(R.id.txtdate);
+            description = (TextView) itemView.findViewById(R.id.txtdecription);
 
         }
 
@@ -59,6 +61,7 @@ public class AppointmentsAdapter extends RecyclerView.Adapter<AppointmentsAdapte
         }
         holder.date.setText(appointment.getDate());
         holder.time.setText(appointment.getStartTime() + " - " + appointment.getEndTime());
+        holder.description.setText(appointment.getDescription());
         System.out.println("name in Adapter " + appointment.getName());
         System.out.println("time in Adapter " + appointment.getStartTime() + " - " + appointment.getEndTime());
 
