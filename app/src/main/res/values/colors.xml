@@ -1,10 +1,16 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <color name="colorPrimary">#ced1e4</color>
-    <color name="colorPrimaryDark">#afb8ed</color>
-    <color name="colorAccent">#afb8ed</color>
+    <color name="primaryColor">#009688</color>
+    <color name="primaryLightColor">#52c7b8</color>
+    <color name="primaryDarkColor">#00675b</color>
+    <!--<color name="colorPrimary">#ced1e4</color>-->
+    <color name="colorPrimary">#009688</color>
+    <!--<color name="colorPrimaryDark">#afb8ed</color>-->
+    <color name="colorPrimaryDark">#00675b</color>
+    <!--<color name="colorAccent">#afb8ed</color>-->
+    <color name="colorAccent">#52c7b8</color>
     <color name="viewBg">#f1f5f8</color>
     <color name="album_title">#4c4c4c</color>
     <color name="colorBackground">#afb8ed</color>
-    <color name="colorDivide">#afb8ed</color>
+    <color name="colorDivide">#00675b</color>
 </resources>

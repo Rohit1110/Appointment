@@ -161,7 +161,7 @@ public class EditProfileActivity extends AppCompatActivity {
                         public void onSuccess(Void aVoid) {
                             Utility.hideProgress(dialog);
                             Log.d("EDIT", "DocumentSnapshot successfully written!");
-                            Intent i = new Intent(EditProfileActivity.this, AppointmentsActivity.class);
+                            Intent i = new Intent(EditProfileActivity.this, MainActivity.class);
                             i.putExtra("user", new Gson().toJson(user));
                             startActivity(i);
                         }

@@ -1,14 +1,23 @@
 package com.rns.mobile.appointments;
 
+import android.*;
+import android.Manifest;
+import android.annotation.TargetApi;
 import android.app.Activity;
+import android.app.AlertDialog;
 import android.app.ProgressDialog;
 import android.content.ContentResolver;
 import android.content.Context;
+import android.content.DialogInterface;
 import android.content.Intent;
+import android.content.pm.PackageManager;
 import android.database.Cursor;
 import android.os.AsyncTask;
+import android.os.Build;
 import android.os.Bundle;
 import android.provider.ContactsContract;
+import android.support.v4.app.ActivityCompat;
+import android.support.v4.content.ContextCompat;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.GridLayoutManager;
 import android.support.v7.widget.RecyclerView;
@@ -32,6 +41,7 @@ import java.util.Locale;
 import java.util.concurrent.CopyOnWriteArrayList;
 
 import adapter.ContactListAdapter;
+import decorator.SimpleDividerItemDecoration;
 import model.Appointment;
 import model.UserContact;
 import utils.Utility;
@@ -71,6 +81,7 @@ public class SearchAppointmentActivity extends AppCompatActivity {
         filterList = new CopyOnWriteArrayList<>();
         adapter = new ContactListAdapter(this, list);
         RecyclerView.LayoutManager mLayoutManager = new GridLayoutManager(this, 1);
+        recyclerView_contact.addItemDecoration(new SimpleDividerItemDecoration(this));
         recyclerView_contact.setLayoutManager(mLayoutManager);
         search.addTextChangedListener(new TextWatcher() {
             @Override
@@ -117,7 +128,6 @@ public class SearchAppointmentActivity extends AppCompatActivity {
         recyclerView_contact.setAdapter(adapter);
 
 
-
         recyclerView_contact.addOnItemTouchListener(new RecyclerTouchListener(this,
                 recyclerView_contact, new ClickListener() {
 
@@ -153,6 +163,10 @@ public class SearchAppointmentActivity extends AppCompatActivity {
             }
         });*/
 
+
+        if (!Utility.checkcontactPermission(SearchAppointmentActivity.this)) {
+            return;
+        }
         new FetchContact().execute();
 
 
@@ -190,7 +204,7 @@ public class SearchAppointmentActivity extends AppCompatActivity {
                 if (phone != null && !phone.trim().contains(Utility.COUNTRY_CODE)) {
                     phone = Utility.COUNTRY_CODE + phone;
                 }
-                if(selectedContact != null && selectedContact.getName() != null) {
+                if (selectedContact != null && selectedContact.getName() != null) {
                     appointment.setName(selectedContact.getName());
                 }
                 appointment.setPhone(phone);

@@ -21,6 +21,7 @@
                 android:layout_height="wrap_content"
                 android:layout_marginBottom="5dp"
                 android:text="User phone"
+                android:textStyle="bold"
                 android:textSize="15sp" />
 
 
@@ -71,7 +72,7 @@
                     android:layout_height="wrap_content"
                     android:layout_margin="10dp"
                     android:gravity="center"
-                    android:hint="Tomarrow" />
+                    android:hint="Tomorrow" />
             </LinearLayout>
 
         </LinearLayout>
@@ -81,7 +82,7 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_below="@+id/lilayout"
-        android:hint="Reasean for Appointment (optionnal)"/>
+        android:hint="Reason for Appointment (optional)"/>
 
 
 
@@ -97,14 +98,14 @@
                 android:layout_height="wrap_content"
                 android:text="Available Slot"
                 android:textSize="20sp"
-                android:textStyle="bold" />
+                />
 
             <TextView
                 android:id="@+id/txt_slot_selected"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:text="No slots selected"
-                android:textStyle="bold"/>
+               />
 
             <ListView
                 android:id="@+id/list_availableslot"

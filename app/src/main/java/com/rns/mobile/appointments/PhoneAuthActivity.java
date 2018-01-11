@@ -7,10 +7,13 @@ package com.rns.mobile.appointments;
 import android.app.ProgressDialog;
 import android.content.Intent;
 import android.content.SharedPreferences;
+import android.content.pm.PackageManager;
+import android.os.Build;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.design.widget.Snackbar;
+import android.support.v4.app.ActivityCompat;
 import android.support.v7.app.AppCompatActivity;
 import android.text.TextUtils;
 import android.util.Log;
@@ -77,16 +80,17 @@ public class PhoneAuthActivity extends AppCompatActivity implements
         super.onCreate(savedInstanceState);
         setContentView(R.layout.phone_authentication);
 
+        //isReadContactPermissionGranted();
         mPhoneNumberField = (EditText) findViewById(R.id.field_phone_number);
         mVerificationField = (EditText) findViewById(R.id.field_verification_code);
-        mCodeNumberField=(TextView) findViewById(R.id.field_code_number);
+        mCodeNumberField = (TextView) findViewById(R.id.field_code_number);
 
 
         mStartButton = (Button) findViewById(R.id.button_start_verification);
         mVerifyButton = (Button) findViewById(R.id.button_verify_phone);
         mResendButton = (Button) findViewById(R.id.button_resend);
-        layoutvarification=(LinearLayout)findViewById(R.id.layoutvarification);
-        phoneAuth=(LinearLayout)findViewById(R.id.layoutauth);
+        layoutvarification = (LinearLayout) findViewById(R.id.layoutvarification);
+        phoneAuth = (LinearLayout) findViewById(R.id.layoutauth);
 
         mStartButton.setOnClickListener(this);
         mVerifyButton.setOnClickListener(this);
@@ -133,6 +137,20 @@ public class PhoneAuthActivity extends AppCompatActivity implements
         };
     }
 
+    @Override
+    public void onRequestPermissionsResult(int requestCode, String[] permissions, int[] grantResults) {
+        switch (requestCode) {
+            case Utility.MY_PERMISSIONS_REQUEST_WRITE_CALENDAR:
+                if (grantResults.length > 0 && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
+
+
+                } else {
+
+                }
+                break;
+        }
+    }
+
     private void signInWithPhoneAuthCredential(PhoneAuthCredential credential) {
         mAuth.signInWithCredential(credential)
                 .addOnCompleteListener(this, new OnCompleteListener<AuthResult>() {
@@ -142,11 +160,11 @@ public class PhoneAuthActivity extends AppCompatActivity implements
                             Log.d(TAG, "signInWithCredential:success");
                             FirebaseUser user = task.getResult().getUser();
                             user.getPhoneNumber();
-                            Log.d("SSSS######", "Phome "+user.getPhoneNumber());
-                            SharedPreferences sp=getSharedPreferences("user",0);
-                            SharedPreferences.Editor edit=sp.edit();
+                            Log.d("SSSS######", "Phome " + user.getPhoneNumber());
+                            SharedPreferences sp = getSharedPreferences("user", 0);
+                            SharedPreferences.Editor edit = sp.edit();
 
-                            edit.putString("userphone",user.getPhoneNumber());
+                            edit.putString("userphone", user.getPhoneNumber());
                             edit.commit();
 
                             nextActivity();
@@ -197,6 +215,7 @@ public class PhoneAuthActivity extends AppCompatActivity implements
         }
         return true;
     }
+
     @Override
     public void onStart() {
         super.onStart();
@@ -216,7 +235,7 @@ public class PhoneAuthActivity extends AppCompatActivity implements
     public void onClick(View view) {
         switch (view.getId()) {
             case R.id.button_start_verification:
-                if(Utility.isInternetOn(PhoneAuthActivity.this)) {
+                if (Utility.isInternetOn(PhoneAuthActivity.this)) {
                     proDialog = new ProgressDialog(PhoneAuthActivity.this);
                     proDialog.setMessage("please wait....");
                     proDialog.setCancelable(false);
@@ -226,8 +245,8 @@ public class PhoneAuthActivity extends AppCompatActivity implements
                         return;
                     }
                     startPhoneNumberVerification(mCodeNumberField.getText().toString() + mPhoneNumberField.getText().toString());
-                }else{
-                    Toast.makeText(PhoneAuthActivity.this,"Check Internet Connection..!!",Toast.LENGTH_LONG).show();
+                } else {
+                    Toast.makeText(PhoneAuthActivity.this, "Check Internet Connection..!!", Toast.LENGTH_LONG).show();
                 }
 
 
@@ -246,6 +265,41 @@ public class PhoneAuthActivity extends AppCompatActivity implements
                 break;
         }
 
+    }
+
+
+    public boolean isReadCalenderPermissionGranted() {
+        if (Build.VERSION.SDK_INT >= 23) {
+            if (checkSelfPermission(android.Manifest.permission.WRITE_CALENDAR) == PackageManager.PERMISSION_GRANTED && checkSelfPermission(android.Manifest.permission.READ_CALENDAR) == PackageManager.PERMISSION_GRANTED && checkSelfPermission(android.Manifest.permission.READ_CONTACTS) == PackageManager.PERMISSION_GRANTED) {
+                Log.v(TAG, "Permission is granted");
+                return true;
+            } else {
+
+                Log.v(TAG, "Permission is revoked");
+                ActivityCompat.requestPermissions(this, new String[]{android.Manifest.permission.READ_CALENDAR, android.Manifest.permission.WRITE_CALENDAR,android.Manifest.permission.READ_CONTACTS}, 1);
+                return false;
+            }
+        } else { //permission is automatically granted on sdk<23 upon installation
+            Log.v(TAG, "Permission is granted");
+            return true;
+        }
+    }
+
+    public boolean isReadContactPermissionGranted() {
+        if (Build.VERSION.SDK_INT >= 23) {
+            if (checkSelfPermission(android.Manifest.permission.READ_CONTACTS) == PackageManager.PERMISSION_GRANTED) {
+                Log.v(TAG, "Permission is granted");
+                return true;
+            } else {
+
+                Log.v(TAG, "Permission is revoked");
+                ActivityCompat.requestPermissions(this, new String[]{android.Manifest.permission.READ_CONTACTS}, 1);
+                return false;
+            }
+        } else { //permission is automatically granted on sdk<23 upon installation
+            Log.v(TAG, "Permission is granted");
+            return true;
+        }
     }
 
 }
