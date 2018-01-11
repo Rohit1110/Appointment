@@ -5,6 +5,7 @@ import android.annotation.TargetApi;
 import android.app.Activity;
 import android.app.AlertDialog;
 import android.app.ProgressDialog;
+import android.content.ContentUris;
 import android.content.ContentValues;
 import android.content.Context;
 import android.content.DialogInterface;
@@ -20,10 +21,10 @@ import android.preference.PreferenceManager;
 import android.provider.CalendarContract;
 import android.support.annotation.NonNull;
 import android.support.v4.content.ContextCompat;
+import android.util.Log;
 import android.widget.DatePicker;
 
 import com.google.gson.Gson;
-import com.rns.mobile.appointments.SelectDateAcitivity;
 
 import java.io.FileOutputStream;
 import java.io.IOException;
@@ -55,6 +56,7 @@ public class Utility {
     public static final String APP_STATUS_CANCELLED = "Cancelled";
     public static final int REMINDER_BEFORE = 15;
     public static final int MY_PERMISSIONS_REQUEST_WRITE_CALENDAR = 123;
+    public static final String CALENDAR_CONTENT_URI = "content://com.android.calendar/events";
 
 
     public static void createAlert(Context context, String message) {
@@ -171,13 +173,18 @@ public class Utility {
     }
 
     public static User getUserFromSharedPrefs(Activity context) {
-        SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(context);
-        String myStrValue = prefs.getString(INTENT_VAR_USER, null);
+        String myStrValue = getSharedString(context, INTENT_VAR_USER);
         if (myStrValue != null) {
             return new Gson().fromJson(myStrValue, User.class);
         }
         return null;
     }
+
+    private static String getSharedString(Activity context, String key) {
+        SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(context);
+        return prefs.getString(key, null);
+    }
+
 
     public static String getStringValue(String value) {
         if (value == null || value.trim().length() == 0) {
@@ -255,7 +262,7 @@ public class Utility {
         long startTime = beginCal.getTimeInMillis();
         long eventID = -1;
         try {
-            String eventUriString = "content://com.android.calendar/events";
+            String eventUriString = CALENDAR_CONTENT_URI;
             ContentValues eventValues = new ContentValues();
             eventValues.put("calendar_id", 1); // id, We need to choose from
             // our mobile for primary its 1
@@ -281,6 +288,7 @@ public class Utility {
             // confirmed (1) or canceled
             // (2):
             eventValues.put("eventTimezone", "UTC/GMT +5:30");
+
  /*
   * Comment below visibility and transparency column to avoid
   * java.lang.IllegalArgumentException column visibility is invalid
@@ -299,6 +307,12 @@ public class Utility {
             Uri eventUri = activity.getApplicationContext().getContentResolver().insert(Uri.parse(eventUriString), eventValues);
             eventID = Long.parseLong(eventUri.getLastPathSegment());
 
+            System.out.println("Writing event ID =>" + eventID);
+
+            //
+
+            //eventValues.put("_id", appointment.getId());
+
             //if (needReminder) {
             /***************** Event: Reminder(with alert) Adding reminder to event ***********        ********/
 
@@ -315,9 +329,11 @@ public class Utility {
 
             /***************** Event: Meeting(without alert) Adding Attendies to the meeting *******************/
 
+            saveStringToSharedPreferences(String.valueOf(eventID), appointment.getId(), activity);
+
 
         } catch (Exception ex) {
-            System.out.println("Error in adding event on calendar" + ex.getMessage());
+            System.out.println("Error in adding event on calendar - " + ex.getMessage());
         }
 
         return eventID;
@@ -327,24 +343,68 @@ public class Utility {
 
     public static boolean caledarEventExists(Activity activity, Appointment appointment) {
 
-        if(!checkPermission(activity)){
+        if (!checkPermission(activity)) {
             return true;
         }
 
-        long begin = convertToDate(appointment.getStartTime(), appointment.getDate()).getTime();
-        long end = convertToDate(appointment.getEndTime(), appointment.getDate()).getTime();
-        String[] proj = new String[]{
-                CalendarContract.Instances._ID,
-                CalendarContract.Instances.BEGIN,
-                CalendarContract.Instances.END,
-                CalendarContract.Instances.EVENT_ID};
-        Cursor cursor =
-                CalendarContract.Instances.query(activity.getContentResolver(), proj, begin, end, appointment.getName());
-        if (cursor.getCount() > 0) {
-            // deal with conflict
-            return true;
+        try {
+            Date startDate = convertToDate(appointment.getStartTime(), appointment.getDate());
+            Date endDate = convertToDate(appointment.getEndTime(), appointment.getDate());
+
+            if (startDate == null || endDate == null) {
+                return false;
+            }
+
+            // +- 5 minutes to the slot
+            Calendar cal1 = Calendar.getInstance();
+            cal1.setTime(startDate);
+            cal1.add(Calendar.MINUTE, -5);
+            Calendar cal2 = Calendar.getInstance();
+            cal2.setTime(endDate);
+            cal2.add(Calendar.MINUTE, 5);
+
+            long begin = cal1.getTimeInMillis();
+            long end = cal2.getTimeInMillis();
+            String[] proj = new String[]{CalendarContract.Instances._ID, CalendarContract.Instances.BEGIN, CalendarContract.Instances.END, CalendarContract.Instances.EVENT_ID};
+            Cursor cursor = CalendarContract.Instances.query(activity.getContentResolver(), proj, begin, end, appointment.getName());
+            if (cursor.getCount() > 0) {
+                // deal with conflict
+                while (cursor.moveToNext()) {
+                    String eventId = cursor.getString(3);
+                    Log.v("ID : ", cursor.getString(0));
+                    Log.v("eventID : ", eventId);
+                    //if (eventId.equals(getSharedString(activity, appointment.getId()))) {
+                        return true;
+                    //}
+                }
+            }
+            return false;
+        } catch (Exception e) {
+            e.printStackTrace();
         }
-        return false;
+        return true;
+    }
+
+    public static void deleteAppointmentFromCalendar(Activity activity, Appointment appointment) {
+        if (!checkPermission(activity)) {
+            return;
+        }
+        try {
+            Uri deleteUri = getUri(activity, appointment);
+            int rows = activity.getContentResolver().delete(deleteUri, null, null);
+        } catch (Exception e) {
+            System.out.println("Error deleting from Calendar =>" + e);
+        }
+
+    }
+
+
+    private static Uri getUri(Activity activity, Appointment appointment) {
+        Uri eventUri = Uri.parse(CALENDAR_CONTENT_URI);  // or
+        Uri deleteUri = null;
+
+        deleteUri = ContentUris.withAppendedId(eventUri, new Long(getSharedString(activity, appointment.getId())));
+        return deleteUri;
     }
 
     @TargetApi(Build.VERSION_CODES.JELLY_BEAN)
