@@ -1,6 +1,5 @@
 package com.rns.mobile.appointments;
 
-import android.*;
 import android.Manifest;
 import android.annotation.TargetApi;
 import android.app.Activity;
@@ -12,9 +11,6 @@ import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.pm.PackageManager;
-import android.graphics.Color;
-import android.graphics.PorterDuff;
-import android.graphics.drawable.Drawable;
 import android.os.Build;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
@@ -62,6 +58,7 @@ public class AppointmentsActivity extends AppCompatActivity {
     private ProgressDialog dialog;
     private String TAG = "Appointments Activity";
     String id;
+    private Appointment currentAppointment;
 
 
     @Override
@@ -79,15 +76,15 @@ public class AppointmentsActivity extends AppCompatActivity {
 
             @Override
             public void onClick(View view, int position) {
-                Toast.makeText(AppointmentsActivity.this, "Long press to cancel appointment", Toast.LENGTH_LONG).show();
+                Toast.makeText(AppointmentsActivity.this, "Press and Hold to Cancel this Appointment", Toast.LENGTH_LONG).show();
             }
 
             @Override
             public void onLongClick(View view, int position) {
                 //Toast.makeText(AppointmentsActivity.this,""+position,Toast.LENGTH_LONG).show();
                 //list.remove(position);
-                Appointment a = list.get(position);
-                id = a.getId();
+                currentAppointment = list.get(position);
+                //id = currentAppointment.getId();
                 AlertDialog.Builder alertDialogBuilder = new AlertDialog.Builder(AppointmentsActivity.this);
                 alertDialogBuilder.setMessage("Are you sure to cancel this Appointment");
                 final int pos = position;
@@ -96,16 +93,26 @@ public class AppointmentsActivity extends AppCompatActivity {
                     @Override
                     public void onClick(DialogInterface arg0, int arg1) {
 
-                        FirebaseUtil.db.collection(FirebaseUtil.DOC_USERS).document(phoneNumber).collection("appointments").document(id).update("appointmentStatus", Utility.APP_STATUS_CANCELLED).addOnSuccessListener(new OnSuccessListener<Void>() {
+                        FirebaseUtil.db.collection(FirebaseUtil.DOC_USERS).document(phoneNumber).collection(FirebaseUtil.DOC_APPOINTMENTS).document(currentAppointment.getId()).update("appointmentStatus", Utility.APP_STATUS_CANCELLED).addOnSuccessListener(new OnSuccessListener<Void>() {
                             @Override
                             public void onSuccess(Void aVoid) {
-                                        /*Appointment a = list.remove(pos);
-                                        adapter.notifyItemRemoved(pos);*/
+                                //Delete other users appointment
+                                FirebaseUtil.db.collection(FirebaseUtil.DOC_USERS).document(currentAppointment.getPhone()).collection(FirebaseUtil.DOC_APPOINTMENTS).document(currentAppointment.getId()).update("appointmentStatus", Utility.APP_STATUS_CANCELLED).addOnSuccessListener(new OnSuccessListener<Void>() {
+                                    @Override
+                                    public void onSuccess(Void aVoid) {
+
+                                    }
+                                }).addOnFailureListener(new OnFailureListener() {
+                                    @Override
+                                    public void onFailure(@NonNull Exception e) {
+                                        Log.w("EDIT", "Error deleting other user App", e);
+                                    }
+                                });
                             }
                         }).addOnFailureListener(new OnFailureListener() {
                             @Override
                             public void onFailure(@NonNull Exception e) {
-                                Log.w("EDIT", "Error writing document", e);
+                                Log.w("EDIT", "Error deleting app", e);
                             }
                         });
                     }
@@ -296,7 +303,7 @@ public class AppointmentsActivity extends AppCompatActivity {
     public void scheduleAlarm(View V) {
         // time at which alarm will be scheduled here alarm is scheduled at 1 day from current time,
         // we fetch  the current time in milliseconds and added 1 day time
-        // i.e. 24*60*60*1000= 86,400,000   milliseconds in a day
+        // i.e. 24*60*60*1000= 86,400,000   milliseconds in currentAppointment day
         Long time = new GregorianCalendar().getTimeInMillis() + 24 * 60 * 60 * 1000;
 
         // create an Intent and set the class which will execute when Alarm triggers, here we have
