@@ -322,11 +322,11 @@ public class Utility {
         cal2.set(Calendar.HOUR_OF_DAY, 24);*/
         long begin = convertToDate(appointment.getStartTime(), appointment.getDate()).getTime();
         long end = convertToDate(appointment.getEndTime(),appointment.getDate()).getTime();
-                String[] proj = new String[]{
-                        CalendarContract.Instances._ID,
-                        CalendarContract.Instances.BEGIN,
-                        CalendarContract.Instances.END,
-                        CalendarContract.Instances.EVENT_ID};
+        String[] proj = new String[]{
+                CalendarContract.Instances._ID,
+                CalendarContract.Instances.BEGIN,
+                CalendarContract.Instances.END,
+                CalendarContract.Instances.EVENT_ID};
         Cursor cursor =
                 CalendarContract.Instances.query(activity.getContentResolver(), proj, begin, end, appointment.getName());
         if (cursor.getCount() > 0) {

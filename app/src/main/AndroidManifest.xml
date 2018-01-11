@@ -43,6 +43,11 @@
 
         </activity>
 
+        <receiver android:name=".AlarmReciever" android:exported="true">
+
+        </receiver>
+
+
         <service
             android:name=".MyFirebaseMessagingService">
             <intent-filter>
