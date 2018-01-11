@@ -313,6 +313,13 @@ public class Utility {
     }
 
     public static boolean caledarEventExists(Activity activity, Appointment appointment) {
+        /*Date date = convertToDate(appointment.getStartTime(), appointment.getDate());
+        Calendar cal = Calendar.getInstance();
+        cal.setTime(date);
+        cal.set(Calendar.HOUR_OF_DAY, 0);
+        Calendar cal2 = Calendar.getInstance();
+        cal2.setTime(date);
+        cal2.set(Calendar.HOUR_OF_DAY, 24);*/
         long begin = convertToDate(appointment.getStartTime(), appointment.getDate()).getTime();
         long end = convertToDate(appointment.getEndTime(),appointment.getDate()).getTime();
                 String[] proj = new String[]{

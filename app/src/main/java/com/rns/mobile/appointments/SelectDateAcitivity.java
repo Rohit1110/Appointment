@@ -408,7 +408,8 @@ public class SelectDateAcitivity extends AppCompatActivity {
 
     private void updateUserAppointments() {
         dialog = Utility.showProgress(SelectDateAcitivity.this);
-        FirebaseUtil.db.collection(FirebaseUtil.DOC_USERS).document(userPhone).collection(FirebaseUtil.DOC_APPOINTMENTS).whereEqualTo("date", appointment.getDate()).orderBy("startTime").get().addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
+        FirebaseUtil.db.collection(FirebaseUtil.DOC_USERS).document(userPhone).collection(FirebaseUtil.DOC_APPOINTMENTS).whereEqualTo("date", appointment.getDate()).whereEqualTo("appointmentStatus", Utility.APP_STATUS_ACTIVE).
+                orderBy("startTime").get().addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
             @Override
             public void onComplete(@NonNull Task<QuerySnapshot> task) {
                 Utility.hideProgress(dialog);
@@ -497,7 +498,8 @@ public class SelectDateAcitivity extends AppCompatActivity {
 
     private void updateOtherUserAppointments() {
         dialog = Utility.showProgress(SelectDateAcitivity.this);
-        FirebaseUtil.db.collection(FirebaseUtil.DOC_USERS).document(appointment.getPhone()).collection(FirebaseUtil.DOC_APPOINTMENTS).whereEqualTo("date", appointment.getDate()).orderBy("startTime").get().addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
+        FirebaseUtil.db.collection(FirebaseUtil.DOC_USERS).document(appointment.getPhone()).collection(FirebaseUtil.DOC_APPOINTMENTS).whereEqualTo("date", appointment.getDate()).whereEqualTo("appointmentStatus", Utility.APP_STATUS_ACTIVE).
+                orderBy("startTime").get().addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
             @Override
             public void onComplete(@NonNull Task<QuerySnapshot> task) {
                 Utility.hideProgress(dialog);
