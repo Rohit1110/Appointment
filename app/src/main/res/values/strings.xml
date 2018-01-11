@@ -1,5 +1,5 @@
 <resources>
-    <string name="app_name">Appointments</string>
+    <string name="app_name">qUp</string>
     <string name="hint_phone_number">Enter Phone Number</string>
     <string name="hint_verification_code">Verification Code</string>
     <string name="start_phone_auth">Login</string>

@@ -1,5 +1,7 @@
 package utils;
 
+import android.Manifest;
+import android.annotation.TargetApi;
 import android.app.Activity;
 import android.app.AlertDialog;
 import android.app.ProgressDialog;
@@ -7,17 +9,21 @@ import android.content.ContentValues;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.SharedPreferences;
+import android.content.pm.PackageManager;
 import android.database.Cursor;
 import android.graphics.Bitmap;
 import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
 import android.net.Uri;
+import android.os.Build;
 import android.preference.PreferenceManager;
 import android.provider.CalendarContract;
 import android.support.annotation.NonNull;
+import android.support.v4.content.ContextCompat;
 import android.widget.DatePicker;
 
 import com.google.gson.Gson;
+import com.rns.mobile.appointments.SelectDateAcitivity;
 
 import java.io.FileOutputStream;
 import java.io.IOException;
@@ -47,9 +53,8 @@ public class Utility {
     public static final String DATE_FORMAT_USED = "yyyy-MM-dd";
     public static final String APP_STATUS_ACTIVE = "Active";
     public static final String APP_STATUS_CANCELLED = "Cancelled";
-    public static final int REMINDER_BEFORE = -15;
+    public static final int REMINDER_BEFORE = 15;
     public static final int MY_PERMISSIONS_REQUEST_WRITE_CALENDAR = 123;
-
 
 
     public static void createAlert(Context context, String message) {
@@ -104,6 +109,7 @@ public class Utility {
         ProgressDialog dialog = new ProgressDialog(context);
         dialog.setTitle("Loading ..");
         //dialog.setMessage("");
+        dialog.setCancelable(false);
         dialog.show();
         return dialog;
     }
@@ -233,13 +239,19 @@ public class Utility {
     }
 
     public static long addAppointmentsToCalender(Activity activity, Appointment appointment) {
+
+
 /***************** Event: add event *******************/
+        if (!checkPermission(activity)) {
+            return 0;
+        }
 
         System.out.println("Started calendar ...");
-        Date time = convertToDate(appointment.getStartTime(), appointment.getDate());
+        Date startDate = convertToDate(appointment.getStartTime(), appointment.getDate());
+        Date endDate = convertToDate(appointment.getStartTime(), appointment.getDate());
         Calendar beginCal = Calendar.getInstance();
-        beginCal.setTime(time);
-        beginCal.add(Calendar.MINUTE, REMINDER_BEFORE);
+        beginCal.setTime(startDate);
+        //beginCal.add(Calendar.MINUTE, );
         long startTime = beginCal.getTimeInMillis();
         long eventID = -1;
         try {
@@ -254,7 +266,7 @@ public class Utility {
             //long endDate = startTime + 1000 * 10 * 10; // For next 10min
 
             Calendar endCal = Calendar.getInstance();
-            endCal.setTime(time);
+            endCal.setTime(endDate);
             long endTime = endCal.getTimeInMillis();
 
             eventValues.put("dtstart", startTime);
@@ -279,7 +291,7 @@ public class Utility {
             // confidential (1), private
             // (2), or public (3):
             // eventValues.put("transparency", 0); // You can control whether
-            // an event consumes time
+            // an event consumes startDate
             // opaque (0) or transparent (1).
 
             eventValues.put("hasAlarm", 1); // 0 for false, 1 for true
@@ -293,7 +305,7 @@ public class Utility {
             String reminderUriString = "content://com.android.calendar/reminders";
             ContentValues reminderValues = new ContentValues();
             reminderValues.put("event_id", eventID);
-            reminderValues.put("minutes", 5); // Default value of the
+            reminderValues.put("minutes", REMINDER_BEFORE); // Default value of the
             // system. Minutes is a integer
             reminderValues.put("method", 1); // Alert Methods: Default(0),
             // Alert(1), Email(2),SMS(3)
@@ -310,18 +322,17 @@ public class Utility {
 
         return eventID;
 
+
     }
 
     public static boolean caledarEventExists(Activity activity, Appointment appointment) {
-        /*Date date = convertToDate(appointment.getStartTime(), appointment.getDate());
-        Calendar cal = Calendar.getInstance();
-        cal.setTime(date);
-        cal.set(Calendar.HOUR_OF_DAY, 0);
-        Calendar cal2 = Calendar.getInstance();
-        cal2.setTime(date);
-        cal2.set(Calendar.HOUR_OF_DAY, 24);*/
+
+        if(!checkPermission(activity)){
+            return true;
+        }
+
         long begin = convertToDate(appointment.getStartTime(), appointment.getDate()).getTime();
-        long end = convertToDate(appointment.getEndTime(),appointment.getDate()).getTime();
+        long end = convertToDate(appointment.getEndTime(), appointment.getDate()).getTime();
         String[] proj = new String[]{
                 CalendarContract.Instances._ID,
                 CalendarContract.Instances.BEGIN,
@@ -334,6 +345,36 @@ public class Utility {
             return true;
         }
         return false;
+    }
+
+    @TargetApi(Build.VERSION_CODES.JELLY_BEAN)
+    public static boolean checkPermission(Activity activity) {
+        int currentAPIVersion = Build.VERSION.SDK_INT;
+        if (currentAPIVersion >= android.os.Build.VERSION_CODES.M) {
+            if (ContextCompat.checkSelfPermission(activity, android.Manifest.permission.WRITE_CALENDAR) != PackageManager.PERMISSION_GRANTED && ContextCompat.checkSelfPermission(activity, android.Manifest.permission.READ_CALENDAR) != PackageManager.PERMISSION_GRANTED) {
+
+                return false;
+            } else {
+                return true;
+            }
+        } else {
+            return true;
+        }
+    }
+
+    @TargetApi(Build.VERSION_CODES.JELLY_BEAN)
+    public static boolean checkcontactPermission(Activity activity) {
+        int currentAPIVersion = Build.VERSION.SDK_INT;
+        if (currentAPIVersion >= android.os.Build.VERSION_CODES.M) {
+            if (ContextCompat.checkSelfPermission(activity, Manifest.permission.READ_CONTACTS) != PackageManager.PERMISSION_GRANTED) {
+
+                return false;
+            } else {
+                return true;
+            }
+        } else {
+            return true;
+        }
     }
 
 

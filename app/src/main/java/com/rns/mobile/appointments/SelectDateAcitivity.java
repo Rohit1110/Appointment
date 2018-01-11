@@ -349,8 +349,8 @@ public class SelectDateAcitivity extends AppCompatActivity {
                             } else {
                                 System.out.println("Appointment failed to add!!" + task.getException());
                             }
-                            if (checkPermission()) {
-                                Utility.addAppointmentsToCalender(SelectDateAcitivity.this, appointment);
+                            if (Utility.checkPermission(SelectDateAcitivity.this)) {
+                                //Utility.addAppointmentsToCalender(SelectDateAcitivity.this, appointment);
                                 System.out.println("calender successfully!!");
                                 goToHome();
                             }
@@ -380,7 +380,7 @@ public class SelectDateAcitivity extends AppCompatActivity {
     }
 
     private void goToHome() {
-
+        Utility.addAppointmentsToCalender(SelectDateAcitivity.this, appointment);
         Intent i = new Intent(SelectDateAcitivity.this, AppointmentsActivity.class);
         startActivity(i);
         finish();
@@ -563,7 +563,7 @@ public class SelectDateAcitivity extends AppCompatActivity {
                 if (validateSlots(selectedSlot)) {
                     selectedSlots.add(selectedSlot);
                     System.out.println(selectedSlots);
-                    Toast.makeText(SelectDateAcitivity.this, "now it is unchecked", Toast.LENGTH_SHORT).show();
+                   // Toast.makeText(SelectDateAcitivity.this, "now it is unchecked", Toast.LENGTH_SHORT).show();
                 } else {
                     ctv.setChecked(false);
                     ctv.setSelected(false);
@@ -572,7 +572,7 @@ public class SelectDateAcitivity extends AppCompatActivity {
             } else {
                 selectedSlots.remove(selectedSlot);
                 System.out.println(selectedSlots);
-                Toast.makeText(SelectDateAcitivity.this, "now it is checked", Toast.LENGTH_SHORT).show();
+                //Toast.makeText(SelectDateAcitivity.this, "now it is checked", Toast.LENGTH_SHORT).show();
             }
             setSlotsSelected();
             //removeInvalidSlots();
@@ -659,11 +659,11 @@ public class SelectDateAcitivity extends AppCompatActivity {
     }
 
 
-    @TargetApi(Build.VERSION_CODES.JELLY_BEAN)
+    /*@TargetApi(Build.VERSION_CODES.JELLY_BEAN)
     public boolean checkPermission() {
         int currentAPIVersion = Build.VERSION.SDK_INT;
         if (currentAPIVersion >= android.os.Build.VERSION_CODES.M) {
-            if (ContextCompat.checkSelfPermission(SelectDateAcitivity.this, android.Manifest.permission.WRITE_CALENDAR) != PackageManager.PERMISSION_GRANTED) {
+            *//*if (ContextCompat.checkSelfPermission(SelectDateAcitivity.this, android.Manifest.permission.WRITE_CALENDAR) != PackageManager.PERMISSION_GRANTED) {
                 if (ActivityCompat.shouldShowRequestPermissionRationale((Activity) SelectDateAcitivity.this, android.Manifest.permission.WRITE_CALENDAR)) {
                     AlertDialog.Builder alertBuilder = new AlertDialog.Builder(SelectDateAcitivity.this);
                     alertBuilder.setCancelable(true);
@@ -683,18 +683,18 @@ public class SelectDateAcitivity extends AppCompatActivity {
                 return false;
             } else {
                 return true;
-            }
+            }*//*
         } else {
             return true;
         }
-    }
+    }*/
 
     @Override
     public void onRequestPermissionsResult(int requestCode, String[] permissions, int[] grantResults) {
         switch (requestCode) {
             case Utility.MY_PERMISSIONS_REQUEST_WRITE_CALENDAR:
                 if (grantResults.length > 0 && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
-                    Utility.addAppointmentsToCalender(SelectDateAcitivity.this, appointment);
+                    //Utility.addAppointmentsToCalender(SelectDateAcitivity.this, appointment);
                     goToHome();
                 } else {
                     //code for deny

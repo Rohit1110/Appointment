@@ -16,19 +16,20 @@
         android:supportsRtl="true"
         android:theme="@style/AppTheme">
         <activity android:name=".MainActivity">
+
+
+        </activity>
+        <activity android:name=".PhoneAuthActivity">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
 
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
-
-        </activity>
-        <activity android:name=".PhoneAuthActivity">
-
         </activity>
         <activity android:name=".SearchAppointmentActivity"
                   android:label="@string/searchappointment"></activity>
-        <activity android:name=".SelectDateAcitivity"/>
+        <activity android:name=".SelectDateAcitivity"
+            android:label="@string/bookappointment"/>
         <activity
             android:name=".AppointmentsActivity"
             android:label="@string/title_activity_main2"
