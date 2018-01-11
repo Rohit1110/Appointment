@@ -1,22 +1,19 @@
 package com.rns.mobile.appointments;
 
+import android.annotation.TargetApi;
 import android.app.Activity;
-import android.app.AlarmManager;
+import android.app.AlertDialog;
 import android.app.DatePickerDialog;
-import android.app.PendingIntent;
 import android.app.ProgressDialog;
-import android.content.ContentResolver;
-import android.content.ContentValues;
-import android.content.Context;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.pm.PackageManager;
-import android.net.Uri;
+import android.os.Build;
 import android.os.Bundle;
-import android.provider.CalendarContract;
 import android.support.annotation.NonNull;
 import android.support.v4.app.ActivityCompat;
+import android.support.v4.content.ContextCompat;
 import android.support.v7.app.AppCompatActivity;
-import android.util.Log;
 import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
@@ -52,15 +49,11 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Locale;
 import java.util.Set;
-import java.util.TimeZone;
 
 import model.Appointment;
 import model.User;
 import utils.FirebaseUtil;
 import utils.Utility;
-
-import static utils.Utility.REMINDER_BEFORE;
-import static utils.Utility.extractUser;
 
 public class SelectDateAcitivity extends AppCompatActivity {
 
@@ -90,7 +83,6 @@ public class SelectDateAcitivity extends AppCompatActivity {
         // book = (Button) findViewById(R.id.btnbook);
         setdate = (TextView) findViewById(R.id.selecteddate);
         reason = (EditText) findViewById(R.id.edit_reason);
-        startCalendar();
         long date = System.currentTimeMillis();
         SimpleDateFormat sdf = new SimpleDateFormat(Utility.DATE_FORMAT_DISPLAY);
         String dateString = sdf.format(date);
@@ -200,7 +192,7 @@ public class SelectDateAcitivity extends AppCompatActivity {
         updateUserAppointments();
     }
 
-    public void startCalendar() {/*
+    /*public void startCalendar() {*//*
         System.out.println("Started calendar ...");
         //Date time = Utility.convertToDate(appointment.getStartTime(), appointment.getDate());
         Calendar beginCal = Calendar.getInstance();
@@ -230,7 +222,7 @@ public class SelectDateAcitivity extends AppCompatActivity {
         intent.putExtra(CalendarContract.Reminders.METHOD, CalendarContract.Reminders.METHOD_ALERT);
         intent.putExtra(CalendarContract.Reminders.MINUTES, -15);
         //intent.putExtra(CalendarContract.Events.intent.putExtra(CalendarContract.Events.RE)
-        startActivity(intent);*/
+        startActivity(intent);*//*
 
         // Date time = Utility.convertToDate(appointment.getStartTime(), appointment.getDate());
         Calendar beginCal = Calendar.getInstance();
@@ -280,7 +272,7 @@ public class SelectDateAcitivity extends AppCompatActivity {
         Uri uri = cr.insert(CalendarContract.Events.CONTENT_URI, values);
         System.out.println("Call Calender2222");
 
-    }
+    }*/
 
 
     @Override
@@ -335,8 +327,7 @@ public class SelectDateAcitivity extends AppCompatActivity {
                 System.out.println("Completed Booking for user!!!" + userPhone);
                 if (task.isSuccessful()) {
                     System.out.println("Appointment added successfully!!" + task.getResult().getId());
-                    Utility.addAppointmentsToCalender(SelectDateAcitivity.this,appointment);
-                    System.out.println("calender successfully!!");
+
                     Appointment otherUserAppointment = new Appointment();
                     User currentUser = Utility.getUserFromSharedPrefs(SelectDateAcitivity.this);
                     if (currentUser != null) {
@@ -358,7 +349,13 @@ public class SelectDateAcitivity extends AppCompatActivity {
                             } else {
                                 System.out.println("Appointment failed to add!!" + task.getException());
                             }
-                            goToHome();
+                            if (checkPermission()) {
+                                Utility.addAppointmentsToCalender(SelectDateAcitivity.this, appointment);
+                                System.out.println("calender successfully!!");
+                                goToHome();
+                            }
+
+
                         }
                     }).addOnFailureListener(new OnFailureListener() {
                         @Override
@@ -383,7 +380,6 @@ public class SelectDateAcitivity extends AppCompatActivity {
     }
 
     private void goToHome() {
-        startCalendar();
 
         Intent i = new Intent(SelectDateAcitivity.this, AppointmentsActivity.class);
         startActivity(i);
@@ -412,7 +408,8 @@ public class SelectDateAcitivity extends AppCompatActivity {
 
     private void updateUserAppointments() {
         dialog = Utility.showProgress(SelectDateAcitivity.this);
-        FirebaseUtil.db.collection(FirebaseUtil.DOC_USERS).document(userPhone).collection(FirebaseUtil.DOC_APPOINTMENTS).whereEqualTo("date", appointment.getDate()).orderBy("startTime").get().addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
+        FirebaseUtil.db.collection(FirebaseUtil.DOC_USERS).document(userPhone).collection(FirebaseUtil.DOC_APPOINTMENTS).whereEqualTo("date", appointment.getDate()).whereEqualTo("appointmentStatus", Utility.APP_STATUS_ACTIVE).
+                orderBy("startTime").get().addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
             @Override
             public void onComplete(@NonNull Task<QuerySnapshot> task) {
                 Utility.hideProgress(dialog);
@@ -501,7 +498,8 @@ public class SelectDateAcitivity extends AppCompatActivity {
 
     private void updateOtherUserAppointments() {
         dialog = Utility.showProgress(SelectDateAcitivity.this);
-        FirebaseUtil.db.collection(FirebaseUtil.DOC_USERS).document(appointment.getPhone()).collection(FirebaseUtil.DOC_APPOINTMENTS).whereEqualTo("date", appointment.getDate()).orderBy("startTime").get().addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
+        FirebaseUtil.db.collection(FirebaseUtil.DOC_USERS).document(appointment.getPhone()).collection(FirebaseUtil.DOC_APPOINTMENTS).whereEqualTo("date", appointment.getDate()).whereEqualTo("appointmentStatus", Utility.APP_STATUS_ACTIVE).
+                orderBy("startTime").get().addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
             @Override
             public void onComplete(@NonNull Task<QuerySnapshot> task) {
                 Utility.hideProgress(dialog);
@@ -658,6 +656,51 @@ public class SelectDateAcitivity extends AppCompatActivity {
             return "";
         }
         return slotString.split(Utility.SLOT_APPENDER)[index];
+    }
+
+
+    @TargetApi(Build.VERSION_CODES.JELLY_BEAN)
+    public boolean checkPermission() {
+        int currentAPIVersion = Build.VERSION.SDK_INT;
+        if (currentAPIVersion >= android.os.Build.VERSION_CODES.M) {
+            if (ContextCompat.checkSelfPermission(SelectDateAcitivity.this, android.Manifest.permission.WRITE_CALENDAR) != PackageManager.PERMISSION_GRANTED) {
+                if (ActivityCompat.shouldShowRequestPermissionRationale((Activity) SelectDateAcitivity.this, android.Manifest.permission.WRITE_CALENDAR)) {
+                    AlertDialog.Builder alertBuilder = new AlertDialog.Builder(SelectDateAcitivity.this);
+                    alertBuilder.setCancelable(true);
+                    alertBuilder.setTitle("Permission necessary");
+                    alertBuilder.setMessage("Write calendar permission is necessary to write event!!!");
+                    alertBuilder.setPositiveButton(android.R.string.yes, new DialogInterface.OnClickListener() {
+                        @TargetApi(Build.VERSION_CODES.JELLY_BEAN)
+                        public void onClick(DialogInterface dialog, int which) {
+                            ActivityCompat.requestPermissions((Activity) SelectDateAcitivity.this, new String[]{android.Manifest.permission.WRITE_CALENDAR}, Utility.MY_PERMISSIONS_REQUEST_WRITE_CALENDAR);
+                        }
+                    });
+                    AlertDialog alert = alertBuilder.create();
+                    alert.show();
+                } else {
+                    ActivityCompat.requestPermissions((Activity) SelectDateAcitivity.this, new String[]{android.Manifest.permission.WRITE_CALENDAR}, Utility.MY_PERMISSIONS_REQUEST_WRITE_CALENDAR);
+                }
+                return false;
+            } else {
+                return true;
+            }
+        } else {
+            return true;
+        }
+    }
+
+    @Override
+    public void onRequestPermissionsResult(int requestCode, String[] permissions, int[] grantResults) {
+        switch (requestCode) {
+            case Utility.MY_PERMISSIONS_REQUEST_WRITE_CALENDAR:
+                if (grantResults.length > 0 && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
+                    Utility.addAppointmentsToCalender(SelectDateAcitivity.this, appointment);
+                    goToHome();
+                } else {
+                    //code for deny
+                }
+                break;
+        }
     }
 
 

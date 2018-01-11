@@ -27,7 +27,7 @@
 
         </activity>
         <activity android:name=".SearchAppointmentActivity"
-            android:label="@string/searchappointment"></activity>
+                  android:label="@string/searchappointment"></activity>
         <activity android:name=".SelectDateAcitivity"/>
         <activity
             android:name=".AppointmentsActivity"
@@ -36,9 +36,9 @@
 
         </activity>
         <activity android:name=".BookAppointmentActivity"
-            android:label="@string/bookappointment"></activity>
+                  android:label="@string/bookappointment"></activity>
         <activity android:name=".EditProfileActivity"
-            android:label="@string/profile">
+                  android:label="@string/profile">
 
 
         </activity>
