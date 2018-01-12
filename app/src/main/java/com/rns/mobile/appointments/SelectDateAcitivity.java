@@ -114,10 +114,14 @@ public class SelectDateAcitivity extends AppCompatActivity {
             }
         });
         today = (TextView) findViewById(R.id.txttoday);
+       today.setTextColor(getResources().getColor(R.color.colorAccent));
         tomorrow = (TextView) findViewById(R.id.txttommarow);
+
         today.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
+                today.setTextColor(getResources().getColor(R.color.colorAccent));
+                tomorrow.setTextColor(getResources().getColor(R.color.album_title));
                 long date = System.currentTimeMillis();
 
                 SimpleDateFormat sdf = new SimpleDateFormat(Utility.DATE_FORMAT_DISPLAY);
@@ -132,6 +136,9 @@ public class SelectDateAcitivity extends AppCompatActivity {
         tomorrow.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
+                tomorrow.setTextColor(getResources().getColor(R.color.colorAccent));
+                today.setTextColor(getResources().getColor(R.color.album_title));
+
                 SimpleDateFormat sdf = new SimpleDateFormat(Utility.DATE_FORMAT_DISPLAY);
                 GregorianCalendar calendar = new GregorianCalendar();
 
