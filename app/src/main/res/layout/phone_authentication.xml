@@ -30,7 +30,6 @@
             android:layout_height="wrap_content"
             android:layout_gravity="center_horizontal"
             android:gravity="center"
-            android:fontFamily="sans-serif-smallcaps"
             android:text="@string/title_app"
             android:textSize="20sp"
             android:textStyle="bold" />

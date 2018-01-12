@@ -28,7 +28,7 @@ public class FirebaseUtil {
 
     public static String getMobile() {
         if(mAuth == null || mAuth.getCurrentUser() == null) {
-            return TEST_PHONE;
+            return null;
         }
         return mAuth.getCurrentUser().getPhoneNumber();
     }
