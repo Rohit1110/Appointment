@@ -9,9 +9,13 @@ import android.widget.TextView;
 
 import com.rns.mobile.appointments.R;
 
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
+import java.util.Date;
 import java.util.List;
 
 import model.Appointment;
+import utils.Utility;
 
 /**
  * Created by Rohit on 12/26/2017.
@@ -59,7 +63,19 @@ public class AppointmentsAdapter extends RecyclerView.Adapter<AppointmentsAdapte
         } else {
             holder.name.setText(appointment.getPhone());
         }
-        holder.date.setText(appointment.getDate());
+        String dateformat= Utility.formatToUsedDate(appointment.getDate());
+        System.out.println(dateformat+" new Date Format");
+        //holder.date.setText(new SimpleDateFormat(Utility.DATE_FORMAT_DISPLAY).format(appointment.getDate()));
+        SimpleDateFormat sdf = new SimpleDateFormat(Utility.DATE_FORMAT_USED);
+        Date dates = null;
+        try {
+            dates = sdf.parse(appointment.getDate());
+            if (dates != null) {
+                holder.date.setText(new SimpleDateFormat(Utility.DATE_FORMAT_DISPLAY).format(dates));
+            }
+        } catch (ParseException e) {
+            e.printStackTrace();
+        }
         holder.time.setText(appointment.getStartTime() + " - " + appointment.getEndTime());
         holder.description.setText(appointment.getDescription());
         System.out.println("name in Adapter " + appointment.getName());

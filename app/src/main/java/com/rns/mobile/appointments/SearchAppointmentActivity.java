@@ -34,6 +34,7 @@ import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
 
+import com.google.common.collect.Ordering;
 import com.google.gson.Gson;
 
 import java.util.List;
@@ -41,6 +42,7 @@ import java.util.Locale;
 import java.util.concurrent.CopyOnWriteArrayList;
 
 import adapter.ContactListAdapter;
+import decorator.ContactDividerItemDecoration;
 import decorator.SimpleDividerItemDecoration;
 import model.Appointment;
 import model.UserContact;
@@ -81,7 +83,7 @@ public class SearchAppointmentActivity extends AppCompatActivity {
         filterList = new CopyOnWriteArrayList<>();
         adapter = new ContactListAdapter(this, list);
         RecyclerView.LayoutManager mLayoutManager = new GridLayoutManager(this, 1);
-        recyclerView_contact.addItemDecoration(new SimpleDividerItemDecoration(this));
+        recyclerView_contact.addItemDecoration(new ContactDividerItemDecoration(this));
         recyclerView_contact.setLayoutManager(mLayoutManager);
         search.addTextChangedListener(new TextWatcher() {
             @Override
@@ -304,6 +306,7 @@ public class SearchAppointmentActivity extends AppCompatActivity {
                     invalidateOptionsMenu();
 
                     filterList.addAll(list);
+
 
                 } else {
                     // Iterate in the original List and add it to filter list...
