@@ -43,7 +43,7 @@ public class NotificationTask extends AsyncTask<Void, Void, Void> {
     protected Void doInBackground(Void... voids) {
         try {
 
-            sendNotification();
+            send();
 
         } catch (Exception e) {
             System.out.println("Error in sending notification =>" + e);
@@ -53,7 +53,7 @@ public class NotificationTask extends AsyncTask<Void, Void, Void> {
         return null;
     }
 
-    private void sendNotification(String deviceId) throws IOException {
+    private void send() throws IOException {
         URL obj = new URL(POST_URL);
         HttpURLConnection con = (HttpURLConnection) obj.openConnection();
         con.setRequestMethod("POST");
@@ -70,6 +70,8 @@ public class NotificationTask extends AsyncTask<Void, Void, Void> {
         String postData = "{\"name\":\"" + name + "\",\"type\":\"" + type + "\",\"appointmentId\":\"" + appointment.getId() + "\"," + "\"startTime\":\"" + appointment.getStartTime() + "\",\"endTime\":\"" + appointment.getEndTime() + "\",\"date\":\"" + appointment.getDate() + "\"}";
 
         String postString = "{ \"data\":" + postData + ", \"registration_ids\" : \"" + tokens + "\"}";
+
+        System.out.println("Notification request =>" + postString);
 
         os.write(postString.getBytes());
         os.flush();
@@ -105,17 +107,13 @@ public class NotificationTask extends AsyncTask<Void, Void, Void> {
 
                     User user = documentSnapshot.toObject(User.class);
                     if (user != null && user.getFcmTokens() != null && user.getFcmTokens().size() > 0) {
-                        for (String fcmToken : user.getFcmTokens()) {
-                            //sendNotification(fcmToken);
-                            tokens.add(fcmToken);
-                        }
-
-
+                        tokens = user.getFcmTokens();
+                        execute();
                     }
 
                 }
             }
         });
-        execute();
+
     }
 }

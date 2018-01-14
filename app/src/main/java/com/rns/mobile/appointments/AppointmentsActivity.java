@@ -107,7 +107,7 @@ public class AppointmentsActivity extends AppCompatActivity {
                                         if(user != null) {
                                             app.setName(user.getFirstName());
                                         }
-                                        new NotificationTask(app, Utility.NOTIFICATION_TYPE_CANCEL);
+                                        new NotificationTask(app, Utility.NOTIFICATION_TYPE_CANCEL).sendNotification();
                                     }
                                 }).addOnFailureListener(new OnFailureListener() {
                                     @Override

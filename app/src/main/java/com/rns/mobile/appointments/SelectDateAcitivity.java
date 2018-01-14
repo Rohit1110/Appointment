@@ -344,7 +344,7 @@ public class SelectDateAcitivity extends AppCompatActivity {
                         Utility.hideProgress(dialog);
                         System.out.println("Appointment added successfully!!" + otherUserAppointment);
 
-                        new NotificationTask(otherUserAppointment, Utility.NOTIFICATION_TYPE_NEW).execute();
+                        new NotificationTask(otherUserAppointment, Utility.NOTIFICATION_TYPE_NEW).sendNotification();
                         goToHome();
                     }
                 }).addOnFailureListener(new OnFailureListener() {
