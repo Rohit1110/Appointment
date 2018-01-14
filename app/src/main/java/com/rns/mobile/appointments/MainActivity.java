@@ -1,15 +1,10 @@
 package com.rns.mobile.appointments;
 
-import android.*;
-import android.app.Activity;
 import android.app.ProgressDialog;
-import android.content.ContentValues;
 import android.content.Intent;
 import android.content.pm.PackageManager;
-import android.net.Uri;
 import android.os.Build;
 import android.os.Bundle;
-import android.provider.CalendarContract;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.v4.app.ActivityCompat;
@@ -21,10 +16,7 @@ import com.google.android.gms.tasks.OnFailureListener;
 import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.android.gms.tasks.Task;
 import com.google.firebase.firestore.DocumentSnapshot;
-import com.google.firebase.firestore.SetOptions;
 import com.google.gson.Gson;
-
-import java.util.Calendar;
 
 import model.User;
 import utils.FirebaseUtil;
@@ -88,9 +80,32 @@ public class MainActivity extends AppCompatActivity {
 
     private void goToHome() {
         Utility.saveStringToSharedPreferences(new Gson().toJson(user), Utility.INTENT_VAR_USER, MainActivity.this);
+        //Save FCM Token
+        saveFCMToken();
+
         Intent i = new Intent(MainActivity.this, AppointmentsActivity.class);
         i.putExtra(Utility.INTENT_VAR_USER, new Gson().toJson(user));
         startActivity(i);
+    }
+
+    private void saveFCMToken() {
+        if(MyFirebaseInstanceIDService.getToken() != null) {
+            if(user.getFcmTokens() == null || user.getFcmTokens().size() == 0) {
+                MyFirebaseInstanceIDService.sendRegistrationToServer();
+            } else {
+                boolean tokenFound = false;
+                for(String token: user.getFcmTokens()) {
+                    if(MyFirebaseInstanceIDService.getToken().equals(token)) {
+                        System.out.println("Token found!!");
+                        tokenFound = true;
+                        break;
+                    }
+                }
+                if(!tokenFound) {
+                    MyFirebaseInstanceIDService.sendRegistrationToServer();
+                }
+            }
+        }
     }
 
     private void showEditProfile() {

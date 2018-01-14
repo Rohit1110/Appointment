@@ -1,23 +1,14 @@
 package com.rns.mobile.appointments;
 
-import android.*;
-import android.Manifest;
-import android.annotation.TargetApi;
 import android.app.Activity;
-import android.app.AlertDialog;
 import android.app.ProgressDialog;
 import android.content.ContentResolver;
 import android.content.Context;
-import android.content.DialogInterface;
 import android.content.Intent;
-import android.content.pm.PackageManager;
 import android.database.Cursor;
 import android.os.AsyncTask;
-import android.os.Build;
 import android.os.Bundle;
 import android.provider.ContactsContract;
-import android.support.v4.app.ActivityCompat;
-import android.support.v4.content.ContextCompat;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.GridLayoutManager;
 import android.support.v7.widget.RecyclerView;
@@ -130,8 +121,7 @@ public class SearchAppointmentActivity extends AppCompatActivity {
         recyclerView_contact.setAdapter(adapter);
 
 
-        recyclerView_contact.addOnItemTouchListener(new RecyclerTouchListener(this,
-                recyclerView_contact, new ClickListener() {
+        recyclerView_contact.addOnItemTouchListener(new RecyclerTouchListener(this, recyclerView_contact, new ClickListener() {
 
             @Override
             public void onClick(View view, final int position) {
@@ -296,41 +286,48 @@ public class SearchAppointmentActivity extends AppCompatActivity {
             @Override
             public void run() {
 
-                // Clear the filter list
-                filterList.clear();
+                try {
+                    // Clear the filter list
+                    filterList.clear();
 
-                // If there is no search value, then add all original list items to filter list
-                if (TextUtils.isEmpty(text)) {
+                    // If there is no search value, then add all original list items to filter list
+                    if (TextUtils.isEmpty(text)) {
 
-                    hideicon = true;
-                    invalidateOptionsMenu();
+                        hideicon = true;
+                        invalidateOptionsMenu();
 
-                    filterList.addAll(list);
+                        filterList.addAll(list);
 
 
-                } else {
-                    // Iterate in the original List and add it to filter list...
-                    for (UserContact item : list) {
-                        if (item.getName().toLowerCase().contains(text.toLowerCase()) || comparePhone(item, text)) {
-                            // Adding Matched items
-                            filterList.add(item);
+                    } else {
+                        // Iterate in the original List and add it to filter list...
+                        for (UserContact item : list) {
+                            if (item.getName().toLowerCase().contains(text.toLowerCase()) || comparePhone(item, text)) {
+                                // Adding Matched items
+                                filterList.add(item);
+                            }
+
                         }
                     }
+
+                    // Set on UI Thread
+                    (SearchAppointmentActivity.this).runOnUiThread(new Runnable() {
+                        @Override
+                        public void run() {
+                            // Notify the List that the DataSet has changed...
+                            adapter = new ContactListAdapter(SearchAppointmentActivity.this, filterList);
+                            RecyclerView.LayoutManager mLayoutManager = new GridLayoutManager(SearchAppointmentActivity.this, 1);
+                            recyclerView_contact.setLayoutManager(mLayoutManager);
+                            recyclerView_contact.setAdapter(adapter);
+
+
+                        }
+                    });
+                } catch (Exception e) {
+                    System.out.println("Error in filter contacts");
+                    e.printStackTrace();
                 }
 
-                // Set on UI Thread
-                (SearchAppointmentActivity.this).runOnUiThread(new Runnable() {
-                    @Override
-                    public void run() {
-                        // Notify the List that the DataSet has changed...
-                        adapter = new ContactListAdapter(SearchAppointmentActivity.this, filterList);
-                        RecyclerView.LayoutManager mLayoutManager = new GridLayoutManager(SearchAppointmentActivity.this, 1);
-                        recyclerView_contact.setLayoutManager(mLayoutManager);
-                        recyclerView_contact.setAdapter(adapter);
-
-
-                    }
-                });
 
             }
         }).start();

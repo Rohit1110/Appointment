@@ -106,4 +106,16 @@ public class Appointment {
     public String toString() {
         return date + " -- " + startTime + " to " + endTime;
     }
+
+    public Appointment duplicate(String userPhone) {
+        Appointment otherUserAppointment = new Appointment();
+        otherUserAppointment.setId(getId());
+        otherUserAppointment.setPhone(userPhone);
+        otherUserAppointment.setDate(getDate());
+        otherUserAppointment.setStartTime(getStartTime());
+        otherUserAppointment.setEndTime(getEndTime());
+        otherUserAppointment.setDescription(getDescription());
+        otherUserAppointment.setAppointmentStatus(getAppointmentStatus());
+        return otherUserAppointment;
+    }
 }
