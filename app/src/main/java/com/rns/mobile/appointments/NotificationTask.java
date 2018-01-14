@@ -11,6 +11,8 @@ import java.io.InputStreamReader;
 import java.io.OutputStream;
 import java.net.HttpURLConnection;
 import java.net.URL;
+import java.util.ArrayList;
+import java.util.List;
 
 import model.Appointment;
 import model.User;
@@ -28,10 +30,12 @@ public class NotificationTask extends AsyncTask<Void, Void, Void> {
 
     private String type;
     private Appointment appointment;
+    private List<String> tokens;
 
     public NotificationTask(Appointment appointment, String type) {
         this.type = type;
         this.appointment = appointment;
+        tokens = new ArrayList<>();
     }
 
 
@@ -39,29 +43,10 @@ public class NotificationTask extends AsyncTask<Void, Void, Void> {
     protected Void doInBackground(Void... voids) {
         try {
 
-            FirebaseUtil.db.collection(FirebaseUtil.DOC_USERS).document(appointment.getPhone()).get().addOnSuccessListener(new OnSuccessListener<DocumentSnapshot>() {
-                @Override
-                public void onSuccess(DocumentSnapshot documentSnapshot) {
-                    if (documentSnapshot != null && documentSnapshot.exists()) {
-                        try {
-                            User user = documentSnapshot.toObject(User.class);
-                            if (user != null && user.getFcmTokens() != null && user.getFcmTokens().size() > 0) {
-                                for (String fcmToken : user.getFcmTokens()) {
-                                    sendNotification(fcmToken);
-                                }
-                            }
-
-
-                        } catch (IOException e) {
-                            e.printStackTrace();
-                        }
-                    }
-
-                }
-            });
-
+            sendNotification();
 
         } catch (Exception e) {
+            System.out.println("Error in sending notification =>" + e);
             e.printStackTrace();
         }
 
@@ -84,7 +69,7 @@ public class NotificationTask extends AsyncTask<Void, Void, Void> {
 
         String postData = "{\"name\":\"" + name + "\",\"type\":\"" + type + "\",\"appointmentId\":\"" + appointment.getId() + "\"," + "\"startTime\":\"" + appointment.getStartTime() + "\",\"endTime\":\"" + appointment.getEndTime() + "\",\"date\":\"" + appointment.getDate() + "\"}";
 
-        String postString = "{ \"data\":" + postData + ", \"to\" : \"" + deviceId + "\"}";
+        String postString = "{ \"data\":" + postData + ", \"registration_ids\" : \"" + tokens + "\"}";
 
         os.write(postString.getBytes());
         os.flush();
@@ -109,5 +94,28 @@ public class NotificationTask extends AsyncTask<Void, Void, Void> {
         } else {
             System.out.println("POST request not worked");
         }
+
+    }
+
+    public void sendNotification() {
+        FirebaseUtil.db.collection(FirebaseUtil.DOC_USERS).document(appointment.getPhone()).get().addOnSuccessListener(new OnSuccessListener<DocumentSnapshot>() {
+            @Override
+            public void onSuccess(DocumentSnapshot documentSnapshot) {
+                if (documentSnapshot != null && documentSnapshot.exists()) {
+
+                    User user = documentSnapshot.toObject(User.class);
+                    if (user != null && user.getFcmTokens() != null && user.getFcmTokens().size() > 0) {
+                        for (String fcmToken : user.getFcmTokens()) {
+                            //sendNotification(fcmToken);
+                            tokens.add(fcmToken);
+                        }
+
+
+                    }
+
+                }
+            }
+        });
+        execute();
     }
 }
