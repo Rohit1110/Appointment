@@ -66,8 +66,9 @@ public class AppointmentsActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_appointments);
         //isReadContactPermissionGranted();
-       // isReadCalenderPermissionGranted();
+        // isReadCalenderPermissionGranted();
 
+        user = Utility.getUserFromSharedPrefs(AppointmentsActivity.this);
 
         recyclerView = (RecyclerView) findViewById(R.id.recycler_view);
         recyclerView.addItemDecoration(new SimpleDividerItemDecoration(this));
@@ -92,15 +93,21 @@ public class AppointmentsActivity extends AppCompatActivity {
                 alertDialogBuilder.setPositiveButton("yes", new DialogInterface.OnClickListener() {
                     @Override
                     public void onClick(DialogInterface arg0, int arg1) {
-
+                        System.out.println("Deleteing appointment =>" + currentAppointment.getId());
                         FirebaseUtil.db.collection(FirebaseUtil.DOC_USERS).document(phoneNumber).collection(FirebaseUtil.DOC_APPOINTMENTS).document(currentAppointment.getId()).update("appointmentStatus", Utility.APP_STATUS_CANCELLED).addOnSuccessListener(new OnSuccessListener<Void>() {
                             @Override
                             public void onSuccess(Void aVoid) {
+                                Utility.deleteAppointmentFromCalendar(AppointmentsActivity.this, currentAppointment);
                                 //Delete other users appointment
                                 FirebaseUtil.db.collection(FirebaseUtil.DOC_USERS).document(currentAppointment.getPhone()).collection(FirebaseUtil.DOC_APPOINTMENTS).document(currentAppointment.getId()).update("appointmentStatus", Utility.APP_STATUS_CANCELLED).addOnSuccessListener(new OnSuccessListener<Void>() {
                                     @Override
                                     public void onSuccess(Void aVoid) {
-
+                                        System.out.println("Deleted for other user appointment =>" + currentAppointment.getId());
+                                        Appointment app = currentAppointment.duplicate(phoneNumber);
+                                        if(user != null) {
+                                            app.setName(user.getFirstName());
+                                        }
+                                        new NotificationTask(app, Utility.NOTIFICATION_TYPE_CANCEL);
                                     }
                                 }).addOnFailureListener(new OnFailureListener() {
                                     @Override
@@ -164,7 +171,7 @@ public class AppointmentsActivity extends AppCompatActivity {
     public boolean onCreateOptionsMenu(Menu menu) {
         MenuInflater inflater = getMenuInflater();
         inflater.inflate(R.menu.profile, menu);
-        return  true;
+        return true;
     }
 
 
@@ -173,12 +180,12 @@ public class AppointmentsActivity extends AppCompatActivity {
         switch (item.getItemId()) {
             case R.id.actionprofile:
 
-                Intent intent=new Intent(AppointmentsActivity.this,EditProfileActivity.class);
+                Intent intent = new Intent(AppointmentsActivity.this, EditProfileActivity.class);
                 startActivity(intent);
-              return  true;
+                return true;
 
         }
-        return  false;
+        return false;
     }
 
     private void prepareAppointmentsList() {
@@ -206,10 +213,8 @@ public class AppointmentsActivity extends AppCompatActivity {
                         }
                         appointment.setId(doc.getId());
                         list.add(appointment);
-                        if(!Utility.caledarEventExists(AppointmentsActivity.this, appointment)) {
-                            System.out.println("Adding appointment to Calendar =>" + appointment);
-                            Utility.addAppointmentsToCalender(AppointmentsActivity.this, appointment);
-                        }
+                        Utility.addAppointmentsToCalender(AppointmentsActivity.this, appointment);
+
                     }
                     System.out.println("Appointments list size => " + list.size());
                     adapter.notifyDataSetChanged();
@@ -240,7 +245,7 @@ public class AppointmentsActivity extends AppCompatActivity {
 
     public boolean isReadCalenderPermissionGranted() {
         if (Build.VERSION.SDK_INT >= 23) {
-            if (checkSelfPermission(Manifest.permission.WRITE_CALENDAR) == PackageManager.PERMISSION_GRANTED && checkSelfPermission(Manifest.permission.READ_CALENDAR) == PackageManager.PERMISSION_GRANTED ) {
+            if (checkSelfPermission(Manifest.permission.WRITE_CALENDAR) == PackageManager.PERMISSION_GRANTED && checkSelfPermission(Manifest.permission.READ_CALENDAR) == PackageManager.PERMISSION_GRANTED) {
                 Log.v(TAG, "Permission is granted");
                 return true;
             } else {

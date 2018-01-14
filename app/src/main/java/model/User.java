@@ -1,5 +1,7 @@
 package model;
 
+import java.util.List;
+
 /**
  * Created by Admin on 31/12/2017.
  */
@@ -13,7 +15,15 @@ public class User {
     private String startTime;
     private String endTime;
     private String phone;
+    private List<String> fcmTokens;
 
+    public List<String> getFcmTokens() {
+        return fcmTokens;
+    }
+
+    public void setFcmTokens(List<String> fcmTokens) {
+        this.fcmTokens = fcmTokens;
+    }
 
     public String getFirstName() {
         return firstName;

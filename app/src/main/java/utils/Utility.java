@@ -57,6 +57,9 @@ public class Utility {
     public static final int REMINDER_BEFORE = 15;
     public static final int MY_PERMISSIONS_REQUEST_WRITE_CALENDAR = 123;
     public static final String CALENDAR_CONTENT_URI = "content://com.android.calendar/events";
+    public static final String NOTIFICATION_TYPE_NEW = "NEW_APP";
+    public static final String NOTIFICATION_TYPE_CANCEL = "CANCEL_APP";
+
 
 
     public static void createAlert(Context context, String message) {
@@ -165,7 +168,7 @@ public class Utility {
         return null;
     }
 
-    public static void saveStringToSharedPreferences(String input, String label, Activity context) {
+    public static void saveStringToSharedPreferences(String input, String label, Context context) {
         SharedPreferences.Editor prefEditor = PreferenceManager.getDefaultSharedPreferences(context).edit();
         prefEditor.putString(label, input);
         prefEditor.apply();
@@ -180,7 +183,7 @@ public class Utility {
         return null;
     }
 
-    private static String getSharedString(Activity context, String key) {
+    private static String getSharedString(Context context, String key) {
         SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(context);
         return prefs.getString(key, null);
     }
@@ -245,12 +248,16 @@ public class Utility {
         return null;
     }
 
-    public static long addAppointmentsToCalender(Activity activity, Appointment appointment) {
+    public static long addAppointmentsToCalender(Context activity, Appointment appointment) {
 
 
 /***************** Event: add event *******************/
         if (!checkPermission(activity)) {
-            return 0;
+            return -1;
+        }
+
+        if(caledarEventExists(activity, appointment)) {
+            return -1;
         }
 
         System.out.println("Started calendar ...");
@@ -331,6 +338,7 @@ public class Utility {
 
             saveStringToSharedPreferences(String.valueOf(eventID), appointment.getId(), activity);
 
+            System.out.println("Added appointment -- " + appointment + " to the calendar - " + eventID);
 
         } catch (Exception ex) {
             System.out.println("Error in adding event on calendar - " + ex.getMessage());
@@ -341,7 +349,7 @@ public class Utility {
 
     }
 
-    public static boolean caledarEventExists(Activity activity, Appointment appointment) {
+    public static boolean caledarEventExists(Context activity, Appointment appointment) {
 
         if (!checkPermission(activity)) {
             return true;
@@ -373,9 +381,9 @@ public class Utility {
                     String eventId = cursor.getString(3);
                     Log.v("ID : ", cursor.getString(0));
                     Log.v("eventID : ", eventId);
-                    //if (eventId.equals(getSharedString(activity, appointment.getId()))) {
+                    if (eventId.equals(getSharedString(activity, appointment.getId()))) {
                         return true;
-                    //}
+                    }
                 }
             }
             return false;
@@ -385,21 +393,21 @@ public class Utility {
         return true;
     }
 
-    public static void deleteAppointmentFromCalendar(Activity activity, Appointment appointment) {
+    public static void deleteAppointmentFromCalendar(Context activity, Appointment appointment) {
         if (!checkPermission(activity)) {
             return;
         }
         try {
             Uri deleteUri = getUri(activity, appointment);
             int rows = activity.getContentResolver().delete(deleteUri, null, null);
+            System.out.println("Removed " + appointment + " from Calendar =>" + deleteUri);
         } catch (Exception e) {
             System.out.println("Error deleting from Calendar =>" + e);
         }
 
     }
 
-
-    private static Uri getUri(Activity activity, Appointment appointment) {
+    private static Uri getUri(Context activity, Appointment appointment) {
         Uri eventUri = Uri.parse(CALENDAR_CONTENT_URI);  // or
         Uri deleteUri = null;
 
@@ -408,7 +416,7 @@ public class Utility {
     }
 
     @TargetApi(Build.VERSION_CODES.JELLY_BEAN)
-    public static boolean checkPermission(Activity activity) {
+    public static boolean checkPermission(Context activity) {
         int currentAPIVersion = Build.VERSION.SDK_INT;
         if (currentAPIVersion >= android.os.Build.VERSION_CODES.M) {
             if (ContextCompat.checkSelfPermission(activity, android.Manifest.permission.WRITE_CALENDAR) != PackageManager.PERMISSION_GRANTED && ContextCompat.checkSelfPermission(activity, android.Manifest.permission.READ_CALENDAR) != PackageManager.PERMISSION_GRANTED) {

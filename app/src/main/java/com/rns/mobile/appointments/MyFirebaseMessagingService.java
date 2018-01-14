@@ -10,14 +10,19 @@ import android.content.Context;
 import android.content.Intent;
 import android.media.RingtoneManager;
 import android.net.Uri;
-import com.firebase.jobdispatcher.Constraint;
+import android.support.v4.app.NotificationCompat;
+import android.util.Log;
+
 import com.firebase.jobdispatcher.FirebaseJobDispatcher;
 import com.firebase.jobdispatcher.GooglePlayDriver;
 import com.firebase.jobdispatcher.Job;
-import android.support.v4.app.NotificationCompat;
-import android.util.Log;
 import com.google.firebase.messaging.FirebaseMessagingService;
 import com.google.firebase.messaging.RemoteMessage;
+
+import java.util.Map;
+
+import model.Appointment;
+import utils.Utility;
 
 public class MyFirebaseMessagingService extends FirebaseMessagingService {
 
@@ -60,9 +65,11 @@ public class MyFirebaseMessagingService extends FirebaseMessagingService {
         }
 
         // Check if message contains a notification payload.
-        if (remoteMessage.getNotification() != null) {
+        /*if (remoteMessage.getNotification() != null) {
             Log.d(TAG, "Message Notification Body: " + remoteMessage.getNotification().getBody());
-        }
+            sendNotification(remoteMessage.getNotification());
+        }*/
+        sendNotification(remoteMessage.getData());
 
         // Also if you intend on generating your own notifications as a result of a received FCM
         // message, here is where that should be initiated. See sendNotification method below.
@@ -75,10 +82,7 @@ public class MyFirebaseMessagingService extends FirebaseMessagingService {
     private void scheduleJob() {
         // [START dispatch_job]
         FirebaseJobDispatcher dispatcher = new FirebaseJobDispatcher(new GooglePlayDriver(this));
-        Job myJob = dispatcher.newJobBuilder()
-                .setService(MyJobService.class)
-                .setTag("my-job-tag")
-                .build();
+        Job myJob = dispatcher.newJobBuilder().setService(MyJobService.class).setTag("my-job-tag").build();
         dispatcher.schedule(myJob);
         // [END dispatch_job]
     }
@@ -93,28 +97,65 @@ public class MyFirebaseMessagingService extends FirebaseMessagingService {
     /**
      * Create and show a simple notification containing the received FCM message.
      *
-     * @param messageBody FCM message body received.
+     * @param
      */
-    private void sendNotification(String messageBody) {
+    private void sendNotification(Map<String, String> data) {
         Intent intent = new Intent(this, MainActivity.class);
         intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
-        PendingIntent pendingIntent = PendingIntent.getActivity(this, 0 /* Request code */, intent,
-                PendingIntent.FLAG_ONE_SHOT);
+        PendingIntent pendingIntent = PendingIntent.getActivity(this, 0 /* Request code */, intent, PendingIntent.FLAG_ONE_SHOT);
 
         String channelId = getString(R.string.app_name);
-        Uri defaultSoundUri= RingtoneManager.getDefaultUri(RingtoneManager.TYPE_NOTIFICATION);
-        NotificationCompat.Builder notificationBuilder =
-                new NotificationCompat.Builder(this, channelId)
-                        .setSmallIcon(R.mipmap.email)
-                        .setContentTitle("FCM Message")
-                        .setContentText(messageBody)
-                        .setAutoCancel(true)
-                        .setSound(defaultSoundUri)
-                        .setContentIntent(pendingIntent);
+        Uri defaultSoundUri = RingtoneManager.getDefaultUri(RingtoneManager.TYPE_NOTIFICATION);
+        //Appointment appointment = new Gson().fromJson(notification.getBody(), Appointment.class);
+        String title = "Test", message = "";
+        title = "New Appointment";
+        message = "New appointment booked for you!";
+        /*if(title != null && title.equals("NEW_APP")) {
 
-        NotificationManager notificationManager =
-                (NotificationManager) getSystemService(Context.NOTIFICATION_SERVICE);
+        }*/
+
+        String name = data.get("name") != null ? data.get("name") : "";
+        String date = data.get("date");
+        String startTime = data.get("startTime");
+        String endTime = data.get("endTime");
+        String type = data.get("type");
+        String appointmentId = data.get("appointmentId");
+
+        if (appointmentId == null || type == null) {
+            return;
+        }
+
+        String time = date + " " + startTime;
+        System.out.println("Notification received from =>" + name);
+        Appointment appointment = new Appointment();
+        if (Utility.NOTIFICATION_TYPE_NEW.equals(type)) {
+            title = "New appointment";
+            message = "Appointment booked for you by " + name + " starting at " + time;
+            appointment.setStartTime(startTime);
+            appointment.setEndTime(endTime);
+            appointment.setName(name);
+            appointment.setId(appointmentId);
+            appointment.setDate(date);
+            Utility.addAppointmentsToCalender(getApplicationContext(), appointment);
+        } else if (Utility.NOTIFICATION_TYPE_CANCEL.equals(type)) {
+            title = "Appointment cancelled";
+            message = "Your appointment starting at " + time + " is cancelled by " + name;
+
+            appointment.setId(appointmentId);
+            Utility.deleteAppointmentFromCalendar(getApplicationContext(), appointment);
+            System.out.println("Appointment Deleted!!");
+        }
+
+        NotificationCompat.Builder notificationBuilder = new NotificationCompat.Builder(this, channelId).setSmallIcon(R.mipmap.email).setContentTitle(title).setContentText(message).setAutoCancel(true).setSound(defaultSoundUri).setContentIntent(pendingIntent);
+
+        NotificationManager notificationManager = (NotificationManager) getSystemService(Context.NOTIFICATION_SERVICE);
 
         notificationManager.notify(0 /* ID of notification */, notificationBuilder.build());
     }
+
+    private static final String APP_KEY = "key=AAAACMqZO2Y:APA91bFvKzS7o72_2hf-zA5jqc9hKfCUQcT-qvo_p3lsrKNGYrN6QmLKWdbqe48dwoSD53kn7Q2d-jnlDvjtZyM57vmgkU1vI_ZERkkkEVpZzDm3VzgunyGzPDa1pB1LbD0AGGBFdgNA";
+    private static final String POST_URL = "https://fcm.googleapis.com/fcm/send";
+    private static final String POST_PARAMS = "{ \"data\": { \"title\": \"{message}\", \"detail\": \"{description}\"}, \"to\" : \"{regId}\"}";
+
+
 }
