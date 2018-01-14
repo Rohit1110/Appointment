@@ -37,6 +37,7 @@ import com.google.firebase.firestore.EventListener;
 import com.google.firebase.firestore.FirebaseFirestoreException;
 import com.google.firebase.firestore.Query;
 import com.google.firebase.firestore.QuerySnapshot;
+import com.google.gson.Gson;
 
 import java.util.ArrayList;
 import java.util.GregorianCalendar;
@@ -68,7 +69,13 @@ public class AppointmentsActivity extends AppCompatActivity {
         //isReadContactPermissionGranted();
         // isReadCalenderPermissionGranted();
 
+
         user = Utility.getUserFromSharedPrefs(AppointmentsActivity.this);
+        String userJson = getIntent().getStringExtra("user");
+        if (userJson != null) {
+            user = new Gson().fromJson(userJson, User.class);
+        }
+
 
         recyclerView = (RecyclerView) findViewById(R.id.recycler_view);
         recyclerView.addItemDecoration(new SimpleDividerItemDecoration(this));
@@ -180,7 +187,9 @@ public class AppointmentsActivity extends AppCompatActivity {
         switch (item.getItemId()) {
             case R.id.actionprofile:
 
-                Intent intent = new Intent(AppointmentsActivity.this, EditProfileActivity.class);
+                Intent intent=new Intent(AppointmentsActivity.this,EditProfileActivity.class);
+                intent.putExtra("user", new Gson().toJson(user));
+
                 startActivity(intent);
                 return true;
 

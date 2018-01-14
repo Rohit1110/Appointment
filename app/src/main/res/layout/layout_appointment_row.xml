@@ -28,7 +28,7 @@
         android:layout_alignParentRight="true"
         android:paddingRight="@dimen/card_margin"
         android:text="Name"
-        android:textColor="#212121" />
+        android:textColor="#757575" />
 
     <TextView
         android:id="@+id/txtdecription"

@@ -3,17 +3,19 @@
     android:layout_gravity="center_horizontal"
     android:background="@android:color/white"
     android:paddingBottom="10dip"
-    android:paddingLeft="10dip"
+    android:paddingLeft="5dip"
+    android:layout_marginRight="@dimen/card_margin"
     android:paddingTop="10dip"
     xmlns:android="http://schemas.android.com/apk/res/android">
 
 
-        <LinearLayout
+          <LinearLayout
             android:id="@+id/llayout"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_marginBottom="5dp"
-            android:orientation="vertical">
+            android:orientation="vertical"
+            android:padding="18dp">
 
             <TextView
                 android:id="@+id/txt_appointment_phone"
@@ -21,25 +23,26 @@
                 android:layout_height="wrap_content"
                 android:layout_marginBottom="5dp"
                 android:text="User phone"
-                android:textStyle="bold"
-                android:textSize="25sp" />
-
+                android:textSize="25sp"
+                android:textStyle="bold" />
 
 
         </LinearLayout>
-    <LinearLayout
-        android:id="@+id/row"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_below="@+id/llayout"
-        android:layout_marginRight="5dp"
-        android:orientation="vertical">
-        <View
-            android:layout_width="wrap_content"
-            android:layout_height="1dp"
-            android:background="#c0c0c0"/>
 
-    </LinearLayout>
+        <LinearLayout
+            android:id="@+id/row"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_below="@+id/llayout"
+            android:layout_marginRight="5dp"
+            android:orientation="vertical">
+
+            <View
+                android:layout_width="wrap_content"
+                android:layout_height="1dp"
+                android:background="#c0c0c0" />
+
+        </LinearLayout>
 
         <LinearLayout
             android:id="@+id/lilayout"
@@ -47,7 +50,8 @@
             android:layout_height="wrap_content"
             android:layout_below="@+id/row"
             android:layout_marginBottom="5dp"
-            android:orientation="horizontal">
+            android:orientation="horizontal"
+            android:padding="18dp">
 
             <TextView
                 android:id="@+id/selecteddate"
@@ -55,7 +59,8 @@
                 android:layout_height="wrap_content"
                 android:layout_gravity="center_vertical"
                 android:text="02 jan 2017"
-                android:textSize="20sp"/>
+                android:textSize="20sp" />
+
             <LinearLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
@@ -66,11 +71,10 @@
                     android:id="@+id/txttoday"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:layout_margin="10dp"
+                    android:layout_margin="7dp"
                     android:gravity="center"
-                    android:textSize="20sp"
-
-                    android:text="Today" />
+                    android:text="Today"
+                    android:textSize="20sp" />
 
                 <TextView
                     android:layout_width="wrap_content"
@@ -78,73 +82,86 @@
                     android:layout_margin="10dp"
                     android:gravity="center"
                     android:text="|" />
-
-
                 <TextView
                     android:id="@+id/txttommarow"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:layout_margin="10dp"
+                    android:layout_margin="8dp"
                     android:gravity="center"
-                    android:textSize="20sp"
-                    android:text="Tomorrow" />
+                    android:text="Tomorrow"
+                    android:textSize="20sp" />
             </LinearLayout>
+        </LinearLayout>
+
+        <LinearLayout
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_below="@+id/lilayout"
+            android:layout_marginRight="5dp"
+            android:orientation="vertical">
+
+            <View
+                android:layout_width="wrap_content"
+                android:layout_height="1dp"
+                android:background="#c0c0c0" />
+
+        </LinearLayout>
+        <LinearLayout
+            android:id="@+id/appointment"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_below="@+id/lilayout"
+            android:padding="18dp"
+            android:orientation="vertical">
+
+        <EditText
+            android:id="@+id/edit_reason"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="5dp"
+            android:hint="Reason for Appointment"
+             />
+
 
 
         </LinearLayout>
-    <LinearLayout
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_below="@+id/lilayout"
-        android:layout_marginRight="5dp"
-        android:orientation="vertical">
-        <View
-            android:layout_width="wrap_content"
-            android:layout_height="1dp"
-            android:background="#c0c0c0"/>
-
-    </LinearLayout>
-
-    <EditText
-        android:id="@+id/edit_reason"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_below="@+id/lilayout"
-        android:layout_marginTop="5dp"
-        android:hint="Reason for Appointment (optional)"/>
-
-
 
 
         <LinearLayout
+            android:id="@+id/reasonlayout"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
-            android:layout_below="@+id/edit_reason"
+            android:layout_below="@+id/appointment"
+            android:layout_marginTop="5dp"
             android:orientation="vertical">
+
+            <View
+                android:layout_marginTop="1dp"
+                android:layout_width="wrap_content"
+                android:layout_height="1dp"
+                android:background="#c0c0c0" />
 
             <TextView
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
+                android:layout_marginTop="@dimen/card_margin"
+                android:paddingLeft="18dp"
                 android:text="Slots to choose from"
-                android:layout_marginLeft="2dp"
-                android:textSize="20sp"
-                />
+                android:textSize="20sp" />
 
             <TextView
                 android:id="@+id/txt_slot_selected"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_marginLeft="2dp"
+                android:paddingLeft="18dp"
                 android:text="No slots selected"
+                />
 
-
-               />
             <View
                 android:layout_width="wrap_content"
                 android:layout_height="1dp"
                 android:layout_marginLeft="5dp"
-                android:background="#c0c0c0"/>
-
+                android:background="#c0c0c0" />
 
             <ListView
                 android:id="@+id/list_availableslot"
@@ -152,7 +169,17 @@
                 android:layout_height="match_parent">
 
             </ListView>
-
-
         </LinearLayout>
-    </RelativeLayout>
+
+       </RelativeLayout>
+
+
+
+
+
+
+
+
+
+
+

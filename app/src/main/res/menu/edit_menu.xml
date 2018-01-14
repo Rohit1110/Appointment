@@ -7,5 +7,11 @@
     android:title=""
     android:icon="@mipmap/mark"
     app:showAsAction="ifRoom"/>
+   <item
+       android:id="@+id/menu_edit"
+       android:title=""
+       android:icon="@mipmap/editmenu"
+       app:showAsAction="ifRoom"/>
 
 </menu>
+
