@@ -224,7 +224,9 @@ public class EditProfileActivity extends AppCompatActivity {
                     if(spinner.getSelectedStrings().toString() != "[]"){
                         selecteddays= "'" + spinner.getSelectedStrings().toString().replace("[", "").replace("]", "").replace(", ", "','") + "'";
                         System.out.println("Selected Days :  "+ selecteddays);
+
                         user.setSelectedDays(selecteddays);
+
 
                     }
                     dialog = Utility.showProgress(EditProfileActivity.this);

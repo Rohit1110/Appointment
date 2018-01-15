@@ -19,6 +19,7 @@ import android.widget.EditText;
 import android.widget.ListView;
 import android.widget.Spinner;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.OnFailureListener;
@@ -317,56 +318,63 @@ public class SelectDateAcitivity extends AppCompatActivity {
             System.out.println("Reason =>" + reason.getText().toString());
         }
 
-        appointment.setAppointmentStatus(Utility.APP_STATUS_ACTIVE);
-        dialog = Utility.showProgress(SelectDateAcitivity.this);
-        FirebaseUtil.db.collection(FirebaseUtil.DOC_USERS).document(userPhone).
-                collection(FirebaseUtil.DOC_APPOINTMENTS).document(appointment.toString()).set(appointment).addOnSuccessListener(new OnSuccessListener<Void>() {
-            @Override
-            public void onSuccess(Void aVoid) {
-                System.out.println("Completed Booking for user!!!" + userPhone);
 
-                System.out.println("Appointment added successfully!!" + appointment);
+        if (selectedSlots != null && selectedSlots.size() > 0) {
+            appointment.setAppointmentStatus(Utility.APP_STATUS_ACTIVE);
+            dialog = Utility.showProgress(SelectDateAcitivity.this);
+            FirebaseUtil.db.collection(FirebaseUtil.DOC_USERS).document(userPhone).
+                    collection(FirebaseUtil.DOC_APPOINTMENTS).document(appointment.toString()).set(appointment).addOnSuccessListener(new OnSuccessListener<Void>() {
+                @Override
+                public void onSuccess(Void aVoid) {
+                    System.out.println("Completed Booking for user!!!" + userPhone);
+
+                    System.out.println("Appointment added successfully!!" + appointment);
 
 
-                User currentUser = Utility.getUserFromSharedPrefs(SelectDateAcitivity.this);
+                    User currentUser = Utility.getUserFromSharedPrefs(SelectDateAcitivity.this);
 
-                appointment.setId(appointment.toString());
-                final Appointment otherUserAppointment = appointment.duplicate(userPhone);
-                if (currentUser != null) {
-                    otherUserAppointment.setName(Utility.getStringValue(currentUser.getFirstName()) + " " + Utility.getStringValue(currentUser.getLastName()));
+                    appointment.setId(appointment.toString());
+                    final Appointment otherUserAppointment = appointment.duplicate(userPhone);
+                    if (currentUser != null) {
+                        otherUserAppointment.setName(Utility.getStringValue(currentUser.getFirstName()) + " " + Utility.getStringValue(currentUser.getLastName()));
+                    }
+                    FirebaseUtil.db.collection(FirebaseUtil.DOC_USERS).document(appointment.getPhone()).
+                            collection(FirebaseUtil.DOC_APPOINTMENTS).
+                            document(appointment.toString()).set(otherUserAppointment).addOnSuccessListener(new OnSuccessListener<Void>() {
+                        @Override
+                        public void onSuccess(Void aVoid) {
+                            System.out.println("Completed booking for other user!!!" + appointment.getPhone());
+                            Utility.hideProgress(dialog);
+                            System.out.println("Appointment added successfully!!" + otherUserAppointment);
+                            Appointment duplicate = appointment.duplicate(appointment.getPhone());
+                            duplicate.setName(otherUserAppointment.getName());
+                            new NotificationTask(duplicate, Utility.NOTIFICATION_TYPE_NEW).sendNotification();
+                            goToHome();
+                        }
+                    }).addOnFailureListener(new OnFailureListener() {
+                        @Override
+                        public void onFailure(@NonNull Exception e) {
+                            System.out.println("Appointment failed to add => " + e);
+                            e.printStackTrace();
+                        }
+                    });
+
+
                 }
-                FirebaseUtil.db.collection(FirebaseUtil.DOC_USERS).document(appointment.getPhone()).
-                        collection(FirebaseUtil.DOC_APPOINTMENTS).
-                        document(appointment.toString()).set(otherUserAppointment).addOnSuccessListener(new OnSuccessListener<Void>() {
-                    @Override
-                    public void onSuccess(Void aVoid) {
-                        System.out.println("Completed booking for other user!!!" + appointment.getPhone());
-                        Utility.hideProgress(dialog);
-                        System.out.println("Appointment added successfully!!" + otherUserAppointment);
-                        new NotificationTask(appointment.duplicate(appointment.getPhone()), Utility.NOTIFICATION_TYPE_NEW).sendNotification();
-                        goToHome();
-                    }
-                }).addOnFailureListener(new OnFailureListener() {
-                    @Override
-                    public void onFailure(@NonNull Exception e) {
-                        System.out.println("Appointment failed to add => " + e);
-                        e.printStackTrace();
-                    }
-                });
-
-
-            }
-        }) /*{
+            }) /*{
             @Override public void onComplete (@NonNull Task < DocumentReference > task) {
 
             }*//*
         })*/.addOnFailureListener(new OnFailureListener() {
-            @Override
-            public void onFailure(@NonNull Exception e) {
-                System.out.println("Appointment failed to add => " + e);
-                e.printStackTrace();
-            }
-        });
+                @Override
+                public void onFailure(@NonNull Exception e) {
+                    System.out.println("Appointment failed to add => " + e);
+                    e.printStackTrace();
+                }
+            });
+        } else {
+            Toast.makeText(SelectDateAcitivity.this, "Please select at least one time slot", Toast.LENGTH_LONG).show();
+        }
     }
 
     private void goToHome() {
