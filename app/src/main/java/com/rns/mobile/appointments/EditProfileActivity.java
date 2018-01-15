@@ -225,7 +225,7 @@ public class EditProfileActivity extends AppCompatActivity {
                         selecteddays= "'" + spinner.getSelectedStrings().toString().replace("[", "").replace("]", "").replace(", ", "','") + "'";
                         System.out.println("Selected Days :  "+ selecteddays);
 
-                        user.setSelectedDays(selecteddays);
+                        user.setSelectedDays(selecteddays.replaceAll("\'", ""));
 
 
                     }
