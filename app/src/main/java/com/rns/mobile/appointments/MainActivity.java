@@ -36,7 +36,6 @@ public class MainActivity extends AppCompatActivity {
         setContentView(R.layout.activity_main);
 
 
-        //TODO: read from auth
         phoneNumber = FirebaseUtil.getMobile();
 
         System.out.println("#### LOADING PROFILE FOR USER " + phoneNumber + ".. ###");
