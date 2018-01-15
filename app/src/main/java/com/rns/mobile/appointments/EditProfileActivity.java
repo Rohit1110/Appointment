@@ -6,12 +6,10 @@ import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.v7.app.AppCompatActivity;
-import android.text.InputType;
 import android.util.Log;
 import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
-import android.view.View;
 import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.EditText;
@@ -123,10 +121,10 @@ public class EditProfileActivity extends AppCompatActivity {
         spinner.setEnabled(false);
         spinner.setItems( getResources().getStringArray(R.array.off_days));
 
-       // String[] items = (user.getSelecteddays().split(","));
+       // String[] items = (user.getSelectedDays().split(","));
 
-        if (user != null && user.getSelecteddays() != null) {
-            List<String> myList = new ArrayList<String>(Arrays.asList(user.getSelecteddays().replaceAll("\'", "").split(",")));
+        if (user != null && user.getSelectedDays() != null) {
+            List<String> myList = new ArrayList<String>(Arrays.asList(user.getSelectedDays().replaceAll("\'", "").split(",")));
             spinner.setSelection(myList);
         }
 
@@ -226,7 +224,7 @@ public class EditProfileActivity extends AppCompatActivity {
                     if(spinner.getSelectedStrings().toString() != "[]"){
                         selecteddays= "'" + spinner.getSelectedStrings().toString().replace("[", "").replace("]", "").replace(", ", "','") + "'";
                         System.out.println("Selected Days :  "+ selecteddays);
-                        user.setSelecteddays(selecteddays);
+                        user.setSelectedDays(selecteddays);
 
                     }
                     dialog = Utility.showProgress(EditProfileActivity.this);
