@@ -116,6 +116,12 @@ public class Appointment {
         otherUserAppointment.setEndTime(getEndTime());
         otherUserAppointment.setDescription(getDescription());
         otherUserAppointment.setAppointmentStatus(getAppointmentStatus());
+        String name = getName();
+        if(name != null) {
+            otherUserAppointment.setName(name);
+        } else {
+            otherUserAppointment.setName(userPhone);
+        }
         return otherUserAppointment;
     }
 }

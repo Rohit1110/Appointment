@@ -343,8 +343,7 @@ public class SelectDateAcitivity extends AppCompatActivity {
                         System.out.println("Completed booking for other user!!!" + appointment.getPhone());
                         Utility.hideProgress(dialog);
                         System.out.println("Appointment added successfully!!" + otherUserAppointment);
-
-                        new NotificationTask(otherUserAppointment, Utility.NOTIFICATION_TYPE_NEW).sendNotification();
+                        new NotificationTask(appointment.duplicate(appointment.getPhone()), Utility.NOTIFICATION_TYPE_NEW).sendNotification();
                         goToHome();
                     }
                 }).addOnFailureListener(new OnFailureListener() {
