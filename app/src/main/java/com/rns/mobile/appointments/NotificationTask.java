@@ -4,6 +4,7 @@ import android.os.AsyncTask;
 
 import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.firebase.firestore.DocumentSnapshot;
+import com.google.gson.Gson;
 
 import java.io.BufferedReader;
 import java.io.IOException;
@@ -15,6 +16,8 @@ import java.util.ArrayList;
 import java.util.List;
 
 import model.Appointment;
+import model.NotificationData;
+import model.NotificationPayload;
 import model.User;
 import utils.FirebaseUtil;
 
@@ -67,10 +70,15 @@ public class NotificationTask extends AsyncTask<Void, Void, Void> {
 
         String name = appointment.getName() != null ? appointment.getName() : appointment.getPhone();
 
-        String postData = "{\"name\":\"" + name + "\",\"type\":\"" + type + "\",\"appointmentId\":\"" + appointment.getId() + "\"," + "\"startTime\":\"" + appointment.getStartTime() + "\",\"endTime\":\"" + appointment.getEndTime() + "\",\"date\":\"" + appointment.getDate() + "\"}";
+       // String postData = "{\"name\":\"" + name + "\",\"type\":\"" + type + "\",\"appointmentId\":\"" + appointment.getId() + "\"," + "\"startTime\":\"" + appointment.getStartTime() + "\",\"endTime\":\"" + appointment.getEndTime() + "\",\"date\":\"" + appointment.getDate() + "\"}";
 
-        String postString = "{ \"data\":" + postData + ", \"registration_ids\" : \"" + tokens + "\"}";
+        //String postString = "{ \"data\":" + postData + ", \"registration_ids\" : \"" + new Gson().toString(tokens) + "\"}";
 
+        NotificationPayload payload = new NotificationPayload();
+        NotificationData data = new NotificationData(appointment, type);
+        payload.setRegistration_ids(tokens);
+        payload.setData(data);
+        String postString = new Gson().toJson(payload);
         System.out.println("Notification request =>" + postString);
 
         os.write(postString.getBytes());

@@ -23,7 +23,6 @@ import android.support.annotation.NonNull;
 import android.support.v4.content.ContextCompat;
 import android.util.Log;
 import android.widget.DatePicker;
-import android.widget.Toast;
 
 import com.google.gson.Gson;
 
@@ -354,11 +353,8 @@ public class Utility {
 
         String event = getSharedString(activity, appointment.getId());
         if(event != null && event.trim().length() > 0) {
-            Toast.makeText(activity, "Event exists!!", Toast.LENGTH_LONG);
             return true;
         }
-
-        Toast.makeText(activity, "Event does not exist for appointment " + appointment, Toast.LENGTH_LONG);
 
         if (!checkPermission(activity)) {
             return true;
