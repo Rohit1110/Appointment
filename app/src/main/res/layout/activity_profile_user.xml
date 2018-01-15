@@ -193,7 +193,7 @@
                     android:textSize="20sp">
                 </android.support.v7.widget.AppCompatSpinner>
             </LinearLayout>
-      <!--      <LinearLayout
+           <LinearLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_marginTop="5dp"
@@ -205,17 +205,14 @@
                     android:text="  Weekly off day:-"
 
                     />
-                <EditText
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:id="@+id/et_weekoff_day"
-                    android:textSize="20sp"
-                    android:editable="false"
 
-                    >
 
-                </EditText>
-            </LinearLayout>-->
+             <com.rns.mobile.appointments.MultiSelectionSpinner
+                   android:id="@+id/spinner_off_days"
+                   android:layout_width="match_parent"
+                   android:layout_height="wrap_content" />
+
+            </LinearLayout>
                            </android.support.design.widget.TextInputLayout>
         </LinearLayout>
 

@@ -8,6 +8,9 @@ import java.util.List;
 
 public class User {
 
+
+    private String selecteddays;
+
     private String firstName;
     private String lastName;
     private String email;
@@ -16,6 +19,14 @@ public class User {
     private String endTime;
     private String phone;
     private List<String> fcmTokens;
+
+    public String getSelecteddays() {
+        return selecteddays;
+    }
+
+    public void setSelecteddays(String selecteddays) {
+        this.selecteddays = selecteddays;
+    }
 
     public List<String> getFcmTokens() {
         return fcmTokens;

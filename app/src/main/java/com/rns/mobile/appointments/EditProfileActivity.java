@@ -22,7 +22,9 @@ import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.firebase.firestore.SetOptions;
 import com.google.gson.Gson;
 
+import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.List;
 
 import model.User;
 import utils.FirebaseUtil;
@@ -45,12 +47,14 @@ public class EditProfileActivity extends AppCompatActivity {
     private String phoneNumber;
     private boolean hideicon = true;
     private ProgressDialog dialog;
+    MultiSelectionSpinner spinner;
+    private String selecteddays;
 
     @Override
     public void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_profile_user);
-
+        final String[] stringsGameCat = getResources().getStringArray(R.array.off_days);
         String userJson = getIntent().getStringExtra("user");
         phoneNumber = FirebaseUtil.getMobile();
 
@@ -113,6 +117,17 @@ public class EditProfileActivity extends AppCompatActivity {
         if (user != null && user.getEndTime() != null) {
             etEndTime.setSelection(Arrays.asList(Utility.TIME_SLOTS).indexOf(user.getEndTime()));
 
+        }
+
+       spinner=(MultiSelectionSpinner)findViewById(R.id.spinner_off_days);
+        spinner.setEnabled(false);
+        spinner.setItems( getResources().getStringArray(R.array.off_days));
+
+       // String[] items = (user.getSelecteddays().split(","));
+
+        if (user != null && user.getSelecteddays() != null) {
+            List<String> myList = new ArrayList<String>(Arrays.asList(user.getSelecteddays().replaceAll("\'", "").split(",")));
+            spinner.setSelection(myList);
         }
 
     /*    btnSaveProfile = (Button) findViewById(R.id.btn_save_profile);
@@ -190,6 +205,7 @@ public class EditProfileActivity extends AppCompatActivity {
                 etStartTime.setEnabled(true);
 
                 etEndTime.setEnabled(true);
+                spinner.setEnabled(true);
 
 
                 return true;
@@ -207,7 +223,14 @@ public class EditProfileActivity extends AppCompatActivity {
                     user.setEmail(etEmail.getText().toString());
                     user.setStartTime(etStartTime.getSelectedItem().toString());
                     user.setEndTime(etEndTime.getSelectedItem().toString());
+                    if(spinner.getSelectedStrings().toString() != "[]"){
+                        selecteddays= "'" + spinner.getSelectedStrings().toString().replace("[", "").replace("]", "").replace(", ", "','") + "'";
+                        System.out.println("Selected Days :  "+ selecteddays);
+                        user.setSelecteddays(selecteddays);
+
+                    }
                     dialog = Utility.showProgress(EditProfileActivity.this);
+
                     FirebaseUtil.db.collection(FirebaseUtil.DOC_USERS).document(phoneNumber).set(user, SetOptions.merge()).addOnSuccessListener(new OnSuccessListener<Void>() {
                         @Override
                         public void onSuccess(Void aVoid) {
