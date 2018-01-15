@@ -9,7 +9,7 @@ import java.util.List;
 public class User {
 
 
-    private String selecteddays;
+    private String selectedDays;
 
     private String firstName;
     private String lastName;
@@ -20,12 +20,12 @@ public class User {
     private String phone;
     private List<String> fcmTokens;
 
-    public String getSelecteddays() {
-        return selecteddays;
+    public String getSelectedDays() {
+        return selectedDays;
     }
 
-    public void setSelecteddays(String selecteddays) {
-        this.selecteddays = selecteddays;
+    public void setSelectedDays(String selectedDays) {
+        this.selectedDays = selectedDays;
     }
 
     public List<String> getFcmTokens() {
