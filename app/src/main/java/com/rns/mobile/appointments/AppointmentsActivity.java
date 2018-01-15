@@ -111,6 +111,7 @@ public class AppointmentsActivity extends AppCompatActivity {
                                     public void onSuccess(Void aVoid) {
                                         System.out.println("Deleted for other user appointment =>" + currentAppointment.getId());
                                         Appointment app = currentAppointment.duplicate(currentAppointment.getPhone());
+                                        app.setName(user.getFullName());
                                         new NotificationTask(app, Utility.NOTIFICATION_TYPE_CANCEL).sendNotification();
                                     }
                                 }).addOnFailureListener(new OnFailureListener() {
