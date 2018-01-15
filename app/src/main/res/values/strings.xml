@@ -5,6 +5,7 @@
     <string name="start_phone_auth">Login</string>
     <string name="verify_phone_auth">Verify</string>
     <string name="resend_phone_auth">Resend</string>
+    <string name="title_app">qUp</string>
     <string name="hint_code_number">+91</string>
     <string name="title_activity_main2">Appointments</string>
     <string name="searchappointment">Select Contact</string>

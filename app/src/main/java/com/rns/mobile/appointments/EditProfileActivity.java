@@ -6,6 +6,7 @@ import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.v7.app.AppCompatActivity;
+import android.text.InputType;
 import android.util.Log;
 import android.view.Menu;
 import android.view.MenuInflater;
@@ -58,27 +59,43 @@ public class EditProfileActivity extends AppCompatActivity {
         }
 
         etFirstName = (EditText) findViewById(R.id.et_first_name);
+        etFirstName.setEnabled(false);
+
         if (user != null) {
             etFirstName.setText(user.getFirstName());
+
         }
 
         etLastName = (EditText) findViewById(R.id.et_last_name);
+        etLastName.setEnabled(false);
+
         if (user != null) {
             etLastName.setText(user.getLastName());
+
+
         }
 
         etEmail = (EditText) findViewById(R.id.et_email);
+        etEmail.setEnabled(false);
+
         if (user != null) {
             etEmail.setText(user.getEmail());
+
         }
 
         etBusinessName = (EditText) findViewById(R.id.et_business_name);
+        etBusinessName.setEnabled(false);
+
         if (user != null) {
             etBusinessName.setText(user.getBusinessName());
+
         }
 
         etStartTime = (Spinner) findViewById(R.id.et_start_time);
+        etStartTime.setEnabled(false);
         etEndTime = (Spinner) findViewById(R.id.et_end_time);
+        etEndTime.setEnabled(false);
+
 
         ArrayAdapter<String> fromAdapter = new ArrayAdapter<String>(this, android.R.layout.simple_spinner_item, Utility.TIME_SLOTS);
         fromAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
@@ -86,6 +103,7 @@ public class EditProfileActivity extends AppCompatActivity {
 
         if (user != null && user.getStartTime() != null) {
             etStartTime.setSelection(Arrays.asList(Utility.TIME_SLOTS).indexOf(user.getStartTime()));
+
         }
 
         ArrayAdapter<String> toAdapter = new ArrayAdapter<String>(this, android.R.layout.simple_spinner_item, Utility.TIME_SLOTS);
@@ -93,7 +111,8 @@ public class EditProfileActivity extends AppCompatActivity {
         etEndTime.setAdapter(toAdapter);
 
         if (user != null && user.getEndTime() != null) {
-            etStartTime.setSelection(Arrays.asList(Utility.TIME_SLOTS).indexOf(user.getEndTime()));
+            etEndTime.setSelection(Arrays.asList(Utility.TIME_SLOTS).indexOf(user.getEndTime()));
+
         }
 
     /*    btnSaveProfile = (Button) findViewById(R.id.btn_save_profile);
@@ -134,6 +153,20 @@ public class EditProfileActivity extends AppCompatActivity {
     public boolean onCreateOptionsMenu(Menu menu) {
         MenuInflater inflater = getMenuInflater();
         inflater.inflate(R.menu.edit_menu, menu);
+        if (hideicon) {
+            MenuItem item = menu.findItem(R.id.menu_mark);
+            item.setVisible(false);
+            this.invalidateOptionsMenu();
+        }else{
+            MenuItem item = menu.findItem(R.id.menu_mark);
+            item.setVisible(true);
+            this.invalidateOptionsMenu();
+
+            MenuItem items = menu.findItem(R.id.menu_edit);
+            items.setVisible(false);
+            this.invalidateOptionsMenu();
+
+        }
 
 
         return true;
@@ -143,12 +176,31 @@ public class EditProfileActivity extends AppCompatActivity {
     public boolean onOptionsItemSelected(MenuItem item) {
         switch (item.getItemId()) {
 
+            case R.id.menu_edit:
+                hideicon = false;
+                invalidateOptionsMenu();
+                etFirstName.setEnabled(true);
+                etFirstName.setFocusable(true);
+                etLastName.setEnabled(true);
+
+                etEmail.setEnabled(true);
+
+                etBusinessName.setEnabled(true);
+
+                etStartTime.setEnabled(true);
+
+                etEndTime.setEnabled(true);
+
+
+                return true;
             case R.id.menu_mark:
 
                 if (user == null) {
                     user = new User();
                 }
                 if (!etFirstName.getText().toString().equals("") && !etLastName.getText().toString().equals("") && !etEmail.getText().toString().equals("")) {
+                    hideicon = true;
+                    invalidateOptionsMenu();
                     user.setFirstName(etFirstName.getText().toString());
                     user.setLastName(etLastName.getText().toString());
                     user.setBusinessName(etBusinessName.getText().toString());
