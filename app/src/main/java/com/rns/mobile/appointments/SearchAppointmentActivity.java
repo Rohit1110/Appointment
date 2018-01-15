@@ -25,7 +25,6 @@ import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
 
-import com.google.common.collect.Ordering;
 import com.google.gson.Gson;
 
 import java.util.List;
@@ -34,7 +33,6 @@ import java.util.concurrent.CopyOnWriteArrayList;
 
 import adapter.ContactListAdapter;
 import decorator.ContactDividerItemDecoration;
-import decorator.SimpleDividerItemDecoration;
 import model.Appointment;
 import model.UserContact;
 import utils.Utility;
@@ -216,11 +214,16 @@ public class SearchAppointmentActivity extends AppCompatActivity {
 
 
         ContentResolver cr = getContentResolver();
-        Cursor cur = cr.query(ContactsContract.Contacts.CONTENT_URI, null, null, null, null);
+
+        String[] projection = {ContactsContract.CommonDataKinds.Phone.DISPLAY_NAME, ContactsContract.CommonDataKinds.Phone.NUMBER, ContactsContract.CommonDataKinds.Phone.PHOTO_URI};
+        Cursor cur = cr.query(ContactsContract.CommonDataKinds.Phone.CONTENT_URI, projection, null, null, ContactsContract.CommonDataKinds.Phone.DISPLAY_NAME + " ASC");
+
+
+        //Cursor cur = cr.query(ContactsContract.Contacts.CONTENT_URI, null, null, null, null);
 
         if ((cur != null ? cur.getCount() : 0) > 0) {
             while (cur != null && cur.moveToNext()) {
-                String id = cur.getString(cur.getColumnIndex(ContactsContract.Contacts._ID));
+                /*String id = cur.getString(cur.getColumnIndex(ContactsContract.Contacts._ID));
                 String name = cur.getString(cur.getColumnIndex(ContactsContract.Contacts.DISPLAY_NAME));
 
                 if (cur.getInt(cur.getColumnIndex(ContactsContract.Contacts.HAS_PHONE_NUMBER)) > 0) {
@@ -238,9 +241,16 @@ public class SearchAppointmentActivity extends AppCompatActivity {
                     }
                     filterList.addAll(list);
                     pCur.close();
-                }
+                }*/
+                String name = cur.getString(0);
+                String phone = cur.getString(1);
+                Log.i(TAG, "Name: " + name);
+                Log.i(TAG, "Phone Number: " + phone);
+                //String  test = exam.getTestName().replaceAll("\\p{P}","");
+                a = new UserContact(name, phone.replaceAll("\\p{P}", ""));
+                list.add(a);
             }
-
+            filterList.addAll(list);
         }
         if (cur != null) {
             cur.close();

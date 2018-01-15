@@ -2,6 +2,8 @@ package model;
 
 import java.util.List;
 
+import utils.Utility;
+
 /**
  * Created by Admin on 31/12/2017.
  */
@@ -94,6 +96,10 @@ public class User {
 
     public String getUserName() {
         return firstName != null ? firstName : phone;
+    }
+
+    public String getFullName() {
+        return Utility.getStringValue(getFirstName()) + " " + Utility.getStringValue(getLastName());
     }
 
 }

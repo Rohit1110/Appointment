@@ -336,7 +336,7 @@ public class SelectDateAcitivity extends AppCompatActivity {
                     appointment.setId(appointment.toString());
                     final Appointment otherUserAppointment = appointment.duplicate(userPhone);
                     if (currentUser != null) {
-                        otherUserAppointment.setName(Utility.getStringValue(currentUser.getFirstName()) + " " + Utility.getStringValue(currentUser.getLastName()));
+                        otherUserAppointment.setName(currentUser.getFullName());
                     }
                     FirebaseUtil.db.collection(FirebaseUtil.DOC_USERS).document(appointment.getPhone()).
                             collection(FirebaseUtil.DOC_APPOINTMENTS).
