@@ -10,7 +10,7 @@
     <string name="title_activity_main2">Appointments</string>
     <string name="searchappointment">Select Contact</string>
     <string name="bookappointment">Book Appointment </string>
-    <string name="profile">User Profile</string>
+    <string name="profile">Profile</string>
     <string name="filter">Filter</string>
 
 
@@ -20,7 +20,7 @@
         <item>Monday</item>
         <item>Tuesday</item>
         <item>Wednesday</item>
-        <item>Thrusday</item>
+        <item>Thursday</item>
         <item>Friday</item>
         <item>Saturday</item>
 

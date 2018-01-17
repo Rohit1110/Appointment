@@ -3,14 +3,14 @@ package com.rns.mobile.appointments;
 import android.Manifest;
 import android.annotation.TargetApi;
 import android.app.Activity;
-import android.app.AlarmManager;
 import android.app.AlertDialog;
-import android.app.PendingIntent;
+import android.app.Dialog;
 import android.app.ProgressDialog;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.pm.PackageManager;
+import android.graphics.Color;
 import android.os.Build;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
@@ -19,6 +19,7 @@ import android.support.v4.app.ActivityCompat;
 import android.support.v4.content.ContextCompat;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.GridLayoutManager;
+import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.Toolbar;
 import android.util.Log;
@@ -28,7 +29,15 @@ import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.MotionEvent;
 import android.view.View;
+import android.view.Window;
+import android.widget.Button;
+import android.widget.RadioButton;
+import android.widget.RadioGroup;
+import android.widget.RelativeLayout;
+import android.widget.Switch;
+import android.widget.TextView;
 import android.widget.Toast;
+import android.widget.ToggleButton;
 
 import com.google.android.gms.tasks.OnFailureListener;
 import com.google.android.gms.tasks.OnSuccessListener;
@@ -39,27 +48,41 @@ import com.google.firebase.firestore.Query;
 import com.google.firebase.firestore.QuerySnapshot;
 import com.google.gson.Gson;
 
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
-import java.util.GregorianCalendar;
+import java.util.Calendar;
+import java.util.Collection;
+import java.util.Collections;
+import java.util.Date;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
+import java.util.TreeMap;
 
-import adapter.AppointmentsAdapter;
+import adapter.AppointmentsDateAdapter;
 import decorator.SimpleDividerItemDecoration;
 import model.Appointment;
 import model.User;
+import recyclerAdapter.EventItem;
+import recyclerAdapter.HeaderItem;
+import recyclerAdapter.ListItem;
+import recyclerAdapter.SimpleAdapter;
 import utils.FirebaseUtil;
 import utils.Utility;
 
 public class AppointmentsActivity extends AppCompatActivity {
     private RecyclerView recyclerView;
     private List<Appointment> list;
-    private AppointmentsAdapter adapter;
+
     private User user;
     private String phoneNumber;
     private ProgressDialog dialog;
     private String TAG = "Appointments Activity";
     String id;
     private Appointment currentAppointment;
+    private SimpleAdapter mAdapter;
+    private View button;
+    AlertDialog alertDialog1;
 
 
     @Override
@@ -79,6 +102,29 @@ public class AppointmentsActivity extends AppCompatActivity {
 
         recyclerView = (RecyclerView) findViewById(R.id.recycler_view);
         recyclerView.addItemDecoration(new SimpleDividerItemDecoration(this));
+      /* String[] array_list={"one","two"};
+
+        mAdapter = new SimpleAdapter(this,array_list);
+
+        //This is the code to provide a sectioned list
+        List<SimpleSectionedRecyclerViewAdapter.Section> sections =
+                new ArrayList<SimpleSectionedRecyclerViewAdapter.Section>();
+
+        //Sections
+        sections.add(new SimpleSectionedRecyclerViewAdapter.Section(0,"Section 1"));
+       // sections.add(new SimpleSectionedRecyclerViewAdapter.Section(2,"Section 2"));
+       *//* sections.add(new SimpleSectionedRecyclerViewAdapter.Section(12,"Section 3"));
+        sections.add(new SimpleSectionedRecyclerViewAdapter.Section(14,"Section 4"));
+        sections.add(new SimpleSectionedRecyclerViewAdapter.Section(20,"Section 5"));*//*
+
+        //Add your adapter to the sectionAdapter
+        SimpleSectionedRecyclerViewAdapter.Section[] dummy = new SimpleSectionedRecyclerViewAdapter.Section[1];
+        SimpleSectionedRecyclerViewAdapter mSectionedAdapter = new
+                SimpleSectionedRecyclerViewAdapter(this,R.layout.section,R.id.section_text,adapter);
+        mSectionedAdapter.setSections(sections.toArray(dummy));
+
+        //Apply this adapter to the RecyclerView
+        recyclerView.setAdapter(mSectionedAdapter);*/
         recyclerView.addOnItemTouchListener(new RecyclerTouchListener(this, recyclerView, new ClickListener() {
 
 
@@ -151,11 +197,11 @@ public class AppointmentsActivity extends AppCompatActivity {
 
         list = new ArrayList<>();
         phoneNumber = FirebaseUtil.getMobile();
-        adapter = new AppointmentsAdapter(this, list);
-        RecyclerView.LayoutManager mLayoutManager = new GridLayoutManager(this, 1);
+        //adapter = new AppointmentsAdapter(this, list);
+       /* RecyclerView.LayoutManager mLayoutManager = new GridLayoutManager(this, 1);
         recyclerView.setLayoutManager(mLayoutManager);
-        recyclerView.setAdapter(adapter);
-        prepareAppointmentsList();
+        recyclerView.setAdapter(adapter);*/
+        prepareAppointmentsList(null);
 
 
         /*AlarmManager alarmManager = (AlarmManager)context.getSystemService(Context.ALARM_SERVICE);
@@ -185,51 +231,103 @@ public class AppointmentsActivity extends AppCompatActivity {
         switch (item.getItemId()) {
             case R.id.actionprofile:
 
-                Intent intent=new Intent(AppointmentsActivity.this,EditProfileActivity.class);
+                Intent intent = new Intent(AppointmentsActivity.this, EditProfileActivity.class);
                 intent.putExtra("user", new Gson().toJson(user));
 
                 startActivity(intent);
+                return true;
+
+            case R.id.actionfilter:
+                CreateAlertDialogWithRadioButtonGroup();
                 return true;
 
         }
         return false;
     }
 
-    private void prepareAppointmentsList() {
+    private void prepareAppointmentsList(String date) {
+
+        if (date == null) {
+            //Utility.showProgress(dialog, AppointmentsActivity.this);
+            FirebaseUtil.db.collection(FirebaseUtil.DOC_USERS).document(phoneNumber).collection(FirebaseUtil.DOC_APPOINTMENTS).
+                    orderBy("date", Query.Direction.DESCENDING).addSnapshotListener(new EventListener<QuerySnapshot>() {
+                @Override
+                public void onEvent(QuerySnapshot documentSnapshots, FirebaseFirestoreException e) {
+                    //Utility.hideProgress(dialog);
+                    prepareAppointmentsAdapter(documentSnapshots);
+                }
+            });
+        }else{
+
+            //Utility.showProgress(dialog, AppointmentsActivity.this);
+            FirebaseUtil.db.collection(FirebaseUtil.DOC_USERS).document(phoneNumber).collection(FirebaseUtil.DOC_APPOINTMENTS).
+                    orderBy("date", Query.Direction.DESCENDING).whereEqualTo("date",date).addSnapshotListener(new EventListener<QuerySnapshot>() {
+                @Override
+                public void onEvent(QuerySnapshot documentSnapshots, FirebaseFirestoreException e) {
+                    //Utility.hideProgress(dialog);
+                    prepareAppointmentsAdapter(documentSnapshots);
+                }
+            });
+
+        }
+
+    }
+
+    private void prepareAppointmentsAdapter(QuerySnapshot documentSnapshots) {
 
 
-        //Utility.showProgress(dialog, AppointmentsActivity.this);
-        FirebaseUtil.db.collection(FirebaseUtil.DOC_USERS).document(phoneNumber).collection(FirebaseUtil.DOC_APPOINTMENTS).
-                orderBy("date", Query.Direction.DESCENDING).addSnapshotListener(new EventListener<QuerySnapshot>() {
-            @Override
-            public void onEvent(QuerySnapshot documentSnapshots, FirebaseFirestoreException e) {
-                //Utility.hideProgress(dialog);
-                System.out.println("Appointments snapshot completed!" + documentSnapshots.size());
+        list.clear();
+        if (documentSnapshots != null && !documentSnapshots.isEmpty()) {
+            System.out.println("Appointments snapshot completed!" + documentSnapshots.size());
+            for (DocumentSnapshot doc : documentSnapshots) {
+                Appointment appointment = doc.toObject(Appointment.class);
 
-                list.clear();
-                if (documentSnapshots != null && !documentSnapshots.isEmpty()) {
-                    for (DocumentSnapshot doc : documentSnapshots) {
-                        Appointment appointment = doc.toObject(Appointment.class);
-
-                        if (appointment == null) {
-                            continue;
-                        }
-                        if (Utility.APP_STATUS_CANCELLED.equals(appointment.getAppointmentStatus())) {
-                            continue;
-
-                        }
-                        appointment.setId(doc.getId());
-                        list.add(appointment);
-                        Utility.addAppointmentsToCalender(AppointmentsActivity.this, appointment);
-
-                    }
-                    System.out.println("Appointments list size => " + list.size());
-                    adapter.notifyDataSetChanged();
+                if (appointment == null) {
+                    continue;
+                }
+                if (Utility.APP_STATUS_CANCELLED.equals(appointment.getAppointmentStatus())) {
+                    continue;
 
                 }
-            }
-        });
+                appointment.setId(doc.getId());
+                /*HeaderItem header = new HeaderItem(doc.getDate("date"));
+                list.add(header);*/
+                list.add(appointment);
+                Utility.addAppointmentsToCalender(AppointmentsActivity.this, appointment);
 
+            }
+            System.out.println("Appointments list size => " + list.size());
+//                    adapter.notifyDataSetChanged();
+
+            // To map and send this list to toMap function
+
+            //Created map should be sent to adapter
+
+
+            Map<String, List<Appointment>> events = toMap(list);
+
+            // Collections.sort(events);
+
+            List<ListItem> items = new ArrayList<>();
+
+            for (String date : events.keySet()) {
+                HeaderItem header = new HeaderItem(date);
+                items.add(header);
+
+                for (Appointment appointment : events.get(date)) {
+                    EventItem item = new EventItem(appointment);
+                    items.add(item);
+                }
+            }
+
+            RecyclerView recyclerView = (RecyclerView) findViewById(R.id.recycler_view);
+            recyclerView.setLayoutManager(new LinearLayoutManager(AppointmentsActivity.this));
+
+            //Collections.sort(items);
+
+            recyclerView.setAdapter(new AppointmentsDateAdapter(items));
+
+        }
     }
 
 
@@ -312,26 +410,6 @@ public class AppointmentsActivity extends AppCompatActivity {
         }
     }
 
-    public void scheduleAlarm(View V) {
-        // time at which alarm will be scheduled here alarm is scheduled at 1 day from current time,
-        // we fetch  the current time in milliseconds and added 1 day time
-        // i.e. 24*60*60*1000= 86,400,000   milliseconds in currentAppointment day
-        Long time = new GregorianCalendar().getTimeInMillis() + 24 * 60 * 60 * 1000;
-
-        // create an Intent and set the class which will execute when Alarm triggers, here we have
-        // given AlarmReciever in the Intent, the onRecieve() method of this class will execute when
-        // alarm triggers and
-        //we will write the code to send SMS inside onRecieve() method pf Alarmreciever class
-        Intent intentAlarm = new Intent(this, AlarmReciever.class);
-
-        // create the object
-        AlarmManager alarmManager = (AlarmManager) getSystemService(Context.ALARM_SERVICE);
-
-        //set the alarm for particular time
-        alarmManager.set(AlarmManager.RTC_WAKEUP, time, PendingIntent.getBroadcast(this, 1, intentAlarm, PendingIntent.FLAG_UPDATE_CURRENT));
-        Toast.makeText(this, "Alarm Scheduled for Tommrrow", Toast.LENGTH_LONG).show();
-
-    }
 
     //Calendar Read permission
 
@@ -376,6 +454,77 @@ public class AppointmentsActivity extends AppCompatActivity {
                 }
                 break;
         }
+    }
+
+    @NonNull
+    private Map<String, List<Appointment>> toMap(@NonNull List<Appointment> events) {
+        Map<String, List<Appointment>> map = new TreeMap<>(Collections.<String>reverseOrder());
+        for (Appointment event : events) {
+            List<Appointment> value = map.get(event.getDate());
+            if (value == null) {
+                value = new ArrayList<>();
+                map.put(event.getDate(), value);
+            }
+            value.add(event);
+        }
+        return map;
+    }
+
+    private void showRadioButtonDialog() {
+        Toast.makeText(AppointmentsActivity.this, "clicked", Toast.LENGTH_SHORT).show();
+        // custom dialog
+        final Dialog dialog = new Dialog(AppointmentsActivity.this);
+        dialog.requestWindowFeature(Window.FEATURE_NO_TITLE);
+        dialog.setContentView(R.layout.radiobutton_dialog);
+        RadioButton rg = (RadioButton)findViewById(R.id.rd);
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
+            rg.setOnContextClickListener(new View.OnContextClickListener() {
+                @Override
+                public boolean onContextClick(View v) {
+                    Toast.makeText(AppointmentsActivity.this, "Button clicked", Toast.LENGTH_SHORT).show();
+
+                    return true;
+                }
+            });
+        }
+        dialog.show();
+
+    }
+
+
+    public void CreateAlertDialogWithRadioButtonGroup(){
+
+
+        AlertDialog.Builder builder = new AlertDialog.Builder(AppointmentsActivity.this);
+        CharSequence[] values = {"Todays Appointments","Show All Appointments"};
+
+        builder.setTitle("Select Your Choice");
+
+        builder.setSingleChoiceItems(values, -1, new DialogInterface.OnClickListener() {
+
+            public void onClick(DialogInterface dialog, int item) {
+
+                switch(item)
+                {
+                    case 0:
+
+                        //Toast.makeText(AppointmentsActivity.this, "First Item Clicked", Toast.LENGTH_LONG).show();
+                        prepareAppointmentsList(Utility.formatDate(new Date(),Utility.DATE_FORMAT_USED));
+                        alertDialog1.dismiss();
+                        break;
+                    case 1:
+
+                        //Toast.makeText(AppointmentsActivity.this, "First Item Clicked", Toast.LENGTH_LONG).show();
+                        prepareAppointmentsList(null);
+                        alertDialog1.dismiss();
+                        break;
+                }
+                alertDialog1.dismiss();
+            }
+        });
+        alertDialog1 = builder.create();
+        alertDialog1.show();
+
     }
 
 
