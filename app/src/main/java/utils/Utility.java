@@ -203,6 +203,12 @@ public class Utility {
         return phone.trim().replaceAll("\\s+", "");
     }
 
+    public static String formatDate(Date date,String format){
+        SimpleDateFormat df = new SimpleDateFormat(format);
+        String formattedDate = df.format(date.getTime());
+        return formattedDate;
+    }
+
     public static String formatToUsedDate(String dateString) {
         if (dateString == null) {
             return null;
