@@ -43,7 +43,7 @@ public class EditProfileActivity extends AppCompatActivity {
     private User user;
     private Button btnSaveProfile;
     private String phoneNumber;
-    private boolean hideicon = true;
+    private boolean hideicon = false;
     private ProgressDialog dialog;
     MultiSelectionSpinner spinner;
     private String selecteddays;
@@ -56,47 +56,50 @@ public class EditProfileActivity extends AppCompatActivity {
         String userJson = getIntent().getStringExtra("user");
         phoneNumber = FirebaseUtil.getMobile();
 
+
         if (userJson != null) {
             user = new Gson().fromJson(userJson, User.class);
+
         }
 
         etFirstName = (EditText) findViewById(R.id.et_first_name);
-        etFirstName.setEnabled(false);
+
 
         if (user != null) {
             etFirstName.setText(user.getFirstName());
-
+            etFirstName.setEnabled(false);
+            hideicon=true;
         }
 
         etLastName = (EditText) findViewById(R.id.et_last_name);
-        etLastName.setEnabled(false);
+
 
         if (user != null) {
             etLastName.setText(user.getLastName());
-
+            etLastName.setEnabled(false);
 
         }
 
         etEmail = (EditText) findViewById(R.id.et_email);
-        etEmail.setEnabled(false);
+
 
         if (user != null) {
             etEmail.setText(user.getEmail());
-
+            etEmail.setEnabled(false);
         }
 
         etBusinessName = (EditText) findViewById(R.id.et_business_name);
-        etBusinessName.setEnabled(false);
+
 
         if (user != null) {
             etBusinessName.setText(user.getBusinessName());
-
+            etBusinessName.setEnabled(false);
         }
 
         etStartTime = (Spinner) findViewById(R.id.et_start_time);
-        etStartTime.setEnabled(false);
+
         etEndTime = (Spinner) findViewById(R.id.et_end_time);
-        etEndTime.setEnabled(false);
+
 
 
         ArrayAdapter<String> fromAdapter = new ArrayAdapter<String>(this, android.R.layout.simple_spinner_item, Utility.TIME_SLOTS);
@@ -105,7 +108,7 @@ public class EditProfileActivity extends AppCompatActivity {
 
         if (user != null && user.getStartTime() != null) {
             etStartTime.setSelection(Arrays.asList(Utility.TIME_SLOTS).indexOf(user.getStartTime()));
-
+            etStartTime.setEnabled(false);
         }
 
         ArrayAdapter<String> toAdapter = new ArrayAdapter<String>(this, android.R.layout.simple_spinner_item, Utility.TIME_SLOTS);
@@ -114,11 +117,11 @@ public class EditProfileActivity extends AppCompatActivity {
 
         if (user != null && user.getEndTime() != null) {
             etEndTime.setSelection(Arrays.asList(Utility.TIME_SLOTS).indexOf(user.getEndTime()));
-
+            etEndTime.setEnabled(false);
         }
 
        spinner=(MultiSelectionSpinner)findViewById(R.id.spinner_off_days);
-        spinner.setEnabled(false);
+
         spinner.setItems( getResources().getStringArray(R.array.off_days));
 
        // String[] items = (user.getSelectedDays().split(","));
@@ -126,6 +129,7 @@ public class EditProfileActivity extends AppCompatActivity {
         if (user != null && user.getSelectedDays() != null) {
             List<String> myList = new ArrayList<String>(Arrays.asList(user.getSelectedDays().replaceAll("\'", "").split(",")));
             spinner.setSelection(myList);
+            spinner.setEnabled(false);
         }
 
     /*    btnSaveProfile = (Button) findViewById(R.id.btn_save_profile);
@@ -169,6 +173,10 @@ public class EditProfileActivity extends AppCompatActivity {
         if (hideicon) {
             MenuItem item = menu.findItem(R.id.menu_mark);
             item.setVisible(false);
+            this.invalidateOptionsMenu();
+
+            MenuItem items = menu.findItem(R.id.menu_edit);
+            items.setVisible(true);
             this.invalidateOptionsMenu();
         }else{
             MenuItem item = menu.findItem(R.id.menu_mark);

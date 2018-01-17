@@ -3,9 +3,13 @@
     xmlns:app="http://schemas.android.com/apk/res-auto">
     <item
         android:id="@+id/actionprofile"
-        android:icon="@mipmap/account"
-        app:showAsAction="always"
         android:title="@string/profile"
        >
+    </item>
+
+    <item
+        android:id="@+id/actionfilter"
+        android:title="@string/filter"
+        >
     </item>
 </menu>

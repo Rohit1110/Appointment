@@ -1,16 +1,17 @@
 <resources>
-    <string name="app_name">qUp</string>
+    <string name="app_name">TimeDe</string>
     <string name="hint_phone_number">Enter Phone Number</string>
     <string name="hint_verification_code">Verification Code</string>
     <string name="start_phone_auth">Login</string>
     <string name="verify_phone_auth">Verify</string>
     <string name="resend_phone_auth">Resend</string>
-    <string name="title_app">qUp</string>
+    <string name="title_app">TimeDe</string>
     <string name="hint_code_number">+91</string>
     <string name="title_activity_main2">Appointments</string>
     <string name="searchappointment">Select Contact</string>
     <string name="bookappointment">Book Appointment </string>
     <string name="profile">User Profile</string>
+    <string name="filter">Filter</string>
 
 
     <string-array name="off_days">

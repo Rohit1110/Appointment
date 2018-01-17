@@ -1,5 +1,6 @@
 package com.rns.mobile.appointments;
 
+import android.view.View;
 import android.widget.ArrayAdapter;
 
         import android.app.AlertDialog;
@@ -53,13 +54,82 @@ public class MultiSelectionSpinner extends  android.support.v7.widget.AppCompatS
         }
     }
 
-    @Override
+   /* @Override
     public boolean performClick() {
         AlertDialog.Builder builder = new AlertDialog.Builder(getContext());
         builder.setMultiChoiceItems(_items, mSelection, this);
         builder.show();
         return true;
     }
+*/
+   //Start
+
+    @Override
+    public boolean performClick() {
+        AlertDialog.Builder builder = new AlertDialog.Builder(getContext());
+        builder.setMultiChoiceItems(_items, mSelection, this);
+        builder.setTitle(R.string.title_app);
+        builder.setNegativeButton("ok",
+                new DialogInterface.OnClickListener() {
+
+                    @Override
+                    public void onClick(DialogInterface dialog, int which) {
+                    }
+                })/*.setPositiveButton("Select All",
+                new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialog, int which) {
+
+                    }
+                })*/;
+
+        final AlertDialog dialog = builder.create();
+        dialog.show();
+        dialog.getButton(AlertDialog.BUTTON_NEGATIVE).setOnClickListener(
+                new View.OnClickListener() {
+                    @Override
+                    public void onClick(View v) {
+                      /*  Boolean wantToCloseDialog = false;
+                        selectAll(false, dialog);
+
+                        if (wantToCloseDialog)
+                            dialog.dismiss();*/
+                        dialog.cancel();
+                    }
+                });
+     /*   dialog.getButton(AlertDialog.BUTTON_POSITIVE).setOnClickListener(
+                new View.OnClickListener() {
+                    @Override
+                    public void onClick(View v) {
+                       Boolean wantToCloseDialog = false;
+                        selectAll(true, dialog);
+
+                        if (wantToCloseDialog)
+                            dialog.dismiss();
+
+                    }
+                });*/
+
+        return true;
+    }
+
+    protected void selectAll(boolean isSelectAll, AlertDialog dialog) {
+        if (mSelection != null) {
+            for (int i = 0; i < _items.length; i++) {
+                mSelection[i] = isSelectAll;
+                ((AlertDialog) dialog).getListView().setItemChecked(i, isSelectAll);
+
+            }
+
+            simple_adapter.clear();
+            simple_adapter.add(buildSelectedItemString());
+        } else {
+            throw new IllegalArgumentException("mSelection is null");
+        }
+    }
+
+
+    //end
 
     @Override
     public void setAdapter(SpinnerAdapter adapter) {
