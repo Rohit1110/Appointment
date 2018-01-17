@@ -248,6 +248,8 @@ public class Utility {
         return null;
     }
 
+
+
     public static long addAppointmentsToCalender(Context activity, Appointment appointment) {
 
 
