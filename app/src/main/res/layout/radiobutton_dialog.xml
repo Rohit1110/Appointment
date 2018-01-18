@@ -3,11 +3,36 @@
     android:layout_height="wrap_content"
     android:layout_gravity="center">
 
-    <RadioButton
-        android:id="@+id/rd"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:text="Show Todays Appointments" />
+    <RadioGroup
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:gravity="center">
+
+        <RadioButton
+            android:id="@+id/todays"
+            android:layout_width="wrap_content"
+            android:layout_height="45dp"
+            android:text="Todays appointment "
+            android:textSize="20dp"
+            android:textStyle="bold" />
+
+
+        <RadioButton
+            android:id="@+id/all"
+            android:layout_width="wrap_content"
+            android:layout_height="45dp"
+            android:text="All Appointments       "
+            android:textSize="20dp"
+            android:textStyle="bold" />
+
+        <RadioButton
+            android:id="@+id/cancel"
+            android:layout_width="wrap_content"
+            android:layout_height="45dp"
+            android:text="Cancel Appointments"
+            android:textSize="20dp"
+            android:textStyle="bold" />
+    </RadioGroup>
 
 
 

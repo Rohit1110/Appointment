@@ -30,6 +30,7 @@ import android.view.MenuItem;
 import android.view.MotionEvent;
 import android.view.View;
 import android.view.Window;
+import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.RadioButton;
 import android.widget.RadioGroup;
@@ -83,6 +84,8 @@ public class AppointmentsActivity extends AppCompatActivity {
     private SimpleAdapter mAdapter;
     private View button;
     AlertDialog alertDialog1;
+    TextView noAppointment;
+    private boolean showcacel=false;
 
 
     @Override
@@ -91,6 +94,7 @@ public class AppointmentsActivity extends AppCompatActivity {
         setContentView(R.layout.activity_appointments);
         //isReadContactPermissionGranted();
         // isReadCalenderPermissionGranted();
+        noAppointment = (TextView) findViewById(R.id.nodata);
 
 
         user = Utility.getUserFromSharedPrefs(AppointmentsActivity.this);
@@ -136,8 +140,13 @@ public class AppointmentsActivity extends AppCompatActivity {
             @Override
             public void onLongClick(View view, int position) {
                 //Toast.makeText(AppointmentsActivity.this,""+position,Toast.LENGTH_LONG).show();
-                //list.remove(position);
-                currentAppointment = list.get(position);
+                AppointmentsDateAdapter adapter = (AppointmentsDateAdapter) recyclerView.getAdapter();
+                System.out.println("current positions..." + adapter.getItemCount());
+
+
+//                list.remove(position);
+                //currentAppointment = list.get(position);
+                currentAppointment = adapter.getAppointment(position);
                 //id = currentAppointment.getId();
                 AlertDialog.Builder alertDialogBuilder = new AlertDialog.Builder(AppointmentsActivity.this);
                 alertDialogBuilder.setMessage("Are you sure to cancel this Appointment");
@@ -238,56 +247,65 @@ public class AppointmentsActivity extends AppCompatActivity {
                 return true;
 
             case R.id.actionfilter:
-                CreateAlertDialogWithRadioButtonGroup();
+                //CreateAlertDialogWithRadioButtonGroup();
+                showDialog();
                 return true;
 
         }
         return false;
     }
 
-    private void prepareAppointmentsList(String date) {
+    private void prepareAppointmentsList(final String date) {
+        System.out.println("coming date " + date);
+        //if (date == null) {
+        //Utility.showProgress(dialog, AppointmentsActivity.this);
+        FirebaseUtil.db.collection(FirebaseUtil.DOC_USERS).document(phoneNumber).collection(FirebaseUtil.DOC_APPOINTMENTS).
+                orderBy("date", Query.Direction.DESCENDING).addSnapshotListener(new EventListener<QuerySnapshot>() {
+            @Override
+            public void onEvent(QuerySnapshot documentSnapshots, FirebaseFirestoreException e) {
+                //Utility.hideProgress(dialog);
+                prepareAppointmentsAdapter(documentSnapshots, date);
+            }
+        });
+         /*}else {
 
-        if (date == null) {
             //Utility.showProgress(dialog, AppointmentsActivity.this);
-            FirebaseUtil.db.collection(FirebaseUtil.DOC_USERS).document(phoneNumber).collection(FirebaseUtil.DOC_APPOINTMENTS).
+            FirebaseUtil.db.collection(FirebaseUtil.DOC_USERS).document(phoneNumber).collection(FirebaseUtil.DOC_APPOINTMENTS).whereEqualTo("date", date).
                     orderBy("date", Query.Direction.DESCENDING).addSnapshotListener(new EventListener<QuerySnapshot>() {
                 @Override
                 public void onEvent(QuerySnapshot documentSnapshots, FirebaseFirestoreException e) {
-                    //Utility.hideProgress(dialog);
-                    prepareAppointmentsAdapter(documentSnapshots);
-                }
-            });
-        }else{
-
-            //Utility.showProgress(dialog, AppointmentsActivity.this);
-            FirebaseUtil.db.collection(FirebaseUtil.DOC_USERS).document(phoneNumber).collection(FirebaseUtil.DOC_APPOINTMENTS).
-                    orderBy("date", Query.Direction.DESCENDING).whereEqualTo("date",date).addSnapshotListener(new EventListener<QuerySnapshot>() {
-                @Override
-                public void onEvent(QuerySnapshot documentSnapshots, FirebaseFirestoreException e) {
-                    //Utility.hideProgress(dialog);
+                    //Utility.hideProgress(dialog)
+                    System.out.println("Snapshot =>" + documentSnapshots + " -- " + e);
                     prepareAppointmentsAdapter(documentSnapshots);
                 }
             });
 
-        }
+        }*/
 
     }
 
-    private void prepareAppointmentsAdapter(QuerySnapshot documentSnapshots) {
-
-
+    private void prepareAppointmentsAdapter(QuerySnapshot documentSnapshots, String filterDate) {
+        System.out.println("call one");
         list.clear();
         if (documentSnapshots != null && !documentSnapshots.isEmpty()) {
-            System.out.println("Appointments snapshot completed!" + documentSnapshots.size());
+            System.out.println("Appointments snapshot completed!");
+            showNoAppointments(false);
             for (DocumentSnapshot doc : documentSnapshots) {
                 Appointment appointment = doc.toObject(Appointment.class);
 
                 if (appointment == null) {
                     continue;
                 }
-                if (Utility.APP_STATUS_CANCELLED.equals(appointment.getAppointmentStatus())) {
+                if (Utility.APP_STATUS_CANCELLED.equals(appointment.getAppointmentStatus())&& !showcacel) {
                     continue;
 
+                }
+                if (!Utility.APP_STATUS_CANCELLED.equals(appointment.getAppointmentStatus())&& showcacel) {
+                    continue;
+
+                }
+                if (filterDate != null && appointment.getDate() != null && !appointment.getDate().equals(filterDate)) {
+                    continue;
                 }
                 appointment.setId(doc.getId());
                 /*HeaderItem header = new HeaderItem(doc.getDate("date"));
@@ -296,18 +314,11 @@ public class AppointmentsActivity extends AppCompatActivity {
                 Utility.addAppointmentsToCalender(AppointmentsActivity.this, appointment);
 
             }
+
             System.out.println("Appointments list size => " + list.size());
-//                    adapter.notifyDataSetChanged();
-
-            // To map and send this list to toMap function
-
-            //Created map should be sent to adapter
 
 
             Map<String, List<Appointment>> events = toMap(list);
-
-            // Collections.sort(events);
-
             List<ListItem> items = new ArrayList<>();
 
             for (String date : events.keySet()) {
@@ -326,8 +337,22 @@ public class AppointmentsActivity extends AppCompatActivity {
             //Collections.sort(items);
 
             recyclerView.setAdapter(new AppointmentsDateAdapter(items));
+            if (list.size() == 0) {
+                showNoAppointments(true);
+            }
 
+        } else {
+
+            showNoAppointments(true);
         }
+    }
+
+    private void showNoAppointments(boolean show) {
+        if (!show) {
+            noAppointment.setText("");
+            return;
+        }
+        noAppointment.setText("You have no appointments");
     }
 
 
@@ -470,33 +495,12 @@ public class AppointmentsActivity extends AppCompatActivity {
         return map;
     }
 
-    private void showRadioButtonDialog() {
-        Toast.makeText(AppointmentsActivity.this, "clicked", Toast.LENGTH_SHORT).show();
-        // custom dialog
-        final Dialog dialog = new Dialog(AppointmentsActivity.this);
-        dialog.requestWindowFeature(Window.FEATURE_NO_TITLE);
-        dialog.setContentView(R.layout.radiobutton_dialog);
-        RadioButton rg = (RadioButton)findViewById(R.id.rd);
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
-            rg.setOnContextClickListener(new View.OnContextClickListener() {
-                @Override
-                public boolean onContextClick(View v) {
-                    Toast.makeText(AppointmentsActivity.this, "Button clicked", Toast.LENGTH_SHORT).show();
 
-                    return true;
-                }
-            });
-        }
-        dialog.show();
-
-    }
-
-
-    public void CreateAlertDialogWithRadioButtonGroup(){
+    public void CreateAlertDialogWithRadioButtonGroup() {
 
 
         AlertDialog.Builder builder = new AlertDialog.Builder(AppointmentsActivity.this);
-        CharSequence[] values = {"Todays Appointments","Show All Appointments"};
+        CharSequence[] values = {"Todays Appointments", "Show All Appointments"};
 
         builder.setTitle("Select Your Choice");
 
@@ -504,13 +508,12 @@ public class AppointmentsActivity extends AppCompatActivity {
 
             public void onClick(DialogInterface dialog, int item) {
 
-                switch(item)
-                {
+                switch (item) {
                     case 0:
 
                         //Toast.makeText(AppointmentsActivity.this, "First Item Clicked", Toast.LENGTH_LONG).show();
-                        prepareAppointmentsList(Utility.formatDate(new Date(),Utility.DATE_FORMAT_USED));
-                        alertDialog1.dismiss();
+                        prepareAppointmentsList(Utility.formatDate(new Date(), Utility.DATE_FORMAT_USED));
+                        //alertDialog1.dismiss();
                         break;
                     case 1:
 
@@ -526,6 +529,53 @@ public class AppointmentsActivity extends AppCompatActivity {
         alertDialog1.show();
 
     }
+
+
+         int selectedElement=-1; //global variable to store state
+         AlertDialog alert;
+        private void SingleChoiceWithRadioButton() {
+        final String[] selectFruit= new String[]{"Todays Appointments", "Show All Appointments","Cancel Appointments"};
+        AlertDialog.Builder builder = new AlertDialog.Builder(this);
+        builder.setTitle("Select Your Choice");
+        builder.setSingleChoiceItems(selectFruit, selectedElement,
+                new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialog, int which) {
+                        selectedElement=which;
+                        Toast.makeText(AppointmentsActivity.this, selectFruit[which]+":"+ which + " Selected", Toast.LENGTH_LONG).show();
+                        if(selectFruit[which]=="Todays Appointments")
+                        {
+                            prepareAppointmentsList(Utility.formatDate(new Date(), Utility.DATE_FORMAT_USED));
+                        } else if(selectFruit[which]=="Show All Appointments"){
+                            prepareAppointmentsList(null);
+                        }else if(selectFruit[which]=="Cancel Appointments"){
+                            showcacel=true;
+                            prepareAppointmentsList(null);
+
+                        }
+                        //  dialog.dismiss();
+                    }
+                });
+        builder.setPositiveButton("ok",
+                new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialog, int which) {
+                        dialog.dismiss();
+                    }
+                });
+        alert = builder.create();
+        alert.show();
+    }
+
+//Call this method always
+
+        private void showDialog(){
+        if(alert==null)
+            SingleChoiceWithRadioButton();
+        else
+            alert.show();
+    }
+
 
 
 }

@@ -66,6 +66,7 @@ public class SelectDateAcitivity extends AppCompatActivity {
     private Set<String> selectedSlots;
     private List<String> filteredSlots;
     private EditText reason;
+    TextView noSlots;
 
 
     @Override
@@ -75,6 +76,7 @@ public class SelectDateAcitivity extends AppCompatActivity {
         // book = (Button) findViewById(R.id.btnbook);
         setdate = (TextView) findViewById(R.id.selecteddate);
         reason = (EditText) findViewById(R.id.edit_reason);
+        noSlots = (TextView) findViewById(R.id.notmeslots);
         long date = System.currentTimeMillis();
         SimpleDateFormat sdf = new SimpleDateFormat(Utility.DATE_FORMAT_DISPLAY);
         String dateString = sdf.format(date);
@@ -418,7 +420,9 @@ public class SelectDateAcitivity extends AppCompatActivity {
             @Override
             public void onComplete(@NonNull Task<QuerySnapshot> task) {
                 Utility.hideProgress(dialog);
+
                 System.out.println("Done fetching users apps for " + userPhone + " == " + task.getResult().size() + " Success:" + task.isSuccessful());
+
                 blockSlots(task);
                 blockOtherUserSlots();
             }
@@ -430,6 +434,7 @@ public class SelectDateAcitivity extends AppCompatActivity {
             System.out.println("Blocking slots for user");
             for (DocumentSnapshot doc : task.getResult()) {
                 if (!doc.exists()) {
+
                     continue;
                 }
                 Appointment appointment = doc.toObject(Appointment.class);
@@ -451,10 +456,13 @@ public class SelectDateAcitivity extends AppCompatActivity {
 
                     }
 
+                } else {
+                    System.out.println("No data for Slots");
                 }
             }
             System.out.println("Blocked slots after user =>" + blockedSlots);
         } else {
+
             System.out.println("ERROR in fetching users apps =>" + task.getException());
         }
         updateAvailableSlots();
@@ -553,6 +561,7 @@ public class SelectDateAcitivity extends AppCompatActivity {
     }
 
     private void updateAvailableSlots() {
+        noSlots.setVisibility(View.INVISIBLE);
         Set<String> availableSlots = new HashSet<>();
         for (String slot : slotsList) {
             if (slotBeforeCurrentTime(slot)) {
@@ -576,6 +585,11 @@ public class SelectDateAcitivity extends AppCompatActivity {
     }
 
     private void setSlotsAdapter() {
+
+        if(filteredSlots.size()<=0){
+            noSlots.setVisibility(View.VISIBLE);
+            noSlots.setText("No slots are available on this date");
+        }
         adapter = new ArrayAdapter<String>(this, android.R.layout.simple_list_item_multiple_choice, filteredSlots);
         availableSlotsListView.setChoiceMode(ListView.CHOICE_MODE_MULTIPLE);
         availableSlotsListView.setAdapter(adapter);

@@ -20,9 +20,9 @@
                 android:paddingTop="@dimen/album_title_padding"
                 android:layout_margin="3dp"
                 android:text="@string/app_name"
-                android:textAppearance="@style/TextAppearance.AppCompat.Light.SearchResult.Title"
+                android:textAppearance="@style/TextAppearance.AppCompat.Light.SearchResult.Subtitle"
                 android:textColor="#212121"
-                android:textSize="@dimen/album_title"
+
                 />
 
             <TextView
@@ -35,7 +35,7 @@
                 android:paddingLeft="@dimen/album_title_padding"
                 android:paddingRight="@dimen/album_title_padding"
                 android:textColor="#757575"
-                android:textSize="@dimen/songs_count" />
+                 />
 
 
         </RelativeLayout>
