@@ -14,6 +14,7 @@ import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.List;
 
+import model.Appointment;
 import recyclerAdapter.EventItem;
 import recyclerAdapter.HeaderItem;
 import recyclerAdapter.ListItem;
@@ -28,14 +29,20 @@ public class AppointmentsDateAdapter extends RecyclerView.Adapter<RecyclerView.V
     private Context mContext = null;
     private List<ListItem> items;
 
+    public List<ListItem> getItems() {
+        return items;
+    }
+
     public AppointmentsDateAdapter(List<ListItem> items) {
         this.items = items;
     }
+
     class ViewHolder0 extends RecyclerView.ViewHolder {
         TextView txt_header;
+
         public ViewHolder0(View itemView) {
             super(itemView);
-            txt_header=(TextView)itemView.findViewById(R.id.txt_header);
+            txt_header = (TextView) itemView.findViewById(R.id.txt_header);
         }
     }
 
@@ -43,7 +50,7 @@ public class AppointmentsDateAdapter extends RecyclerView.Adapter<RecyclerView.V
         private TextView description;
         private TextView time, name, date;
 
-        public ViewHolder1 (View itemView) {
+        public ViewHolder1(View itemView) {
             super(itemView);
 
             time = (TextView) itemView.findViewById(R.id.txttime);
@@ -80,7 +87,7 @@ public class AppointmentsDateAdapter extends RecyclerView.Adapter<RecyclerView.V
             case ListItem.TYPE_DATE: {
                 HeaderItem header = (HeaderItem) items.get(position);
 
-                ViewHolder0 dateholder=(ViewHolder0) holder;
+                ViewHolder0 dateholder = (ViewHolder0) holder;
                 // your logic here
                 //dateholder.txt_header.setText(header.getDate());
 
@@ -146,7 +153,6 @@ public class AppointmentsDateAdapter extends RecyclerView.Adapter<RecyclerView.V
                 System.out.println("time in Adapter " + event.getEvent().getStartTime() + " - " + event.getEvent().getEndTime());
 
 
-
                 //gholder.txt_title.setText(event.getEvent().getTitle());
                 break;
             }
@@ -163,7 +169,23 @@ public class AppointmentsDateAdapter extends RecyclerView.Adapter<RecyclerView.V
     @Override
     public int getItemViewType(int position) {
 
-            return items.get(position).getType();
+        return items.get(position).getType();
 
     }
+
+    public Appointment getAppointment(int position) {
+        if(items == null || items.size() <= position) {
+            return null;
+        }
+        ListItem item = items.get(position);
+        if(ListItem.TYPE_GENERAL == item.getType()) {
+            EventItem eventItem = (EventItem) item;
+            if(eventItem != null) {
+                return eventItem.getEvent();
+            }
+
+        }
+        return null;
+    }
+
 }
