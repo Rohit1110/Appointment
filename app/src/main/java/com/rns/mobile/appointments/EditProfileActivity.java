@@ -45,8 +45,8 @@ public class EditProfileActivity extends AppCompatActivity {
     private String phoneNumber;
     private boolean hideicon = false;
     private ProgressDialog dialog;
-    MultiSelectionSpinner spinner;
-    private String selecteddays;
+    private MultiSelectionSpinner spinner;
+    private String selectedDays;
 
     @Override
     public void onCreate(@Nullable Bundle savedInstanceState) {
@@ -68,7 +68,7 @@ public class EditProfileActivity extends AppCompatActivity {
         if (user != null) {
             etFirstName.setText(user.getFirstName());
             etFirstName.setEnabled(false);
-            hideicon=true;
+            hideicon = true;
         }
 
         etLastName = (EditText) findViewById(R.id.et_last_name);
@@ -101,7 +101,6 @@ public class EditProfileActivity extends AppCompatActivity {
         etEndTime = (Spinner) findViewById(R.id.et_end_time);
 
 
-
         ArrayAdapter<String> fromAdapter = new ArrayAdapter<String>(this, android.R.layout.simple_spinner_item, Utility.TIME_SLOTS);
         fromAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
         etStartTime.setAdapter(fromAdapter);
@@ -120,11 +119,11 @@ public class EditProfileActivity extends AppCompatActivity {
             etEndTime.setEnabled(false);
         }
 
-       spinner=(MultiSelectionSpinner)findViewById(R.id.spinner_off_days);
+        spinner = (MultiSelectionSpinner) findViewById(R.id.spinner_off_days);
 
-        spinner.setItems( getResources().getStringArray(R.array.off_days));
+        spinner.setItems(getResources().getStringArray(R.array.off_days));
 
-       // String[] items = (user.getSelectedDays().split(","));
+        // String[] items = (user.getSelectedDays().split(","));
 
         if (user != null && user.getSelectedDays() != null) {
             List<String> myList = new ArrayList<String>(Arrays.asList(user.getSelectedDays().replaceAll("\'", "").split(",")));
@@ -178,7 +177,7 @@ public class EditProfileActivity extends AppCompatActivity {
             MenuItem items = menu.findItem(R.id.menu_edit);
             items.setVisible(true);
             this.invalidateOptionsMenu();
-        }else{
+        } else {
             MenuItem item = menu.findItem(R.id.menu_mark);
             item.setVisible(true);
             this.invalidateOptionsMenu();
@@ -229,11 +228,11 @@ public class EditProfileActivity extends AppCompatActivity {
                     user.setEmail(etEmail.getText().toString());
                     user.setStartTime(etStartTime.getSelectedItem().toString());
                     user.setEndTime(etEndTime.getSelectedItem().toString());
-                    if(spinner.getSelectedStrings().toString() != "[]"){
-                        selecteddays= "'" + spinner.getSelectedStrings().toString().replace("[", "").replace("]", "").replace(", ", "','") + "'";
-                        System.out.println("Selected Days :  "+ selecteddays);
+                    if (spinner.getSelectedStrings().toString() != "[]") {
+                        selectedDays = "'" + spinner.getSelectedStrings().toString().replace("[", "").replace("]", "").replace(", ", "','") + "'";
+                        System.out.println("Selected Days :  " + selectedDays);
 
-                        user.setSelectedDays(selecteddays.replaceAll("\'", ""));
+                        user.setSelectedDays(selectedDays.replaceAll("\'", ""));
 
 
                     }

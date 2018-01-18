@@ -209,6 +209,17 @@ public class Utility {
         return formattedDate;
     }
 
+    public static Date formatDate(String date,String format){
+        SimpleDateFormat df = new SimpleDateFormat(format);
+        Date formattedDate = null;
+        try {
+            formattedDate = df.parse(date);
+        } catch (ParseException e) {
+            e.printStackTrace();
+        }
+        return formattedDate;
+    }
+
     public static String formatToUsedDate(String dateString) {
         if (dateString == null) {
             return null;

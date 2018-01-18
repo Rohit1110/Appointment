@@ -351,6 +351,7 @@ public class SelectDateAcitivity extends AppCompatActivity {
                             Appointment duplicate = appointment.duplicate(appointment.getPhone());
                             duplicate.setName(otherUserAppointment.getName());
                             new NotificationTask(duplicate, Utility.NOTIFICATION_TYPE_NEW).sendNotification();
+                            new SMSTask(Utility.NOTIFICATION_TYPE_NEW, duplicate).execute();
                             goToHome();
                         }
                     }).addOnFailureListener(new OnFailureListener() {
@@ -490,6 +491,12 @@ public class SelectDateAcitivity extends AppCompatActivity {
                         }
                         System.out.println("Appointment for =>" + appointment.getName());
                         //Update slotsList based on this other users available slotsList
+                        if (isWeeklyOff(otherUser)) {
+                            filteredSlots.clear();
+                            setSlotsAdapter();
+                            return;
+                        }
+
                         updateUserSlots(otherUser);
                         updateOtherUserAppointments();
                     }
@@ -506,6 +513,29 @@ public class SelectDateAcitivity extends AppCompatActivity {
         } else {
             updateAvailableSlots();
         }
+    }
+
+    private boolean isWeeklyOff(User otherUser) {
+        if (otherUser == null || otherUser.getSelectedDays() == null || otherUser.getSelectedDays().trim().length() == 0) {
+            return false;
+        }
+
+        String[] days = otherUser.getSelectedDays().split(",");
+        if (days.length == 0) {
+            return false;
+        }
+
+        Calendar cal = Calendar.getInstance();
+        cal.setTime(Utility.formatDate(appointment.getDate(), Utility.DATE_FORMAT_USED));
+        String[] mTestArray = getResources().getStringArray(R.array.off_days);
+        String today = mTestArray[cal.get(Calendar.DAY_OF_WEEK) - 1];
+
+        for (String day : days) {
+            if (day.equalsIgnoreCase(today)) {
+                return true;
+            }
+        }
+        return false;
     }
 
     private void updateOtherUserAppointments() {
@@ -549,6 +579,13 @@ public class SelectDateAcitivity extends AppCompatActivity {
         }
         filteredSlots = new ArrayList<>(availableSlots);
         Collections.sort(filteredSlots);
+        setSlotsAdapter();
+        //availableSlotsListView.setOnItemSelectedListener(new SlotsListener);
+
+    }
+
+    private void setSlotsAdapter() {
+
         if(filteredSlots.size()<=0){
             noSlots.setVisibility(View.VISIBLE);
             noSlots.setText("No slots are available on this date");
@@ -558,8 +595,6 @@ public class SelectDateAcitivity extends AppCompatActivity {
         availableSlotsListView.setAdapter(adapter);
 
         availableSlotsListView.setOnItemClickListener(new SlotsSelected());
-        //availableSlotsListView.setOnItemSelectedListener(new SlotsListener);
-
     }
 
     private boolean slotBeforeCurrentTime(String slot) {
