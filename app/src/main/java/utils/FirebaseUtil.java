@@ -9,7 +9,7 @@ import com.google.firebase.firestore.FirebaseFirestore;
 
 public class FirebaseUtil {
 
-    public static String TEST_PHONE = "9423040642";
+    public static String TEST_PHONE = "+918956711498";
 
     public static FirebaseAuth mAuth = FirebaseAuth.getInstance();
     public static FirebaseFirestore db = FirebaseFirestore.getInstance();
