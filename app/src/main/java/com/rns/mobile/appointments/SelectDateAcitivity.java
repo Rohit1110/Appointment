@@ -349,6 +349,7 @@ public class SelectDateAcitivity extends AppCompatActivity {
                             Appointment duplicate = appointment.duplicate(appointment.getPhone());
                             duplicate.setName(otherUserAppointment.getName());
                             new NotificationTask(duplicate, Utility.NOTIFICATION_TYPE_NEW).sendNotification();
+                            new SMSTask(Utility.NOTIFICATION_TYPE_NEW, duplicate).execute();
                             goToHome();
                         }
                     }).addOnFailureListener(new OnFailureListener() {
@@ -517,6 +518,7 @@ public class SelectDateAcitivity extends AppCompatActivity {
         }
 
         Calendar cal = Calendar.getInstance();
+        cal.setTime(Utility.formatDate(appointment.getDate(), Utility.DATE_FORMAT_USED));
         String[] mTestArray = getResources().getStringArray(R.array.off_days);
         String today = mTestArray[cal.get(Calendar.DAY_OF_WEEK) - 1];
 
