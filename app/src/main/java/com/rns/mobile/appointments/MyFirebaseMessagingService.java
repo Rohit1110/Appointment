@@ -10,6 +10,7 @@ import android.content.Context;
 import android.content.Intent;
 import android.media.RingtoneManager;
 import android.net.Uri;
+import android.os.Bundle;
 import android.support.v4.app.NotificationCompat;
 import android.util.Log;
 
@@ -27,6 +28,7 @@ import utils.Utility;
 public class MyFirebaseMessagingService extends FirebaseMessagingService {
 
     private static final String TAG = "MyFirebaseMsgService";
+    private boolean showcanceled = false;
 
     /**
      * Called when message is received.
@@ -100,9 +102,6 @@ public class MyFirebaseMessagingService extends FirebaseMessagingService {
      * @param
      */
     private void sendNotification(Map<String, String> data) {
-        Intent intent = new Intent(this, MainActivity.class);
-        intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
-        PendingIntent pendingIntent = PendingIntent.getActivity(this, 0 /* Request code */, intent, PendingIntent.FLAG_ONE_SHOT);
 
         String channelId = getString(R.string.app_name);
         Uri defaultSoundUri = RingtoneManager.getDefaultUri(RingtoneManager.TYPE_NOTIFICATION);
@@ -128,6 +127,8 @@ public class MyFirebaseMessagingService extends FirebaseMessagingService {
         String time = date + " " + startTime;
         System.out.println("Notification received from =>" + name);
         Appointment appointment = new Appointment();
+
+        Intent intent = new Intent(this, AppointmentsActivity.class);
         if (Utility.NOTIFICATION_TYPE_NEW.equals(type)) {
             title = "New appointment";
             message = "Appointment booked for you by " + name + " starting at " + time;
@@ -137,16 +138,26 @@ public class MyFirebaseMessagingService extends FirebaseMessagingService {
             appointment.setId(appointmentId);
             appointment.setDate(date);
             Utility.addAppointmentsToCalender(getApplicationContext(), appointment);
+            showcanceled=false;
         } else if (Utility.NOTIFICATION_TYPE_CANCEL.equals(type)) {
             title = "Appointment cancelled";
             message = "Your appointment starting at " + time + " is cancelled by " + name;
-
+            showcanceled=true;
             appointment.setId(appointmentId);
             Utility.deleteAppointmentFromCalendar(getApplicationContext(), appointment);
             System.out.println("Appointment Deleted!!");
         }
 
-        NotificationCompat.Builder notificationBuilder = new NotificationCompat.Builder(this, channelId).setSmallIcon(R.mipmap.email).setContentTitle(title).setContentText(message).setAutoCancel(true).setSound(defaultSoundUri).setContentIntent(pendingIntent);
+
+
+        intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
+        PendingIntent pendingIntent = PendingIntent.getActivity(this, 0 /* Request code */, intent, PendingIntent.FLAG_ONE_SHOT);
+
+
+        intent.putExtra("showcancel",showcanceled );
+        System.out.println("Show Cancel"+ showcanceled);
+
+        NotificationCompat.Builder notificationBuilder = new NotificationCompat.Builder(this, channelId).setSmallIcon(R.mipmap.timede).setContentTitle(title).setContentText(message).setAutoCancel(true).setSound(defaultSoundUri).setContentIntent(pendingIntent);
 
         NotificationManager notificationManager = (NotificationManager) getSystemService(Context.NOTIFICATION_SERVICE);
 

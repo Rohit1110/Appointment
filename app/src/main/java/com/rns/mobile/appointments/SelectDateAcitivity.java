@@ -389,6 +389,7 @@ public class SelectDateAcitivity extends AppCompatActivity {
         }
 
         Intent i = new Intent(SelectDateAcitivity.this, AppointmentsActivity.class);
+       i.putExtra("showcancel",false);
         startActivity(i);
         finish();
     }
