@@ -17,7 +17,7 @@
         android:supportsRtl="true"
         android:theme="@style/AppTheme">
         <activity android:name=".MainActivity">
-           
+
         </activity>
         <activity android:name=".PhoneAuthActivity">
             <intent-filter>

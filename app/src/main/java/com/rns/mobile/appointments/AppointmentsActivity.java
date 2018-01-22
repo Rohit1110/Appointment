@@ -65,7 +65,7 @@ public class AppointmentsActivity extends AppCompatActivity {
     private ProgressDialog dialog;
     private String TAG = "Appointments Activity";
     String id;
-    private Appointment currentAppointment,cappointnent;
+    private Appointment currentAppointment, cappointnent;
     private SimpleAdapter mAdapter;
     private View button;
     AlertDialog alertDialog1;
@@ -82,11 +82,9 @@ public class AppointmentsActivity extends AppCompatActivity {
         noAppointment = (TextView) findViewById(R.id.nodata);
 
 
-
-
         user = Utility.getUserFromSharedPrefs(AppointmentsActivity.this);
         String userJson = getIntent().getStringExtra("user");
-        showcacel = getIntent().getBooleanExtra("showcancel",false);
+        showcacel = getIntent().getBooleanExtra("showcancel", false);
         if (userJson != null) {
             user = new Gson().fromJson(userJson, User.class);
 
@@ -179,22 +177,21 @@ public class AppointmentsActivity extends AppCompatActivity {
                     }
                 });
 
+
                 cappointnent = adapter.getAppointment(position);
 
-
-               Date dt= Utility.formatDate(cappointnent.getDate(),Utility.DATE_FORMAT_USED);
-              String chkf=  Utility.CompareDate(dt,new Date());
-              String chkp=  Utility.getcurrentAppointment(cappointnent.getStartTime(),cappointnent.getEndTime(),dt,new Date());
-              if(!chkf.contains("past")||chkf.contains("future")||chkp.contains("future")){
-                  if(!chkp.contains("present")||chkp.contains("future")){
-                      AlertforDoubleclick(position,cappointnent);
-                  }else{
-                      Toast.makeText(AppointmentsActivity.this,"ongoing or past appointments cannot be cancelled",Toast.LENGTH_LONG).show();
-                  }
-              }else{
-                  Toast.makeText(AppointmentsActivity.this,"ongoing or past appointments cannot be cancelled",Toast.LENGTH_LONG).show();
-              }
-
+                Date dt = Utility.formatDate(cappointnent.getDate(), Utility.DATE_FORMAT_USED);
+                String chkf = Utility.CompareDate(dt, new Date());
+                String chkp = Utility.getcurrentAppointment(cappointnent.getStartTime(), cappointnent.getEndTime(), dt, new Date());
+                if (!chkf.contains("past") || chkf.contains("future") || chkp.contains("future")) {
+                    if (!chkp.contains("present") || chkp.contains("future")) {
+                        AlertforDoubleclick(position, cappointnent);
+                    } else {
+                        Toast.makeText(AppointmentsActivity.this, "ongoing or past appointments cannot be cancelled", Toast.LENGTH_LONG).show();
+                    }
+                } else {
+                    Toast.makeText(AppointmentsActivity.this, "ongoing or past appointments cannot be cancelled", Toast.LENGTH_LONG).show();
+                }
 
 
             }
@@ -227,9 +224,9 @@ public class AppointmentsActivity extends AppCompatActivity {
         });
     }
 
-    private void AlertforDoubleclick(int position,Appointment appointment) {
+    private void AlertforDoubleclick(int position, Appointment appointment) {
         //Toast.makeText(AppointmentsActivity.this,""+position,Toast.LENGTH_LONG).show();
-        currentAppointment=appointment;
+        currentAppointment = appointment;
         //id = currentAppointment.getId();
         AlertDialog.Builder alertDialogBuilder = new AlertDialog.Builder(AppointmentsActivity.this);
         alertDialogBuilder.setMessage("Are you sure to cancel this Appointment");
@@ -549,43 +546,39 @@ public class AppointmentsActivity extends AppCompatActivity {
     }
 
 
+    int selectedElement = 1; //global variable to store state
+    AlertDialog alert;
 
-
-         int selectedElement=1; //global variable to store state
-         AlertDialog alert;
-        private void SingleChoiceWithRadioButton() {
-        final String[] selectFruit= new String[]{"Todays Appointments", "Show All Appointments","Canceled Appointments"};
+    private void SingleChoiceWithRadioButton() {
+        final String[] selectFruit = new String[]{"Todays Appointments", "Show All Appointments", "Canceled Appointments"};
         AlertDialog.Builder builder = new AlertDialog.Builder(this);
         builder.setTitle("Select Your Choice");
-        builder.setSingleChoiceItems(selectFruit, selectedElement,
-                new DialogInterface.OnClickListener() {
-                    @Override
-                    public void onClick(DialogInterface dialog, int which) {
-                        selectedElement=which;
-                        //Toast.makeText(AppointmentsActivity.this, selectFruit[which]+":"+ which + " Selected", Toast.LENGTH_LONG).show();
-                        if(selectFruit[which]=="Todays Appointments")
-                        {
-                            showcacel=false;
-                            prepareAppointmentsList(Utility.formatDate(new Date(), Utility.DATE_FORMAT_USED));
-                        } else if(selectFruit[which]=="Show All Appointments"){
-                            showcacel=false;
-                            prepareAppointmentsList(null);
+        builder.setSingleChoiceItems(selectFruit, selectedElement, new DialogInterface.OnClickListener() {
+            @Override
+            public void onClick(DialogInterface dialog, int which) {
+                selectedElement = which;
+                //Toast.makeText(AppointmentsActivity.this, selectFruit[which]+":"+ which + " Selected", Toast.LENGTH_LONG).show();
+                if (selectFruit[which] == "Todays Appointments") {
+                    showcacel = false;
+                    prepareAppointmentsList(Utility.formatDate(new Date(), Utility.DATE_FORMAT_USED));
+                } else if (selectFruit[which] == "Show All Appointments") {
+                    showcacel = false;
+                    prepareAppointmentsList(null);
 
-                        }else if(selectFruit[which]=="Cancel Appointments"){
-                            showcacel=true;
-                            prepareAppointmentsList(null);
+                } else if (selectFruit[which] == "Cancel Appointments") {
+                    showcacel = true;
+                    prepareAppointmentsList(null);
 
-                        }
-                        //  dialog.dismiss();
-                    }
-                });
-        builder.setPositiveButton("OK",
-                new DialogInterface.OnClickListener() {
-                    @Override
-                    public void onClick(DialogInterface dialog, int which) {
-                        dialog.dismiss();
-                    }
-                });
+                }
+                //  dialog.dismiss();
+            }
+        });
+        builder.setPositiveButton("OK", new DialogInterface.OnClickListener() {
+            @Override
+            public void onClick(DialogInterface dialog, int which) {
+                dialog.dismiss();
+            }
+        });
 
         alert = builder.create();
         alert.show();

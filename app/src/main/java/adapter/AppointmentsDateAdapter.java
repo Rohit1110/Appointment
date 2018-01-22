@@ -9,6 +9,7 @@ import android.widget.TextView;
 
 import com.rns.mobile.appointments.R;
 
+import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.List;
 
@@ -51,7 +52,7 @@ public class AppointmentsDateAdapter extends RecyclerView.Adapter<RecyclerView.V
 
         public ViewHolder1(View itemView) {
             super(itemView);
-            appointmentindicator=(View)itemView.findViewById(R.id.appointmentindicator);
+            appointmentindicator = (View) itemView.findViewById(R.id.appointmentindicator);
             time = (TextView) itemView.findViewById(R.id.txttime);
             name = (TextView) itemView.findViewById(R.id.txtname);
             date = (TextView) itemView.findViewById(R.id.txtdate);
@@ -88,7 +89,6 @@ public class AppointmentsDateAdapter extends RecyclerView.Adapter<RecyclerView.V
 
                 ViewHolder0 dateholder = (ViewHolder0) holder;
 
-
                 Date formattedDate = Utility.formatDate(header.getDate(), Utility.DATE_FORMAT_USED);
                 System.out.println(formattedDate + " new Date Format");
                 if (formattedDate != null) {
@@ -115,37 +115,32 @@ public class AppointmentsDateAdapter extends RecyclerView.Adapter<RecyclerView.V
 
                 String dateformat = Utility.formatToUsedDate(event.getEvent().getDate());
                 System.out.println(dateformat + " new Date Format");
-                //holder.date.setText(new SimpleDateFormat(Utility.DATE_FORMAT_DISPLAY).format(appointment.getDate()));
-                SimpleDateFormat sdf = new SimpleDateFormat(Utility.DATE_FORMAT_USED);
-                Date dates = null;
-                try
 
-                {
-                    dates = sdf.parse(event.getEvent().getDate());
-                    if (dates != null) {
-                       String tens=Utility.CompareDate(dates,new Date());
-                        String currentappointment=Utility.getcurrentAppointment(event.getEvent().getStartTime(),event.getEvent().getEndTime(),dates,new Date());
-                       System.out.println("Tens== "+currentappointment);
 
-                        if (tens.contains("future")){
-                            gholder.appointmentindicator.setBackgroundResource(R.color.feature_appointments);
-                        }
-                       else if (tens.contains("past")){
-                            gholder.appointmentindicator.setBackgroundResource(R.color.past_appointments);
-                        }
-                        if(currentappointment.contains("present"))
-                        {
-                            gholder.appointmentindicator.setBackgroundResource(R.color.present_appointments);
-                        }else if(currentappointment.contains("future")){
-                            gholder.appointmentindicator.setBackgroundResource(R.color.feature_appointments);
-                        }
+                Date dates = Utility.formatDate(dateformat, Utility.DATE_FORMAT_USED);
+                if (dates != null) {
+                    String tens = Utility.CompareDate(dates, new Date());
+                    String currentappointment = Utility.getcurrentAppointment(event.getEvent().getStartTime(), event.getEvent().getEndTime(), dates, new Date());
+                    System.out.println("Tens== " + currentappointment);
 
-                        gholder.date.setText(new SimpleDateFormat(Utility.DATE_FORMAT_DISPLAY).format(dates));
-
+                    if (tens.contains("future")) {
+                        gholder.appointmentindicator.setBackgroundResource(R.color.feature_appointments);
+                    } else if (tens.contains("past")) {
+                        gholder.appointmentindicator.setBackgroundResource(R.color.past_appointments);
                     }
+                    if (currentappointment.contains("present")) {
+                        gholder.appointmentindicator.setBackgroundResource(R.color.present_appointments);
+                    } else if (currentappointment.contains("future")) {
+                        gholder.appointmentindicator.setBackgroundResource(R.color.feature_appointments);
+                    }
+
+                    gholder.date.setText(new SimpleDateFormat(Utility.DATE_FORMAT_DISPLAY).format(dates));
+
 
                 }
 
+
+                gholder.date.setText(new SimpleDateFormat(Utility.DATE_FORMAT_DISPLAY).format(dates));
                 gholder.time.setText(event.getEvent().getStartTime() + " - " + event.getEvent().getEndTime());
                 gholder.description.setText(event.getEvent().getDescription());
                 System.out.println("name in Adapter " + event.getEvent().getName());
@@ -157,8 +152,12 @@ public class AppointmentsDateAdapter extends RecyclerView.Adapter<RecyclerView.V
             }
             default:
                 throw new IllegalStateException("unsupported item type");
+
+
         }
+
     }
+
 
     @Override
     public int getItemCount() {
