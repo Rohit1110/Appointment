@@ -1,35 +1,27 @@
 {
   "project_info": {
-    "project_number": "744562982687",
-    "firebase_url": "https://appoinments-396f4.firebaseio.com",
-    "project_id": "appoinments-396f4",
-    "storage_bucket": "appoinments-396f4.appspot.com"
+    "project_number": "284255444024",
+    "firebase_url": "https://timede-76632.firebaseio.com",
+    "project_id": "timede-76632",
+    "storage_bucket": "timede-76632.appspot.com"
   },
   "client": [
     {
       "client_info": {
-        "mobilesdk_app_id": "1:744562982687:android:754ec5cb0e57037e",
+        "mobilesdk_app_id": "1:284255444024:android:754ec5cb0e57037e",
         "android_client_info": {
           "package_name": "com.rns.mobile.appointments"
         }
       },
       "oauth_client": [
         {
-          "client_id": "744562982687-fvuaediaa1m5l5mbcgigco664irp3k9g.apps.googleusercontent.com",
-          "client_type": 1,
-          "android_info": {
-            "package_name": "com.rns.mobile.appointments",
-            "certificate_hash": "4b5ec6957caa3deb041e6ba7a0b26a1281ae04f1"
-          }
-        },
-        {
-          "client_id": "744562982687-dbqbae4sfa3tp229ss11354lo2dsbdob.apps.googleusercontent.com",
+          "client_id": "284255444024-sbltotlecsark7h0oo6981gej43abtn0.apps.googleusercontent.com",
           "client_type": 3
         }
       ],
       "api_key": [
         {
-          "current_key": "AIzaSyCJ7R5AFoj0aRH6WE_QHulPnJV6arrR9eo"
+          "current_key": "AIzaSyC4OleoDKkR-_57ECt1jCw9RgZ5Una39Zc"
         }
       ],
       "services": {
@@ -37,13 +29,8 @@
           "status": 1
         },
         "appinvite_service": {
-          "status": 2,
-          "other_platform_oauth_client": [
-            {
-              "client_id": "744562982687-dbqbae4sfa3tp229ss11354lo2dsbdob.apps.googleusercontent.com",
-              "client_type": 3
-            }
-          ]
+          "status": 1,
+          "other_platform_oauth_client": []
         },
         "ads_service": {
           "status": 2

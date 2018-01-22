@@ -123,14 +123,30 @@ public class AppointmentsDateAdapter extends RecyclerView.Adapter<RecyclerView.V
                     System.out.println("Tens== " + currentappointment);
 
                     if (tens.contains("future")) {
-                        gholder.appointmentindicator.setBackgroundResource(R.color.feature_appointments);
+                        if (event.getEvent().getAppointmentStatus().equals(Utility.APP_STATUS_CANCELLED)) {
+                            gholder.appointmentindicator.setBackgroundResource(R.color.cancel_appointment);
+                        } else {
+                            gholder.appointmentindicator.setBackgroundResource(R.color.feature_appointments);
+                        }
                     } else if (tens.contains("past")) {
-                        gholder.appointmentindicator.setBackgroundResource(R.color.past_appointments);
+                        if (event.getEvent().getAppointmentStatus().equals(Utility.APP_STATUS_CANCELLED)) {
+                            gholder.appointmentindicator.setBackgroundResource(R.color.cancel_appointment);
+                        } else {
+                            gholder.appointmentindicator.setBackgroundResource(R.color.past_appointments);
+                        }
                     }
                     if (currentappointment.contains("present")) {
-                        gholder.appointmentindicator.setBackgroundResource(R.color.present_appointments);
+                        if (event.getEvent().getAppointmentStatus().equals(Utility.APP_STATUS_CANCELLED)) {
+                            gholder.appointmentindicator.setBackgroundResource(R.color.cancel_appointment);
+                        } else {
+                            gholder.appointmentindicator.setBackgroundResource(R.color.present_appointments);
+                        }
                     } else if (currentappointment.contains("future")) {
-                        gholder.appointmentindicator.setBackgroundResource(R.color.feature_appointments);
+                        if (event.getEvent().getAppointmentStatus().equals(Utility.APP_STATUS_CANCELLED)) {
+                            gholder.appointmentindicator.setBackgroundResource(R.color.cancel_appointment);
+                        } else {
+                            gholder.appointmentindicator.setBackgroundResource(R.color.feature_appointments);
+                        }
                     }
 
                     gholder.date.setText(Utility.formatDate(dates, Utility.DATE_FORMAT_DISPLAY));

@@ -404,6 +404,7 @@ public class SelectDateAcitivity extends AppCompatActivity {
 
         Intent i = new Intent(SelectDateAcitivity.this, AppointmentsActivity.class);
         i.putExtra("showcancel", false);
+        i.putExtra("states", 1);
         startActivity(i);
         finish();
     }
@@ -518,7 +519,10 @@ public class SelectDateAcitivity extends AppCompatActivity {
                         System.out.println("Appointment for =>" + appointment.getName());
                         //Update slotsList based on this other users available slotsList
                         if (isWeeklyOff(otherUser)) {
-                            filteredSlots.clear();
+                            if (filteredSlots != null) {
+                                filteredSlots.clear();
+                            }
+
                             setSlotsAdapter();
                             return;
                         }

@@ -18,4 +18,5 @@
     <color name="past_appointments">#a1887f</color>
     <color name="present_appointments">#00e676</color>
     <color name="white">#ffffff</color>
+    <color name="cancel_appointment">#000</color>
 </resources>

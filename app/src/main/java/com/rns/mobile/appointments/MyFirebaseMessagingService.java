@@ -29,6 +29,7 @@ public class MyFirebaseMessagingService extends FirebaseMessagingService {
 
     private static final String TAG = "MyFirebaseMsgService";
     private boolean showcanceled = false;
+    private int state=1;
 
     /**
      * Called when message is received.
@@ -139,10 +140,12 @@ public class MyFirebaseMessagingService extends FirebaseMessagingService {
             appointment.setDate(date);
             Utility.addAppointmentsToCalender(getApplicationContext(), appointment);
             showcanceled=false;
+            state=1;
         } else if (Utility.NOTIFICATION_TYPE_CANCEL.equals(type)) {
             title = "Appointment cancelled";
             message = "Your appointment starting at " + time + " is cancelled by " + name;
             showcanceled=true;
+            state=2;
             appointment.setId(appointmentId);
             Utility.deleteAppointmentFromCalendar(getApplicationContext(), appointment);
             System.out.println("Appointment Deleted!!");
@@ -153,9 +156,9 @@ public class MyFirebaseMessagingService extends FirebaseMessagingService {
         intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
         PendingIntent pendingIntent = PendingIntent.getActivity(this, 0 /* Request code */, intent, PendingIntent.FLAG_ONE_SHOT);
 
-
+        intent.putExtra("states",state);
         intent.putExtra("showcancel",showcanceled );
-        System.out.println("Show Cancel"+ showcanceled);
+        System.out.println("Show cancel in firebase "+ showcanceled+ " staes in firebase "+state);
 
         NotificationCompat.Builder notificationBuilder = new NotificationCompat.Builder(this, channelId).setSmallIcon(R.mipmap.timede).setContentTitle(title).setContentText(message).setAutoCancel(true).setSound(defaultSoundUri).setContentIntent(pendingIntent);
 

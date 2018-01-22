@@ -87,6 +87,7 @@ public class MainActivity extends AppCompatActivity {
         Intent i = new Intent(MainActivity.this, AppointmentsActivity.class);
         i.putExtra(Utility.INTENT_VAR_USER, new Gson().toJson(user));
         i.putExtra("showcancel",false);
+        i.putExtra("states",1);
         startActivity(i);
     }
 

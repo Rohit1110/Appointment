@@ -21,6 +21,7 @@ import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.Toolbar;
 import android.util.Log;
 import android.view.GestureDetector;
+import android.view.Gravity;
 import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
@@ -71,6 +72,8 @@ public class AppointmentsActivity extends AppCompatActivity {
     AlertDialog alertDialog1;
     TextView noAppointment;
     private boolean showcacel = false;
+    int selectedElement = 1; //global variable to store state
+    private String from="all";
 
 
     @Override
@@ -84,7 +87,10 @@ public class AppointmentsActivity extends AppCompatActivity {
 
         user = Utility.getUserFromSharedPrefs(AppointmentsActivity.this);
         String userJson = getIntent().getStringExtra("user");
-        showcacel = getIntent().getBooleanExtra("showcancel", false);
+        showcacel = getIntent().getBooleanExtra("showcancel", true);
+        selectedElement=getIntent().getIntExtra("states",2);
+        System.out.println("Show cancel "+showcacel+" states "+selectedElement);
+
         if (userJson != null) {
             user = new Gson().fromJson(userJson, User.class);
 
@@ -184,13 +190,25 @@ public class AppointmentsActivity extends AppCompatActivity {
                 String chkf = Utility.CompareDate(dt, new Date());
                 String chkp = Utility.getcurrentAppointment(cappointnent.getStartTime(), cappointnent.getEndTime(), dt, new Date());
                 if (!chkf.contains("past") || chkf.contains("future") || chkp.contains("future")) {
-                    if (!chkp.contains("present") || chkp.contains("future")) {
-                        AlertforDoubleclick(position, cappointnent);
+                    if (cappointnent.getAppointmentStatus().equals(Utility.APP_STATUS_ACTIVE)) {
+                        if (!chkp.contains("present") || chkp.contains("future")) {
+                            AlertforDoubleclick(position, cappointnent);
+                        } else {
+
+                            if (cappointnent.getAppointmentStatus().equals(Utility.APP_STATUS_CANCELLED)) {
+                                Toast.makeText(AppointmentsActivity.this, "This appointment is already cancelled", Toast.LENGTH_LONG).show();
+                            } else {
+                                Toast.makeText(AppointmentsActivity.this, "ongoing or past appointments cannot be cancelled", Toast.LENGTH_LONG).show();
+                            }                        }
+                    } else {
+                        Toast.makeText(AppointmentsActivity.this, "This appointment is already cancelled", Toast.LENGTH_LONG).show();
+                    }
+                } else {
+                    if (cappointnent.getAppointmentStatus().equals(Utility.APP_STATUS_CANCELLED)) {
+                        Toast.makeText(AppointmentsActivity.this, "This appointment is already cancelled", Toast.LENGTH_LONG).show();
                     } else {
                         Toast.makeText(AppointmentsActivity.this, "ongoing or past appointments cannot be cancelled", Toast.LENGTH_LONG).show();
                     }
-                } else {
-                    Toast.makeText(AppointmentsActivity.this, "ongoing or past appointments cannot be cancelled", Toast.LENGTH_LONG).show();
                 }
 
 
@@ -402,7 +420,17 @@ public class AppointmentsActivity extends AppCompatActivity {
             noAppointment.setText("");
             return;
         }
-        noAppointment.setText("You have no appointments");
+        if(from.equals("all")) {
+            noAppointment.setVisibility(View.VISIBLE);
+            noAppointment.setText("No appointments to show");
+        }else  if(from.equals("today")) {
+            noAppointment.setVisibility(View.VISIBLE);
+            noAppointment.setText("No appointments to show today");
+        }else  if(from.equals("cancel")) {
+            noAppointment.setVisibility(View.VISIBLE);
+
+            noAppointment.setText("No cancelled appointments to show");
+        }
     }
 
 
@@ -546,7 +574,7 @@ public class AppointmentsActivity extends AppCompatActivity {
     }
 
 
-    int selectedElement = 1; //global variable to store state
+
     AlertDialog alert;
 
     private void SingleChoiceWithRadioButton() {
@@ -559,14 +587,17 @@ public class AppointmentsActivity extends AppCompatActivity {
                 selectedElement = which;
                 //Toast.makeText(AppointmentsActivity.this, selectFruit[which]+":"+ which + " Selected", Toast.LENGTH_LONG).show();
                 if (selectFruit[which] == "Todays Appointments") {
+                    from="today";
                     showcacel = false;
                     prepareAppointmentsList(Utility.formatDate(new Date(), Utility.DATE_FORMAT_USED));
                 } else if (selectFruit[which] == "Show All Appointments") {
                     showcacel = false;
+                    from="all";
                     prepareAppointmentsList(null);
 
-                } else if (selectFruit[which] == "Cancel Appointments") {
+                } else if (selectFruit[which] == "Canceled Appointments") {
                     showcacel = true;
+                    from="cancel";
                     prepareAppointmentsList(null);
 
                 }
