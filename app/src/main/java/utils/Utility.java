@@ -204,17 +204,23 @@ public class Utility {
     }
 
     public static String formatDate(Date date, String format) {
+        if(date == null || format == null) {
+            return null;
+        }
         SimpleDateFormat df = new SimpleDateFormat(format);
         String formattedDate = df.format(date.getTime());
         return formattedDate;
     }
 
     public static Date formatDate(String date, String format) {
+        if(date == null || format == null) {
+            return null;
+        }
         SimpleDateFormat df = new SimpleDateFormat(format);
         Date formattedDate = null;
         try {
             formattedDate = df.parse(date);
-        } catch (ParseException e) {
+        } catch (Exception e) {
             e.printStackTrace();
         }
         return formattedDate;
@@ -241,12 +247,27 @@ public class Utility {
     //end comparisions
 
 
-    public static String formatToUsedDate(String dateString) {
+    public static String extractFromDisplayDate(String dateString) {
         if (dateString == null) {
             return null;
         }
         try {
             Date date = new SimpleDateFormat(DATE_FORMAT_DISPLAY).parse(dateString);
+            if (date != null) {
+                return new SimpleDateFormat(DATE_FORMAT_USED).format(date);
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        return null;
+    }
+
+    public static String extractFromUsedDate(String dateString) {
+        if (dateString == null) {
+            return null;
+        }
+        try {
+            Date date = new SimpleDateFormat(DATE_FORMAT_USED).parse(dateString);
             if (date != null) {
                 return new SimpleDateFormat(DATE_FORMAT_USED).format(date);
             }

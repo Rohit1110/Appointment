@@ -9,7 +9,6 @@ import android.widget.TextView;
 
 import com.rns.mobile.appointments.R;
 
-import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.List;
 
@@ -113,11 +112,11 @@ public class AppointmentsDateAdapter extends RecyclerView.Adapter<RecyclerView.V
                 }
 
 
-                String dateformat = Utility.formatToUsedDate(event.getEvent().getDate());
-                System.out.println(dateformat + " new Date Format");
+                String formatted = Utility.extractFromUsedDate(event.getEvent().getDate());
+                System.out.println(formatted + " new Date Format");
 
 
-                Date dates = Utility.formatDate(dateformat, Utility.DATE_FORMAT_USED);
+                Date dates = Utility.formatDate(formatted, Utility.DATE_FORMAT_USED);
                 if (dates != null) {
                     String tens = Utility.CompareDate(dates, new Date());
                     String currentappointment = Utility.getcurrentAppointment(event.getEvent().getStartTime(), event.getEvent().getEndTime(), dates, new Date());
@@ -134,13 +133,11 @@ public class AppointmentsDateAdapter extends RecyclerView.Adapter<RecyclerView.V
                         gholder.appointmentindicator.setBackgroundResource(R.color.feature_appointments);
                     }
 
-                    gholder.date.setText(new SimpleDateFormat(Utility.DATE_FORMAT_DISPLAY).format(dates));
+                    gholder.date.setText(Utility.formatDate(dates, Utility.DATE_FORMAT_DISPLAY));
 
 
                 }
 
-
-                gholder.date.setText(new SimpleDateFormat(Utility.DATE_FORMAT_DISPLAY).format(dates));
                 gholder.time.setText(event.getEvent().getStartTime() + " - " + event.getEvent().getEndTime());
                 gholder.description.setText(event.getEvent().getDescription());
                 System.out.println("name in Adapter " + event.getEvent().getName());
