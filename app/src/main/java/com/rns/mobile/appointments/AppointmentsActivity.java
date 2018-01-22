@@ -65,7 +65,7 @@ public class AppointmentsActivity extends AppCompatActivity {
     private ProgressDialog dialog;
     private String TAG = "Appointments Activity";
     String id;
-    private Appointment currentAppointment;
+    private Appointment currentAppointment,cappointnent;
     private SimpleAdapter mAdapter;
     private View button;
     AlertDialog alertDialog1;
@@ -82,10 +82,14 @@ public class AppointmentsActivity extends AppCompatActivity {
         noAppointment = (TextView) findViewById(R.id.nodata);
 
 
+
+
         user = Utility.getUserFromSharedPrefs(AppointmentsActivity.this);
         String userJson = getIntent().getStringExtra("user");
+        showcacel = getIntent().getBooleanExtra("showcancel",false);
         if (userJson != null) {
             user = new Gson().fromJson(userJson, User.class);
+
         }
 
 
@@ -124,13 +128,14 @@ public class AppointmentsActivity extends AppCompatActivity {
 
             @Override
             public void onLongClick(View view, int position) {
-                //Toast.makeText(AppointmentsActivity.this,""+position,Toast.LENGTH_LONG).show();
+
                 AppointmentsDateAdapter adapter = (AppointmentsDateAdapter) recyclerView.getAdapter();
                 System.out.println("current positions..." + adapter.getItemCount());
 
 
 //                list.remove(position);
                 //currentAppointment = list.get(position);
+
                 currentAppointment = adapter.getAppointment(position);
                 //id = currentAppointment.getId();
                 AlertDialog.Builder alertDialogBuilder = new AlertDialog.Builder(AppointmentsActivity.this);
@@ -174,16 +179,22 @@ public class AppointmentsActivity extends AppCompatActivity {
                     }
                 });
 
-                alertDialogBuilder.setNegativeButton("No", new DialogInterface.OnClickListener() {
-                    @Override
-                    public void onClick(DialogInterface dialog, int which) {
+                cappointnent = adapter.getAppointment(position);
 
 
-                    }
-                });
+               Date dt= Utility.formatDate(cappointnent.getDate(),Utility.DATE_FORMAT_USED);
+              String chkf=  Utility.CompareDate(dt,new Date());
+              String chkp=  Utility.getcurrentAppointment(cappointnent.getStartTime(),cappointnent.getEndTime(),dt,new Date());
+              if(!chkf.contains("past")||chkf.contains("future")||chkp.contains("future")){
+                  if(!chkp.contains("present")||chkp.contains("future")){
+                      AlertforDoubleclick(position,cappointnent);
+                  }else{
+                      Toast.makeText(AppointmentsActivity.this,"ongoing or past appointments cannot be cancelled",Toast.LENGTH_LONG).show();
+                  }
+              }else{
+                  Toast.makeText(AppointmentsActivity.this,"ongoing or past appointments cannot be cancelled",Toast.LENGTH_LONG).show();
+              }
 
-                AlertDialog alertDialog = alertDialogBuilder.create();
-                alertDialog.show();
 
 
             }
@@ -214,6 +225,59 @@ public class AppointmentsActivity extends AppCompatActivity {
                 startActivity(intent);
             }
         });
+    }
+
+    private void AlertforDoubleclick(int position,Appointment appointment) {
+        //Toast.makeText(AppointmentsActivity.this,""+position,Toast.LENGTH_LONG).show();
+        currentAppointment=appointment;
+        //id = currentAppointment.getId();
+        AlertDialog.Builder alertDialogBuilder = new AlertDialog.Builder(AppointmentsActivity.this);
+        alertDialogBuilder.setMessage("Are you sure to cancel this Appointment");
+        final int pos = position;
+
+        alertDialogBuilder.setPositiveButton("yes", new DialogInterface.OnClickListener() {
+            @Override
+            public void onClick(DialogInterface arg0, int arg1) {
+                System.out.println("Deleteing appointment =>" + currentAppointment.getId());
+                FirebaseUtil.db.collection(FirebaseUtil.DOC_USERS).document(phoneNumber).collection(FirebaseUtil.DOC_APPOINTMENTS).document(currentAppointment.getId()).update("appointmentStatus", Utility.APP_STATUS_CANCELLED).addOnSuccessListener(new OnSuccessListener<Void>() {
+                    @Override
+                    public void onSuccess(Void aVoid) {
+                        Utility.deleteAppointmentFromCalendar(AppointmentsActivity.this, currentAppointment);
+                        //Delete other users appointment
+                        FirebaseUtil.db.collection(FirebaseUtil.DOC_USERS).document(currentAppointment.getPhone()).collection(FirebaseUtil.DOC_APPOINTMENTS).document(currentAppointment.getId()).update("appointmentStatus", Utility.APP_STATUS_CANCELLED).addOnSuccessListener(new OnSuccessListener<Void>() {
+                            @Override
+                            public void onSuccess(Void aVoid) {
+                                System.out.println("Deleted for other user appointment =>" + currentAppointment.getId());
+                                Appointment app = currentAppointment.duplicate(currentAppointment.getPhone());
+                                app.setName(user.getFullName());
+                                new NotificationTask(app, Utility.NOTIFICATION_TYPE_CANCEL).sendNotification();
+                            }
+                        }).addOnFailureListener(new OnFailureListener() {
+                            @Override
+                            public void onFailure(@NonNull Exception e) {
+                                Log.w("EDIT", "Error deleting other user App", e);
+                            }
+                        });
+                    }
+                }).addOnFailureListener(new OnFailureListener() {
+                    @Override
+                    public void onFailure(@NonNull Exception e) {
+                        Log.w("EDIT", "Error deleting app", e);
+                    }
+                });
+            }
+        });
+
+        alertDialogBuilder.setNegativeButton("No", new DialogInterface.OnClickListener() {
+            @Override
+            public void onClick(DialogInterface dialog, int which) {
+
+
+            }
+        });
+
+        AlertDialog alertDialog = alertDialogBuilder.create();
+        alertDialog.show();
     }
 
     @Override
@@ -485,71 +549,44 @@ public class AppointmentsActivity extends AppCompatActivity {
     }
 
 
-    public void CreateAlertDialogWithRadioButtonGroup() {
 
 
-        AlertDialog.Builder builder = new AlertDialog.Builder(AppointmentsActivity.this);
-        CharSequence[] values = {"Todays Appointments", "Show All Appointments"};
-
-        builder.setTitle("Select Your Choice");
-
-        builder.setSingleChoiceItems(values, -1, new DialogInterface.OnClickListener() {
-
-            public void onClick(DialogInterface dialog, int item) {
-
-                switch (item) {
-                    case 0:
-
-                        //Toast.makeText(AppointmentsActivity.this, "First Item Clicked", Toast.LENGTH_LONG).show();
-                        prepareAppointmentsList(Utility.formatDate(new Date(), Utility.DATE_FORMAT_USED));
-                        //alertDialog1.dismiss();
-                        break;
-                    case 1:
-
-                        //Toast.makeText(AppointmentsActivity.this, "First Item Clicked", Toast.LENGTH_LONG).show();
-                        prepareAppointmentsList(null);
-                        alertDialog1.dismiss();
-                        break;
-                }
-                alertDialog1.dismiss();
-            }
-        });
-        alertDialog1 = builder.create();
-        alertDialog1.show();
-
-    }
-
-
-    int selectedElement = -1; //global variable to store state
-    AlertDialog alert;
-
-    private void SingleChoiceWithRadioButton() {
-        final String[] selectFruit = new String[]{"Todays Appointments", "Show All Appointments", "Cancel Appointments"};
+         int selectedElement=1; //global variable to store state
+         AlertDialog alert;
+        private void SingleChoiceWithRadioButton() {
+        final String[] selectFruit= new String[]{"Todays Appointments", "Show All Appointments","Canceled Appointments"};
         AlertDialog.Builder builder = new AlertDialog.Builder(this);
         builder.setTitle("Select Your Choice");
-        builder.setSingleChoiceItems(selectFruit, selectedElement, new DialogInterface.OnClickListener() {
-            @Override
-            public void onClick(DialogInterface dialog, int which) {
-                selectedElement = which;
-                Toast.makeText(AppointmentsActivity.this, selectFruit[which] + ":" + which + " Selected", Toast.LENGTH_LONG).show();
-                if (selectFruit[which] == "Todays Appointments") {
-                    prepareAppointmentsList(Utility.formatDate(new Date(), Utility.DATE_FORMAT_USED));
-                } else if (selectFruit[which] == "Show All Appointments") {
-                    prepareAppointmentsList(null);
-                } else if (selectFruit[which] == "Cancel Appointments") {
-                    showcacel = true;
-                    prepareAppointmentsList(null);
+        builder.setSingleChoiceItems(selectFruit, selectedElement,
+                new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialog, int which) {
+                        selectedElement=which;
+                        //Toast.makeText(AppointmentsActivity.this, selectFruit[which]+":"+ which + " Selected", Toast.LENGTH_LONG).show();
+                        if(selectFruit[which]=="Todays Appointments")
+                        {
+                            showcacel=false;
+                            prepareAppointmentsList(Utility.formatDate(new Date(), Utility.DATE_FORMAT_USED));
+                        } else if(selectFruit[which]=="Show All Appointments"){
+                            showcacel=false;
+                            prepareAppointmentsList(null);
 
-                }
-                //  dialog.dismiss();
-            }
-        });
-        builder.setPositiveButton("ok", new DialogInterface.OnClickListener() {
-            @Override
-            public void onClick(DialogInterface dialog, int which) {
-                dialog.dismiss();
-            }
-        });
+                        }else if(selectFruit[which]=="Cancel Appointments"){
+                            showcacel=true;
+                            prepareAppointmentsList(null);
+
+                        }
+                        //  dialog.dismiss();
+                    }
+                });
+        builder.setPositiveButton("OK",
+                new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialog, int which) {
+                        dialog.dismiss();
+                    }
+                });
+
         alert = builder.create();
         alert.show();
     }

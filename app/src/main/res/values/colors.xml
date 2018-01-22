@@ -14,4 +14,7 @@
     <color name="colorBackground">#afb8ed</color>
     <color name="colorDivide">#c0c0c0</color>
     <color name="contactcolorDivide">#c0c0c0</color>
+    <color name="feature_appointments">#ef5350</color>
+    <color name="past_appointments">#a1887f</color>
+    <color name="present_appointments">#00e676</color>
 </resources>
