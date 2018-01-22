@@ -61,7 +61,7 @@ public class Utility {
     public static final String CALENDAR_CONTENT_URI = "content://com.android.calendar/events";
     public static final String NOTIFICATION_TYPE_NEW = "NEW_APP";
     public static final String NOTIFICATION_TYPE_CANCEL = "CANCEL_APP";
-
+    public static final String ERROR_CONNECTION = "Error connecting server ..";
 
 
     public static void createAlert(Context context, String message) {
@@ -205,13 +205,13 @@ public class Utility {
         return phone.trim().replaceAll("\\s+", "");
     }
 
-    public static String formatDate(Date date,String format){
+    public static String formatDate(Date date, String format) {
         SimpleDateFormat df = new SimpleDateFormat(format);
         String formattedDate = df.format(date.getTime());
         return formattedDate;
     }
 
-    public static Date formatDate(String date,String format){
+    public static Date formatDate(String date, String format) {
         SimpleDateFormat df = new SimpleDateFormat(format);
         Date formattedDate = null;
         try {
@@ -221,6 +221,7 @@ public class Utility {
         }
         return formattedDate;
     }
+
 
 
 
@@ -244,6 +245,7 @@ public class Utility {
 
 
     //end comparisions
+
 
     public static String formatToUsedDate(String dateString) {
         if (dateString == null) {
@@ -291,7 +293,6 @@ public class Utility {
     }
 
 
-
     public static long addAppointmentsToCalender(Context activity, Appointment appointment) {
 
 
@@ -300,7 +301,7 @@ public class Utility {
             return -1;
         }
 
-        if(caledarEventExists(activity, appointment)) {
+        if (caledarEventExists(activity, appointment)) {
             return -1;
         }
 
@@ -396,7 +397,7 @@ public class Utility {
     public static boolean caledarEventExists(Context activity, Appointment appointment) {
 
         String event = getSharedString(activity, appointment.getId());
-        if(event != null && event.trim().length() > 0) {
+        if (event != null && event.trim().length() > 0) {
             return true;
         }
 
@@ -495,6 +496,13 @@ public class Utility {
     }
 
 
+
+    private boolean isNetworkAvailable(Context context) {
+        ConnectivityManager connectivityManager = (ConnectivityManager) context.getSystemService(Context.CONNECTIVITY_SERVICE);
+        NetworkInfo activeNetworkInfo = connectivityManager.getActiveNetworkInfo();
+        return activeNetworkInfo != null && activeNetworkInfo.isConnected();
+    }
+  
     public static String getcurrentAppointment(String startTime, String endTime, Date dates,Date today) {
         System.out.println("Start: "+startTime+" End :"+ endTime+" Dates : "+dates);
       String newDate= Utility.formatDate(dates,Utility.DATE_FORMAT_USED);
@@ -512,8 +520,7 @@ public class Utility {
         return "future";
     }
 
-return "not";
-
+    return "not";
     }
 
 }

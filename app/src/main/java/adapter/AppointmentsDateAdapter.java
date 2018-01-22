@@ -9,8 +9,6 @@ import android.widget.TextView;
 
 import com.rns.mobile.appointments.R;
 
-import java.text.ParseException;
-import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.List;
 
@@ -89,28 +87,12 @@ public class AppointmentsDateAdapter extends RecyclerView.Adapter<RecyclerView.V
                 HeaderItem header = (HeaderItem) items.get(position);
 
                 ViewHolder0 dateholder = (ViewHolder0) holder;
-                // your logic here
-                //dateholder.txt_header.setText(header.getDate());
 
 
-                String dateformat = Utility.formatToUsedDate(header.getDate());
-                System.out.println(dateformat + " new Date Format");
-                //holder.date.setText(new SimpleDateFormat(Utility.DATE_FORMAT_DISPLAY).format(appointment.getDate()));
-                SimpleDateFormat sdf = new SimpleDateFormat(Utility.DATE_FORMAT_USED);
-                Date dates = null;
-                try
-
-                {
-                    dates = sdf.parse(header.getDate());
-                    if (dates != null) {
-
-                        dateholder.txt_header.setText(new SimpleDateFormat(Utility.DATE_FORMAT_DISPLAY).format(dates));
-                    }
-                } catch (
-                        ParseException e)
-
-                {
-                    e.printStackTrace();
+                Date formattedDate = Utility.formatDate(header.getDate(), Utility.DATE_FORMAT_USED);
+                System.out.println(formattedDate + " new Date Format");
+                if (formattedDate != null) {
+                    dateholder.txt_header.setText(Utility.formatDate(formattedDate, Utility.DATE_FORMAT_DISPLAY));
                 }
 
                 break;
@@ -129,6 +111,7 @@ public class AppointmentsDateAdapter extends RecyclerView.Adapter<RecyclerView.V
                 {
                     gholder.name.setText(event.getEvent().getPhone());
                 }
+
 
                 String dateformat = Utility.formatToUsedDate(event.getEvent().getDate());
                 System.out.println(dateformat + " new Date Format");
@@ -158,12 +141,9 @@ public class AppointmentsDateAdapter extends RecyclerView.Adapter<RecyclerView.V
                         }
 
                         gholder.date.setText(new SimpleDateFormat(Utility.DATE_FORMAT_DISPLAY).format(dates));
-                    }
-                } catch (
-                        ParseException e)
 
-                {
-                    e.printStackTrace();
+                    }
+
                 }
 
                 gholder.time.setText(event.getEvent().getStartTime() + " - " + event.getEvent().getEndTime());
@@ -193,13 +173,13 @@ public class AppointmentsDateAdapter extends RecyclerView.Adapter<RecyclerView.V
     }
 
     public Appointment getAppointment(int position) {
-        if(items == null || items.size() <= position) {
+        if (items == null || items.size() <= position) {
             return null;
         }
         ListItem item = items.get(position);
-        if(ListItem.TYPE_GENERAL == item.getType()) {
+        if (ListItem.TYPE_GENERAL == item.getType()) {
             EventItem eventItem = (EventItem) item;
-            if(eventItem != null) {
+            if (eventItem != null) {
                 return eventItem.getEvent();
             }
 

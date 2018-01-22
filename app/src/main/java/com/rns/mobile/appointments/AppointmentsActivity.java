@@ -4,13 +4,11 @@ import android.Manifest;
 import android.annotation.TargetApi;
 import android.app.Activity;
 import android.app.AlertDialog;
-import android.app.Dialog;
 import android.app.ProgressDialog;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.pm.PackageManager;
-import android.graphics.Color;
 import android.os.Build;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
@@ -18,7 +16,6 @@ import android.support.design.widget.FloatingActionButton;
 import android.support.v4.app.ActivityCompat;
 import android.support.v4.content.ContextCompat;
 import android.support.v7.app.AppCompatActivity;
-import android.support.v7.widget.GridLayoutManager;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.Toolbar;
@@ -29,16 +26,8 @@ import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.MotionEvent;
 import android.view.View;
-import android.view.Window;
-import android.widget.ArrayAdapter;
-import android.widget.Button;
-import android.widget.RadioButton;
-import android.widget.RadioGroup;
-import android.widget.RelativeLayout;
-import android.widget.Switch;
 import android.widget.TextView;
 import android.widget.Toast;
-import android.widget.ToggleButton;
 
 import com.google.android.gms.tasks.OnFailureListener;
 import com.google.android.gms.tasks.OnSuccessListener;
@@ -49,13 +38,9 @@ import com.google.firebase.firestore.Query;
 import com.google.firebase.firestore.QuerySnapshot;
 import com.google.gson.Gson;
 
-import java.text.SimpleDateFormat;
 import java.util.ArrayList;
-import java.util.Calendar;
-import java.util.Collection;
 import java.util.Collections;
 import java.util.Date;
-import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.TreeMap;
@@ -85,7 +70,7 @@ public class AppointmentsActivity extends AppCompatActivity {
     private View button;
     AlertDialog alertDialog1;
     TextView noAppointment;
-    private boolean showcacel=false;
+    private boolean showcacel = false;
 
 
     @Override
@@ -150,7 +135,52 @@ public class AppointmentsActivity extends AppCompatActivity {
 
 //                list.remove(position);
                 //currentAppointment = list.get(position);
+
+                currentAppointment = adapter.getAppointment(position);
+                //id = currentAppointment.getId();
+                AlertDialog.Builder alertDialogBuilder = new AlertDialog.Builder(AppointmentsActivity.this);
+                alertDialogBuilder.setMessage("Are you sure to cancel this Appointment");
+                final int pos = position;
+
+                alertDialogBuilder.setPositiveButton("yes", new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface arg0, int arg1) {
+                        if (!Utility.isInternetOn(AppointmentsActivity.this)) {
+                            Utility.createAlert(AppointmentsActivity.this, Utility.ERROR_CONNECTION);
+                            return;
+                        }
+                        System.out.println("Deleteing appointment =>" + currentAppointment.getId());
+                        FirebaseUtil.db.collection(FirebaseUtil.DOC_USERS).document(phoneNumber).collection(FirebaseUtil.DOC_APPOINTMENTS).document(currentAppointment.getId()).update("appointmentStatus", Utility.APP_STATUS_CANCELLED).addOnSuccessListener(new OnSuccessListener<Void>() {
+                            @Override
+                            public void onSuccess(Void aVoid) {
+                                Utility.deleteAppointmentFromCalendar(AppointmentsActivity.this, currentAppointment);
+                                //Delete other users appointment
+                                FirebaseUtil.db.collection(FirebaseUtil.DOC_USERS).document(currentAppointment.getPhone()).collection(FirebaseUtil.DOC_APPOINTMENTS).document(currentAppointment.getId()).update("appointmentStatus", Utility.APP_STATUS_CANCELLED).addOnSuccessListener(new OnSuccessListener<Void>() {
+                                    @Override
+                                    public void onSuccess(Void aVoid) {
+                                        System.out.println("Deleted for other user appointment =>" + currentAppointment.getId());
+                                        Appointment app = currentAppointment.duplicate(currentAppointment.getPhone());
+                                        app.setName(user.getFullName());
+                                        new NotificationTask(app, Utility.NOTIFICATION_TYPE_CANCEL).sendNotification();
+                                    }
+                                }).addOnFailureListener(new OnFailureListener() {
+                                    @Override
+                                    public void onFailure(@NonNull Exception e) {
+                                        Log.w("EDIT", "Error deleting other user App", e);
+                                    }
+                                });
+                            }
+                        }).addOnFailureListener(new OnFailureListener() {
+                            @Override
+                            public void onFailure(@NonNull Exception e) {
+                                Log.w("EDIT", "Error deleting app", e);
+                            }
+                        });
+                    }
+                });
+
                 cappointnent = adapter.getAppointment(position);
+
 
                Date dt= Utility.formatDate(cappointnent.getDate(),Utility.DATE_FORMAT_USED);
               String chkf=  Utility.CompareDate(dt,new Date());
@@ -319,11 +349,11 @@ public class AppointmentsActivity extends AppCompatActivity {
                 if (appointment == null) {
                     continue;
                 }
-                if (Utility.APP_STATUS_CANCELLED.equals(appointment.getAppointmentStatus())&& !showcacel) {
+                if (Utility.APP_STATUS_CANCELLED.equals(appointment.getAppointmentStatus()) && !showcacel) {
                     continue;
 
                 }
-                if (!Utility.APP_STATUS_CANCELLED.equals(appointment.getAppointmentStatus())&& showcacel) {
+                if (!Utility.APP_STATUS_CANCELLED.equals(appointment.getAppointmentStatus()) && showcacel) {
                     continue;
 
                 }
@@ -556,19 +586,17 @@ public class AppointmentsActivity extends AppCompatActivity {
                         dialog.dismiss();
                     }
                 });
+
         alert = builder.create();
         alert.show();
     }
 
 //Call this method always
 
-        private void showDialog(){
-        if(alert==null)
-            SingleChoiceWithRadioButton();
-        else
-            alert.show();
+    private void showDialog() {
+        if (alert == null) SingleChoiceWithRadioButton();
+        else alert.show();
     }
-
 
 
 }

@@ -236,6 +236,12 @@ public class EditProfileActivity extends AppCompatActivity {
 
 
                     }
+
+                    if(!Utility.isInternetOn(EditProfileActivity.this)) {
+                        Utility.createAlert(EditProfileActivity.this, Utility.ERROR_CONNECTION);
+                        return false;
+                    }
+
                     dialog = Utility.showProgress(EditProfileActivity.this);
 
                     FirebaseUtil.db.collection(FirebaseUtil.DOC_USERS).document(phoneNumber).set(user, SetOptions.merge()).addOnSuccessListener(new OnSuccessListener<Void>() {
@@ -251,6 +257,7 @@ public class EditProfileActivity extends AppCompatActivity {
                         @Override
                         public void onFailure(@NonNull Exception e) {
                             Log.w("EDIT", "Error writing document", e);
+                            Utility.createAlert(EditProfileActivity.this, Utility.ERROR_CONNECTION);
                         }
                     });
                 } else {
