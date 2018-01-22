@@ -131,7 +131,7 @@ public class SelectDateAcitivity extends AppCompatActivity {
                 String dateString = sdf.format(date);
                 setdate.setText(dateString);
 
-                appointment.setDate(Utility.formatToUsedDate(dateString));
+                appointment.setDate(Utility.extractFromDisplayDate(dateString));
                 updateUserAppointments();
             }
         });
@@ -158,7 +158,7 @@ public class SelectDateAcitivity extends AppCompatActivity {
                 System.out.println(formattedDate);
                 setdate.setText(formattedDate);
 
-                appointment.setDate(Utility.formatToUsedDate(formattedDate));
+                appointment.setDate(Utility.extractFromDisplayDate(formattedDate));
                 updateUserAppointments();
             }
         });
@@ -189,7 +189,7 @@ public class SelectDateAcitivity extends AppCompatActivity {
         }
 
 
-        appointment.setDate(Utility.formatToUsedDate(dateString));
+        appointment.setDate(Utility.extractFromDisplayDate(dateString));
         updateUserAppointments();
     }
 
@@ -314,7 +314,7 @@ public class SelectDateAcitivity extends AppCompatActivity {
 
     private void bookAppointment() {
         System.out.println("Book appointment clicked!");
-        if(!Utility.isInternetOn(SelectDateAcitivity.this)) {
+        if (!Utility.isInternetOn(SelectDateAcitivity.this)) {
             Utility.createAlert(SelectDateAcitivity.this, Utility.ERROR_CONNECTION);
             return;
         }
@@ -403,7 +403,7 @@ public class SelectDateAcitivity extends AppCompatActivity {
         }
 
         Intent i = new Intent(SelectDateAcitivity.this, AppointmentsActivity.class);
-       i.putExtra("showcancel",false);
+        i.putExtra("showcancel", false);
         startActivity(i);
         finish();
     }
@@ -440,9 +440,8 @@ public class SelectDateAcitivity extends AppCompatActivity {
                 if (FirebaseUtil.resultExists(task)) {
                     System.out.println("Done fetching users apps for " + userPhone + " == " + task.getResult().size() + " Success:" + task.isSuccessful());
                     blockSlots(task);
-                    blockOtherUserSlots();
                 }
-
+                blockOtherUserSlots();
             }
         }).addOnFailureListener(new OnFailureListener() {
             @Override
@@ -507,7 +506,7 @@ public class SelectDateAcitivity extends AppCompatActivity {
             FirebaseUtil.db.collection(FirebaseUtil.DOC_USERS).document(appointment.getPhone()).get().addOnCompleteListener(new OnCompleteListener<DocumentSnapshot>() {
                 @Override
                 public void onComplete(@NonNull Task<DocumentSnapshot> task) {
-
+                    Utility.hideProgress(dialog);
                     if (FirebaseUtil.taskExists(task)) {
                         System.out.println("## Done profile .." + task.getResult().exists());
                         otherUser = task.getResult().toObject(User.class);
@@ -526,8 +525,6 @@ public class SelectDateAcitivity extends AppCompatActivity {
 
                         updateUserSlots(otherUser);
                         updateOtherUserAppointments();
-                    } else {
-                        Utility.hideProgress(dialog);
                     }
                 }
             }).addOnFailureListener(new OnFailureListener() {
