@@ -550,22 +550,22 @@ public class AppointmentsActivity extends AppCompatActivity {
     AlertDialog alert;
 
     private void SingleChoiceWithRadioButton() {
-        final String[] selectFruit = new String[]{"Todays Appointments", "Show All Appointments", "Canceled Appointments"};
+        final String[] appointmentTypes = new String[]{"Todays Appointments", "Show All Appointments", "Cancelled Appointments"};
         AlertDialog.Builder builder = new AlertDialog.Builder(this);
         builder.setTitle("Select Your Choice");
-        builder.setSingleChoiceItems(selectFruit, selectedElement, new DialogInterface.OnClickListener() {
+        builder.setSingleChoiceItems(appointmentTypes, selectedElement, new DialogInterface.OnClickListener() {
             @Override
             public void onClick(DialogInterface dialog, int which) {
-                selectedElement = which;
-                //Toast.makeText(AppointmentsActivity.this, selectFruit[which]+":"+ which + " Selected", Toast.LENGTH_LONG).show();
-                if (selectFruit[which] == "Todays Appointments") {
+                //selectedElement = which;
+                //Toast.makeText(AppointmentsActivity.this, appointmentTypes[which]+":"+ which + " Selected", Toast.LENGTH_LONG).show();
+                if (which == 0) {
                     showcacel = false;
                     prepareAppointmentsList(Utility.formatDate(new Date(), Utility.DATE_FORMAT_USED));
-                } else if (selectFruit[which] == "Show All Appointments") {
+                } else if (which == 1) {
                     showcacel = false;
                     prepareAppointmentsList(null);
 
-                } else if (selectFruit[which] == "Cancel Appointments") {
+                } else if (which == 2) {
                     showcacel = true;
                     prepareAppointmentsList(null);
 
