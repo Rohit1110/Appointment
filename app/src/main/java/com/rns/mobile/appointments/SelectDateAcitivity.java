@@ -525,6 +525,8 @@ public class SelectDateAcitivity extends AppCompatActivity {
 
                         updateUserSlots(otherUser);
                         updateOtherUserAppointments();
+                    } else {
+                        updateAvailableSlots();
                     }
                 }
             }).addOnFailureListener(new OnFailureListener() {
