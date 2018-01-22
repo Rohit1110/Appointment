@@ -17,4 +17,5 @@
     <color name="feature_appointments">#ef5350</color>
     <color name="past_appointments">#a1887f</color>
     <color name="present_appointments">#00e676</color>
+    <color name="white">#ffffff</color>
 </resources>
