@@ -28,12 +28,14 @@ public class MainActivity extends AppCompatActivity {
     private User user;
     private ProgressDialog dialog;
     private String TAG = "MainActivity Appointments";
+    private boolean showcancel=false;
 
     @Override
     public void onCreate(@Nullable Bundle savedInstanceState) {
 
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
+
 
 
         phoneNumber = FirebaseUtil.getMobile();
@@ -84,6 +86,7 @@ public class MainActivity extends AppCompatActivity {
 
         Intent i = new Intent(MainActivity.this, AppointmentsActivity.class);
         i.putExtra(Utility.INTENT_VAR_USER, new Gson().toJson(user));
+        i.putExtra("showcancel",false);
         startActivity(i);
     }
 

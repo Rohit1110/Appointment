@@ -221,6 +221,24 @@ public class Utility {
     }
 
 
+    //For Date comparison
+    public static String CompareDate(Date startDate, Date today) {
+        String past = null, feature = null, present = null;
+        long st_dateTime_millis = startDate.getTime();
+        long today_datetime_millis = today.getTime();
+        System.out.println("start dates " + st_dateTime_millis + " today " + today_datetime_millis);
+        if (today_datetime_millis >= st_dateTime_millis) {
+            return "past";
+        } else if (today_datetime_millis <= st_dateTime_millis) {
+            return "future";
+        } else if (today_datetime_millis == st_dateTime_millis) {
+            return "present";
+        }
+        return "not";
+    }
+
+
+    //end comparisions
 
     public static String formatToUsedDate(String dateString) {
         if (dateString == null) {
@@ -475,6 +493,26 @@ public class Utility {
         ConnectivityManager connectivityManager = (ConnectivityManager) context.getSystemService(Context.CONNECTIVITY_SERVICE);
         NetworkInfo activeNetworkInfo = connectivityManager.getActiveNetworkInfo();
         return activeNetworkInfo != null && activeNetworkInfo.isConnected();
+    }
+
+    public static String getcurrentAppointment(String startTime, String endTime, Date dates, Date today) {
+        System.out.println("Start: " + startTime + " End :" + endTime + " Dates : " + dates);
+        String newDate = Utility.formatDate(dates, Utility.DATE_FORMAT_USED);
+        Date start_time = convertToDate(startTime, newDate);
+        Date end_time = convertToDate(endTime, newDate);
+        long stime = start_time.getTime();
+        long etime = end_time.getTime();
+        long t_days = today.getTime();
+        System.out.println("Start: " + stime + " End :" + etime + " t_days : " + t_days);
+        if (stime <= t_days && etime >= t_days) {
+            return "present";
+        } else if (etime >= t_days) {
+
+            return "future";
+        }
+
+        return "not";
+
     }
 
 }

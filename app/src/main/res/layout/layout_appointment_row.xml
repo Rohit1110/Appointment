@@ -1,12 +1,28 @@
 <RelativeLayout
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
-    android:paddingLeft="5dip"
     android:paddingTop="10dip"
     android:paddingBottom="10dip"
     android:layout_margin="@dimen/card_margin"
 
     xmlns:android="http://schemas.android.com/apk/res/android">
+  <!--  <LinearLayout
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        >
+        <ImageView
+            android:id="@+id/indicator"
+            android:layout_width="match_parent"
+            android:layout_height="80dp"
+            android:src="@drawable/bar"
+            />
+
+    </LinearLayout>-->
+    <View
+        android:id="@+id/appointmentindicator"
+        android:layout_width="8dp"
+        android:layout_height="50dp"
+        />
 
 
     <TextView
@@ -16,7 +32,7 @@
         android:layout_alignParentLeft="true"
         android:layout_alignParentTop="true"
         android:layout_marginTop="5dp"
-        android:gravity="left"
+       android:layout_marginLeft="12dp"
         android:text="Number"
         android:textAppearance="@style/TextAppearance.AppCompat.Light.SearchResult.Subtitle"
         android:textColor="#212121" />
@@ -36,7 +52,7 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
       android:layout_below="@+id/txtname"
-
+        android:layout_marginLeft="12dp"
         android:gravity="left"
         android:text="description"
 
