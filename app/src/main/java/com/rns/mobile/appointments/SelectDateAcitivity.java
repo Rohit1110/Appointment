@@ -314,6 +314,11 @@ public class SelectDateAcitivity extends AppCompatActivity {
 
     private void bookAppointment() {
         System.out.println("Book appointment clicked!");
+        if(!Utility.isInternetOn(SelectDateAcitivity.this)) {
+            Utility.createAlert(SelectDateAcitivity.this, Utility.ERROR_CONNECTION);
+            return;
+        }
+
         prepareAppointmentSlots();
         if (!reason.getText().toString().equals("")) {
             appointment.setDescription(reason.getText().toString());
@@ -357,6 +362,8 @@ public class SelectDateAcitivity extends AppCompatActivity {
                     }).addOnFailureListener(new OnFailureListener() {
                         @Override
                         public void onFailure(@NonNull Exception e) {
+                            Utility.hideProgress(dialog);
+                            Utility.createAlert(SelectDateAcitivity.this, Utility.ERROR_CONNECTION);
                             System.out.println("Appointment failed to add => " + e);
                             e.printStackTrace();
                         }
@@ -371,8 +378,15 @@ public class SelectDateAcitivity extends AppCompatActivity {
         })*/.addOnFailureListener(new OnFailureListener() {
                 @Override
                 public void onFailure(@NonNull Exception e) {
+                    Utility.hideProgress(dialog);
+                    Utility.createAlert(SelectDateAcitivity.this, Utility.ERROR_CONNECTION);
                     System.out.println("Appointment failed to add => " + e);
                     e.printStackTrace();
+                }
+            }).addOnCompleteListener(new OnCompleteListener<Void>() {
+                @Override
+                public void onComplete(@NonNull Task<Void> task) {
+                    System.out.println("Completed!!" + task.getException());
                 }
             });
         } else {
@@ -419,15 +433,27 @@ public class SelectDateAcitivity extends AppCompatActivity {
                 orderBy("startTime").get().addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
             @Override
             public void onComplete(@NonNull Task<QuerySnapshot> task) {
+
                 Utility.hideProgress(dialog);
 
-                System.out.println("Done fetching users apps for " + userPhone + " == " + task.getResult().size() + " Success:" + task.isSuccessful());
+                if (FirebaseUtil.resultExists(task)) {
+                    System.out.println("Done fetching users apps for " + userPhone + " == " + task.getResult().size() + " Success:" + task.isSuccessful());
+                    blockSlots(task);
+                    blockOtherUserSlots();
+                }
 
-                blockSlots(task);
-                blockOtherUserSlots();
+            }
+        }).addOnFailureListener(new OnFailureListener() {
+            @Override
+            public void onFailure(@NonNull Exception e) {
+                Utility.hideProgress(dialog);
+                Utility.createAlert(SelectDateAcitivity.this, Utility.ERROR_CONNECTION);
+                System.out.println("Failed to load user appointments =>" + e);
+                e.printStackTrace();
             }
         });
     }
+
 
     private void blockSlots(@NonNull Task<QuerySnapshot> task) {
         if (task.getResult() != null && task.getResult().size() > 0) {
@@ -480,9 +506,9 @@ public class SelectDateAcitivity extends AppCompatActivity {
             FirebaseUtil.db.collection(FirebaseUtil.DOC_USERS).document(appointment.getPhone()).get().addOnCompleteListener(new OnCompleteListener<DocumentSnapshot>() {
                 @Override
                 public void onComplete(@NonNull Task<DocumentSnapshot> task) {
-                    Utility.hideProgress(dialog);
-                    System.out.println("## Done profile .." + task.getResult().exists());
-                    if (task.isSuccessful() && task.getResult() != null && task.getResult().exists()) {
+
+                    if (FirebaseUtil.taskExists(task)) {
+                        System.out.println("## Done profile .." + task.getResult().exists());
                         otherUser = task.getResult().toObject(User.class);
                         otherUser.setPhone(appointment.getPhone());
                         if (appointment.getName() == null) {
@@ -499,11 +525,15 @@ public class SelectDateAcitivity extends AppCompatActivity {
 
                         updateUserSlots(otherUser);
                         updateOtherUserAppointments();
+                    } else {
+                        Utility.hideProgress(dialog);
                     }
                 }
             }).addOnFailureListener(new OnFailureListener() {
                 @Override
                 public void onFailure(@NonNull Exception e) {
+                    Utility.hideProgress(dialog);
+                    Utility.createAlert(SelectDateAcitivity.this, Utility.ERROR_CONNECTION);
                     System.out.println("## Error in blocking slots .." + e);
                     e.printStackTrace();
                 }
@@ -514,6 +544,7 @@ public class SelectDateAcitivity extends AppCompatActivity {
             updateAvailableSlots();
         }
     }
+
 
     private boolean isWeeklyOff(User otherUser) {
         if (otherUser == null || otherUser.getSelectedDays() == null || otherUser.getSelectedDays().trim().length() == 0) {
@@ -552,6 +583,8 @@ public class SelectDateAcitivity extends AppCompatActivity {
         }).addOnFailureListener(new OnFailureListener() {
             @Override
             public void onFailure(@NonNull Exception e) {
+                Utility.hideProgress(dialog);
+                Utility.createAlert(SelectDateAcitivity.this, Utility.ERROR_CONNECTION);
                 System.out.println("Failed to fetch apps for other user =>" + e.getMessage());
                 e.printStackTrace();
             }
@@ -586,7 +619,7 @@ public class SelectDateAcitivity extends AppCompatActivity {
 
     private void setSlotsAdapter() {
 
-        if(filteredSlots.size()<=0){
+        if (filteredSlots.size() <= 0) {
             noSlots.setVisibility(View.VISIBLE);
             noSlots.setText("No slots are available on this date");
         }
