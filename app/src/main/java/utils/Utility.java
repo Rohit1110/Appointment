@@ -240,6 +240,7 @@ public class Utility {
 
     //end comparisions
 
+
     public static String formatToUsedDate(String dateString) {
         if (dateString == null) {
             return null;
@@ -488,12 +489,12 @@ public class Utility {
         }
     }
 
-
     private boolean isNetworkAvailable(Context context) {
         ConnectivityManager connectivityManager = (ConnectivityManager) context.getSystemService(Context.CONNECTIVITY_SERVICE);
         NetworkInfo activeNetworkInfo = connectivityManager.getActiveNetworkInfo();
         return activeNetworkInfo != null && activeNetworkInfo.isConnected();
     }
+
 
     public static String getcurrentAppointment(String startTime, String endTime, Date dates, Date today) {
         System.out.println("Start: " + startTime + " End :" + endTime + " Dates : " + dates);
@@ -514,5 +515,6 @@ public class Utility {
         return "not";
 
     }
+
 
 }

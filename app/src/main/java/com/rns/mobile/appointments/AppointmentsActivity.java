@@ -177,8 +177,8 @@ public class AppointmentsActivity extends AppCompatActivity {
                     }
                 });
 
-                cappointnent = adapter.getAppointment(position);
 
+                cappointnent = adapter.getAppointment(position);
 
                 Date dt = Utility.formatDate(cappointnent.getDate(), Utility.DATE_FORMAT_USED);
                 String chkf = Utility.CompareDate(dt, new Date());
@@ -545,6 +545,7 @@ public class AppointmentsActivity extends AppCompatActivity {
         return map;
     }
 
+
     int selectedElement = 1; //global variable to store state
     AlertDialog alert;
 
@@ -578,6 +579,7 @@ public class AppointmentsActivity extends AppCompatActivity {
                 dialog.dismiss();
             }
         });
+
         alert = builder.create();
         alert.show();
     }

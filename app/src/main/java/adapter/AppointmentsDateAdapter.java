@@ -116,6 +116,7 @@ public class AppointmentsDateAdapter extends RecyclerView.Adapter<RecyclerView.V
                 String dateformat = Utility.formatToUsedDate(event.getEvent().getDate());
                 System.out.println(dateformat + " new Date Format");
 
+
                 Date dates = Utility.formatDate(dateformat, Utility.DATE_FORMAT_USED);
                 if (dates != null) {
                     String tens = Utility.CompareDate(dates, new Date());
@@ -135,9 +136,11 @@ public class AppointmentsDateAdapter extends RecyclerView.Adapter<RecyclerView.V
 
                     gholder.date.setText(new SimpleDateFormat(Utility.DATE_FORMAT_DISPLAY).format(dates));
 
+
                 }
 
 
+                gholder.date.setText(new SimpleDateFormat(Utility.DATE_FORMAT_DISPLAY).format(dates));
                 gholder.time.setText(event.getEvent().getStartTime() + " - " + event.getEvent().getEndTime());
                 gholder.description.setText(event.getEvent().getDescription());
                 System.out.println("name in Adapter " + event.getEvent().getName());
@@ -149,8 +152,12 @@ public class AppointmentsDateAdapter extends RecyclerView.Adapter<RecyclerView.V
             }
             default:
                 throw new IllegalStateException("unsupported item type");
+
+
         }
+
     }
+
 
     @Override
     public int getItemCount() {
