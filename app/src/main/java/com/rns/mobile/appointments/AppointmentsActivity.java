@@ -74,6 +74,8 @@ public class AppointmentsActivity extends AppCompatActivity {
     private boolean showcacel = false;
     int selectedElement = 1; //global variable to store state
     private String from="all";
+    String elementstatus;
+    String appointmentstatus;
 
 
     @Override
@@ -87,8 +89,24 @@ public class AppointmentsActivity extends AppCompatActivity {
 
         user = Utility.getUserFromSharedPrefs(AppointmentsActivity.this);
         String userJson = getIntent().getStringExtra("user");
-        showcacel = getIntent().getBooleanExtra("showcancel", true);
-        selectedElement=getIntent().getIntExtra("states",2);
+        elementstatus = getIntent().getStringExtra("showcancel");
+        appointmentstatus=getIntent().getStringExtra("states");
+        System.out.println("status "+elementstatus+" appointment "+appointmentstatus );
+       if(elementstatus.equals("true")){
+            showcacel=true;
+        }else{
+            showcacel=false;
+        }
+        if(appointmentstatus.equals("1")){
+            selectedElement=1;
+        }else{
+            selectedElement=2;
+        }
+      /*  Intent intent = getIntent();
+
+           showcacel=intent.getBooleanExtra("showcanceled",false);
+           selectedElement=intent.getIntExtra("state",1);*/
+
         System.out.println("Show cancel "+showcacel+" states "+selectedElement);
 
         if (userJson != null) {
@@ -143,7 +161,7 @@ public class AppointmentsActivity extends AppCompatActivity {
                 currentAppointment = adapter.getAppointment(position);
                 //id = currentAppointment.getId();
                 AlertDialog.Builder alertDialogBuilder = new AlertDialog.Builder(AppointmentsActivity.this);
-                alertDialogBuilder.setMessage("Are you sure to cancel this Appointment");
+                alertDialogBuilder.setMessage("Are you sure you want to cancel this Appointment");
                 final int pos = position;
 
                 alertDialogBuilder.setPositiveButton("yes", new DialogInterface.OnClickListener() {
@@ -579,7 +597,7 @@ public class AppointmentsActivity extends AppCompatActivity {
     AlertDialog alert;
 
     private void SingleChoiceWithRadioButton() {
-        final String[] selectFruit = new String[]{"Todays Appointments", "Show All Appointments", "Canceled Appointments"};
+        final String[] selectFruit = new String[]{"Todays Appointments", "Show All Appointments", "Cancelled Appointments"};
         AlertDialog.Builder builder = new AlertDialog.Builder(this);
         builder.setTitle("Select Your Choice");
         builder.setSingleChoiceItems(selectFruit, selectedElement, new DialogInterface.OnClickListener() {
@@ -596,7 +614,7 @@ public class AppointmentsActivity extends AppCompatActivity {
                     from="all";
                     prepareAppointmentsList(null);
 
-                } else if (selectFruit[which] == "Canceled Appointments") {
+                } else if (selectFruit[which] == "Cancelled Appointments") {
                     showcacel = true;
                     from="cancel";
                     prepareAppointmentsList(null);

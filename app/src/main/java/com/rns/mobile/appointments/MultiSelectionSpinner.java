@@ -141,7 +141,8 @@ public class MultiSelectionSpinner extends  android.support.v7.widget.AppCompatS
         _items = items;
         mSelection = new boolean[_items.length];
         simple_adapter.clear();
-        simple_adapter.add(_items[0]);
+        //Item position to start list
+        simple_adapter.add(_items[1]);
         Arrays.fill(mSelection, false);
     }
 

@@ -9,6 +9,7 @@ import java.net.HttpURLConnection;
 import java.net.URL;
 
 import model.Appointment;
+import model.SmsField;
 import utils.Utility;
 
 /**
@@ -20,11 +21,14 @@ public class SMSTask extends AsyncTask<Void, Void, Void> {
     private static String GET_URL = "http://api.msg91.com/api/sendhttp.php" + "?sender=TIMEDE&route=4&authkey=193344AsiDSe0j5a5db681&country=91";
     private String smsType;
     private Appointment appointment;
+    private SmsField smsField;
 
 
-    public SMSTask(String type, Appointment appointment) {
+    public SMSTask(String type, Appointment appointment, SmsField smsField) {
         this.smsType = type;
         this.appointment = appointment;
+        this.smsField=smsField;
+        System.out.println("SSSSSS"+smsField);
     }
 
     @Override
@@ -35,6 +39,7 @@ public class SMSTask extends AsyncTask<Void, Void, Void> {
         }
 
         try {
+            System.out.println("Url for SMS"+ smsField.getUrl()+"?sender="+smsField.getSender()+"&route="+smsField.getRoute()+"&authkey="+smsField.getAuthkey()+"&country="+smsField.getCountry());
             URL obj = new URL(GET_URL);
             HttpURLConnection con = (HttpURLConnection) obj.openConnection();
             con.setRequestMethod("GET");

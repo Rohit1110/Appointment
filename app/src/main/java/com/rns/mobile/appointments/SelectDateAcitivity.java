@@ -6,6 +6,7 @@ import android.content.Intent;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.v7.app.AppCompatActivity;
+import android.util.Log;
 import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
@@ -43,6 +44,7 @@ import java.util.Locale;
 import java.util.Set;
 
 import model.Appointment;
+import model.SmsField;
 import model.User;
 import utils.FirebaseUtil;
 import utils.Utility;
@@ -67,6 +69,7 @@ public class SelectDateAcitivity extends AppCompatActivity {
     private List<String> filteredSlots;
     private EditText reason;
     TextView noSlots;
+    public SmsField smsField;
 
 
     @Override
@@ -348,51 +351,80 @@ public class SelectDateAcitivity extends AppCompatActivity {
                     FirebaseUtil.db.collection(FirebaseUtil.DOC_USERS).document(appointment.getPhone()).
                             collection(FirebaseUtil.DOC_APPOINTMENTS).
                             document(appointment.toString()).set(otherUserAppointment).addOnSuccessListener(new OnSuccessListener<Void>() {
+
+
                         @Override
                         public void onSuccess(Void aVoid) {
                             System.out.println("Completed booking for other user!!!" + appointment.getPhone());
                             Utility.hideProgress(dialog);
                             System.out.println("Appointment added successfully!!" + otherUserAppointment);
-                            Appointment duplicate = appointment.duplicate(appointment.getPhone());
+                            final Appointment duplicate = appointment.duplicate(appointment.getPhone());
                             duplicate.setName(otherUserAppointment.getName());
                             new NotificationTask(duplicate, Utility.NOTIFICATION_TYPE_NEW).sendNotification();
-                            new SMSTask(Utility.NOTIFICATION_TYPE_NEW, duplicate).execute();
-                            goToHome();
-                        }
-                    }).addOnFailureListener(new OnFailureListener() {
-                        @Override
-                        public void onFailure(@NonNull Exception e) {
-                            Utility.hideProgress(dialog);
-                            Utility.createAlert(SelectDateAcitivity.this, Utility.ERROR_CONNECTION);
-                            System.out.println("Appointment failed to add => " + e);
-                            e.printStackTrace();
-                        }
-                    });
+                            FirebaseUtil.db.collection(FirebaseUtil.DOC_CONFIG).document("ehJdPUDH9lAz50qPK2Hw").get().addOnCompleteListener(new OnCompleteListener<DocumentSnapshot>() {
+
+                                @Override
+                                public void onComplete(@NonNull Task<DocumentSnapshot> task) {
+                                    if (task.isSuccessful()) {
+
+                                        DocumentSnapshot document = task.getResult();
+                                        if (document != null) {
+                                             smsField = document.toObject(SmsField.class);
+                                            new SMSTask(Utility.NOTIFICATION_TYPE_NEW, duplicate,smsField).execute();
+                                            Log.d("TAG", "DocumentSnapshot data: " + task.getResult().getData());
+                                        } else {
+                                            Log.d("TAG", "No such document");
+                                        }
+                                    } else {
+                                        Log.d("TAG", "get failed with ", task.getException());
+                                    }
+                                }
+
+                            });
 
 
-                }
-            }) /*{
+
+
+                        goToHome();
+                    }
+                }).
+
+                addOnFailureListener(new OnFailureListener() {
+                    @Override
+                    public void onFailure (@NonNull Exception e){
+                        Utility.hideProgress(dialog);
+                        Utility.createAlert(SelectDateAcitivity.this, Utility.ERROR_CONNECTION);
+                        System.out.println("Appointment failed to add => " + e);
+                        e.printStackTrace();
+                    }
+                });
+
+
+            }
+        }) /*{
             @Override public void onComplete (@NonNull Task < DocumentReference > task) {
 
             }*//*
         })*/.addOnFailureListener(new OnFailureListener() {
-                @Override
-                public void onFailure(@NonNull Exception e) {
-                    Utility.hideProgress(dialog);
-                    Utility.createAlert(SelectDateAcitivity.this, Utility.ERROR_CONNECTION);
-                    System.out.println("Appointment failed to add => " + e);
-                    e.printStackTrace();
-                }
-            }).addOnCompleteListener(new OnCompleteListener<Void>() {
-                @Override
-                public void onComplete(@NonNull Task<Void> task) {
-                    System.out.println("Completed!!" + task.getException());
-                }
-            });
-        } else {
-            Toast.makeText(SelectDateAcitivity.this, "Please select at least one time slot", Toast.LENGTH_LONG).show();
-        }
+            @Override
+            public void onFailure(@NonNull Exception e) {
+                Utility.hideProgress(dialog);
+                Utility.createAlert(SelectDateAcitivity.this, Utility.ERROR_CONNECTION);
+                System.out.println("Appointment failed to add => " + e);
+                e.printStackTrace();
+            }
+        }).addOnCompleteListener(new OnCompleteListener<Void>() {
+            @Override
+            public void onComplete(@NonNull Task<Void> task) {
+                System.out.println("Completed!!" + task.getException());
+            }
+        });
+    } else
+
+    {
+        Toast.makeText(SelectDateAcitivity.this, "Please select at least one time slot", Toast.LENGTH_LONG).show();
     }
+}
 
     private void goToHome() {
 
@@ -403,8 +435,8 @@ public class SelectDateAcitivity extends AppCompatActivity {
         }
 
         Intent i = new Intent(SelectDateAcitivity.this, AppointmentsActivity.class);
-        i.putExtra("showcancel", false);
-        i.putExtra("states", 1);
+        i.putExtra("showcancel","false");
+        i.putExtra("states","1");
         startActivity(i);
         finish();
     }
@@ -649,32 +681,33 @@ public class SelectDateAcitivity extends AppCompatActivity {
         return false;
     }
 
-    public class SlotsSelected implements AdapterView.OnItemClickListener {
+public class SlotsSelected implements AdapterView.OnItemClickListener {
 
-        @Override
-        public void onItemClick(AdapterView<?> arg0, View arg1, int arg2, long arg3) {
-            // TODO Auto-generated method stub
-            CheckedTextView ctv = (CheckedTextView) arg1;
-            String selectedSlot = ctv.getText().toString();
-            if (ctv.isChecked()) {
-                if (validateSlots(selectedSlot)) {
-                    selectedSlots.add(selectedSlot);
-                    System.out.println(selectedSlots);
-                    // Toast.makeText(SelectDateAcitivity.this, "now it is unchecked", Toast.LENGTH_SHORT).show();
-                } else {
-                    ctv.setChecked(false);
-                    ctv.setSelected(false);
-                }
-
-            } else {
-                selectedSlots.remove(selectedSlot);
+    @Override
+    public void onItemClick(AdapterView<?> arg0, View arg1, int arg2, long arg3) {
+        // TODO Auto-generated method stub
+        CheckedTextView ctv = (CheckedTextView) arg1;
+        String selectedSlot = ctv.getText().toString();
+        if (ctv.isChecked()) {
+            if (validateSlots(selectedSlot)) {
+                selectedSlots.add(selectedSlot);
                 System.out.println(selectedSlots);
-                //Toast.makeText(SelectDateAcitivity.this, "now it is checked", Toast.LENGTH_SHORT).show();
+                // Toast.makeText(SelectDateAcitivity.this, "now it is unchecked", Toast.LENGTH_SHORT).show();
+            } else {
+                ctv.setChecked(false);
+                ctv.setSelected(false);
             }
-            setSlotsSelected();
-            //removeInvalidSlots();
+
+        } else {
+            selectedSlots.remove(selectedSlot);
+            System.out.println(selectedSlots);
+            //Toast.makeText(SelectDateAcitivity.this, "now it is checked", Toast.LENGTH_SHORT).show();
         }
+        setSlotsSelected();
+        //removeInvalidSlots();
     }
+
+}
 
     private boolean validateSlots(String selectedSlot) {
         if (selectedSlots == null || selectedSlots.size() == 0) {

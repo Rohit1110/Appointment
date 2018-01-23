@@ -28,7 +28,8 @@ import utils.FirebaseUtil;
 public class NotificationTask extends AsyncTask<Void, Void, Void> {
 
     private static final String POST_URL = "https://fcm.googleapis.com/fcm/send";
-    private static final String APP_KEY = "key=AAAArVtpfx8:APA91bE974pR5MHFZLzdknWFVM_sW2oA-wEVBwf_f0vf-mgpKA91eSiATUCWaEyw-M-6BgaFJkSB7VIu5c7Efo_EAASpM73RLXv7J9yy5Lu7LndpOrcm8Vp7YAdrESbpPX35a8Kertv0";
+    //private static final String APP_KEY = "key=AAAArVtpfx8:APA91bE974pR5MHFZLzdknWFVM_sW2oA-wEVBwf_f0vf-mgpKA91eSiATUCWaEyw-M-6BgaFJkSB7VIu5c7Efo_EAASpM73RLXv7J9yy5Lu7LndpOrcm8Vp7YAdrESbpPX35a8Kertv0";
+    private static final String APP_KEY = "key=AAAAQi7x3Dg:APA91bH0-amKrSrFBojfq4-z0XXULfPjMeGImdB63TFrsptSpGvcWOJDEo_a8J4J2y0MnBewkvyu4s8B8xyXu3HykOUhbEp-x0gTpwgRkbQjvzVCwH3CDOOCYaaCf-JOwaBzA6YkBH3v";
 
 
     private String type;
