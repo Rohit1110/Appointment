@@ -201,6 +201,7 @@ public class SearchAppointmentActivity extends AppCompatActivity {
                 System.out.println("Selected appointment is =>" + appointment);
                 intent.putExtra(Utility.INTENT_VAR_APPOINTMENT, new Gson().toJson(appointment));
                 startActivity(intent);
+                finish();
                 return true;
 
         }

@@ -89,6 +89,7 @@ public class MainActivity extends AppCompatActivity {
         i.putExtra("showcancel",false);
         i.putExtra("states",1);
         startActivity(i);
+        finish();
     }
 
     private void saveFCMToken() {

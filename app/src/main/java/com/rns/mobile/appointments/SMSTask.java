@@ -17,7 +17,7 @@ import utils.Utility;
 
 public class SMSTask extends AsyncTask<Void, Void, Void> {
 
-    private static String GET_URL = "http://api.msg91.com/api/sendhttp.php" + "?sender=MSGIND&route=1&authkey=193344AsiDSe0j5a5db681&country=91";
+    private static String GET_URL = "http://api.msg91.com/api/sendhttp.php" + "?sender=TIMEDE&route=4&authkey=193344AsiDSe0j5a5db681&country=91";
     private String smsType;
     private Appointment appointment;
 
@@ -45,7 +45,7 @@ public class SMSTask extends AsyncTask<Void, Void, Void> {
 
             if(Utility.NOTIFICATION_TYPE_NEW.equalsIgnoreCase(smsType)) {
                 message = "&message=New appointment is booked for you by user " + appointment.getName() + " for the date " + appointment.getDate()
-                        + " starting at - " + appointment.getStartTime() + " using a cool new app called as - TimeDe. Download the app free from  - URL";
+                        + " starting at - " + appointment.getStartTime() + " using a cool new app called as - TimeDe. Download the app free from Google play store";
             }
 
             String postString = GET_URL + mobiles + message;

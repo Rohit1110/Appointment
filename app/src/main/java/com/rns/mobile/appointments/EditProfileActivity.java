@@ -252,6 +252,7 @@ public class EditProfileActivity extends AppCompatActivity {
                             Intent i = new Intent(EditProfileActivity.this, MainActivity.class);
                             i.putExtra("user", new Gson().toJson(user));
                             startActivity(i);
+                            finish();
                         }
                     }).addOnFailureListener(new OnFailureListener() {
                         @Override

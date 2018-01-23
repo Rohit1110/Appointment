@@ -238,6 +238,7 @@ public class AppointmentsActivity extends AppCompatActivity {
             public void onClick(View view) {
                 Intent intent = new Intent(AppointmentsActivity.this, SearchAppointmentActivity.class);
                 startActivity(intent);
+
             }
         });
     }
