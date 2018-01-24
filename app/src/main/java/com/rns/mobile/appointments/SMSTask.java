@@ -39,8 +39,11 @@ public class SMSTask extends AsyncTask<Void, Void, Void> {
         }
 
         try {
-            System.out.println("Url for SMS"+ smsField.getUrl()+"?sender="+smsField.getSender()+"&route="+smsField.getRoute()+"&authkey="+smsField.getAuthkey()+"&country="+smsField.getCountry());
-            URL obj = new URL(GET_URL);
+            //System.out.println("Url for SMS"+ smsField.getUrl()+"?sender="+smsField.getSender()+"&route="+smsField.getRoute()+"&authkey="+smsField.getAuthkey()+"&country="+smsField.getCountry());
+            System.out.println("Url for SMS1"+GET_URL);
+            String url= smsField.getUrl()+"?sender="+smsField.getSender()+"&route="+smsField.getRoute()+"&authkey="+smsField.getAuthkey()+"&country="+smsField.getCountry();
+            System.out.println("Url for SMS"+url);
+            URL obj = new URL(url);
             HttpURLConnection con = (HttpURLConnection) obj.openConnection();
             con.setRequestMethod("GET");
 
@@ -49,8 +52,15 @@ public class SMSTask extends AsyncTask<Void, Void, Void> {
             String message = "";
 
             if(Utility.NOTIFICATION_TYPE_NEW.equalsIgnoreCase(smsType)) {
-                message = "&message=New appointment is booked for you by user " + appointment.getName() + " for the date " + appointment.getDate()
-                        + " starting at - " + appointment.getStartTime() + " using a cool new app called as - TimeDe. Download the app free from Google play store";
+                System.out.println("SMS "+smsField.getSMS());
+                String msg=smsField.getSMS();
+                msg=msg.replaceAll("&user",appointment.getName());
+                msg=msg.replaceAll("&date",appointment.getDate());
+                msg=msg.replaceAll("&startTime",appointment.getStartTime());
+                message=msg+smsField.getAppurl();
+
+// message = "&message=New appointment is booked for you by user " + appointment.getName() + " for the date " + appointment.getDate()
+//                        + " smsTypetarting at - " + appointment.getStartTime() + " using a cool new app called as - TimeDe. Download the app free from Google play store";
             }
 
             String postString = GET_URL + mobiles + message;

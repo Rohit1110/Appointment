@@ -11,16 +11,23 @@ public class SmsField {
     private String route;
     private String sender;
     private String url;
+    private String appurl;
 
-  /*  public String getSMS() {
+  public String getSMS() {
         return SMS;
     }
 
     public void setSMS(String SMS) {
         this.SMS = SMS;
-    }*/
+    }
 
+    public String getAppurl() {
+        return appurl;
+    }
 
+    public void setAppurl(String appurl) {
+        this.appurl = appurl;
+    }
 
     public String getAuthkey() {
         return authkey;
