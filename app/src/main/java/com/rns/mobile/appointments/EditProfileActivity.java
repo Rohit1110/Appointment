@@ -121,7 +121,11 @@ public class EditProfileActivity extends AppCompatActivity {
 
         spinner = (MultiSelectionSpinner) findViewById(R.id.spinner_off_days);
 
+
+
         spinner.setItems(getResources().getStringArray(R.array.off_days));
+        spinner.setText();
+
 
         // String[] items = (user.getSelectedDays().split(","));
 

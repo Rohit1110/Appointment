@@ -214,7 +214,8 @@
              <com.rns.mobile.appointments.MultiSelectionSpinner
                    android:id="@+id/spinner_off_days"
                    android:layout_width="match_parent"
-                   android:layout_height="wrap_content" >
+                   android:layout_height="wrap_content"
+                >
 
 
              </com.rns.mobile.appointments.MultiSelectionSpinner>

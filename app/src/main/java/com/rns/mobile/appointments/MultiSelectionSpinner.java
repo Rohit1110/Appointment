@@ -142,8 +142,11 @@ public class MultiSelectionSpinner extends  android.support.v7.widget.AppCompatS
         mSelection = new boolean[_items.length];
         simple_adapter.clear();
         //Item position to start list
-        simple_adapter.add(_items[1]);
+        //simple_adapter.add(_items[0]);
         Arrays.fill(mSelection, false);
+
+
+
     }
 
     public void setItems(List<String> items) {
@@ -151,6 +154,7 @@ public class MultiSelectionSpinner extends  android.support.v7.widget.AppCompatS
         mSelection = new boolean[_items.length];
         simple_adapter.clear();
         simple_adapter.add(_items[0]);
+
         Arrays.fill(mSelection, false);
     }
 
@@ -162,6 +166,10 @@ public class MultiSelectionSpinner extends  android.support.v7.widget.AppCompatS
                 }
             }
         }
+    }
+    public String setText(){
+        simple_adapter.add(buildSelectedItemString());
+        return "None";
     }
 
     public void setSelection(List<String> selection) {
@@ -233,32 +241,43 @@ public class MultiSelectionSpinner extends  android.support.v7.widget.AppCompatS
         StringBuilder sb = new StringBuilder();
         boolean foundOne = false;
 
-        for (int i = 0; i < _items.length; ++i) {
-            if (mSelection[i]) {
-                if (foundOne) {
-                    sb.append(", ");
-                }
-                foundOne = true;
 
-                sb.append(_items[i]);
+
+            for (int i = 0; i < _items.length; ++i) {
+                if (mSelection[i]) {
+                    if (foundOne) {
+                        sb.append(", ");
+                    }
+                    foundOne = true;
+
+                    sb.append(_items[i]);
+                }
             }
+
+        if(!foundOne){
+                return "None";
         }
+
         return sb.toString();
     }
 
     public String getSelectedItemsAsString() {
-        StringBuilder sb = new StringBuilder();
+      /*  StringBuilder sb = new StringBuilder();
         boolean foundOne = false;
-
-        for (int i = 0; i < _items.length; ++i) {
-            if (mSelection[i]) {
-                if (foundOne) {
-                    sb.append(", ");
-                }
-                foundOne = true;
-                sb.append(_items[i]);
-            }
-        }
-        return sb.toString();
+  if(_items!=null&&_items.length>0) {
+      for (int i = 0; i < _items.length; ++i) {
+          if (mSelection[i]) {
+              if (foundOne) {
+                  sb.append(", ");
+              }
+              foundOne = true;
+              sb.append(_items[i]);
+          }
+      }
+  }else{
+      return "None";
+  }*/
+      System.out.println("ROhit");
+        return "None";
     }
 }
