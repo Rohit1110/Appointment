@@ -75,6 +75,7 @@
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:textSize="20sp"
+                    android:singleLine="true"
 
                     >
 
@@ -98,6 +99,8 @@
                     android:layout_height="wrap_content"
                     android:id="@+id/et_last_name"
                     android:textSize="20sp"
+                    android:singleLine="true"
+
 
                     >
 
@@ -121,6 +124,7 @@
                     android:id="@+id/et_business_name"
                     android:textSize="20sp"
 
+                    android:singleLine="true"
                     >
 
 
@@ -144,8 +148,8 @@
                     android:layout_height="wrap_content"
                     android:id="@+id/et_email"
                     android:textSize="20sp"
-
-                     >
+                    android:singleLine="true"
+                    >
 
                 </EditText>
             </LinearLayout>
@@ -167,7 +171,7 @@
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:id="@+id/et_start_time"
-
+                    android:nextFocusForward="@+id/et_end_time"
 
                     android:textSize="20sp"
 
@@ -194,7 +198,8 @@
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:id="@+id/et_end_time"
-                    android:textSize="20sp">
+                    android:textSize="20sp"
+                    android:nextFocusForward="@+id/spinner_off_days">
                 </android.support.v7.widget.AppCompatSpinner>
             </LinearLayout>
            <LinearLayout

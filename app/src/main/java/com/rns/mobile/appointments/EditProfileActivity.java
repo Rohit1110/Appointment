@@ -124,7 +124,8 @@ public class EditProfileActivity extends AppCompatActivity {
 
 
         spinner.setItems(getResources().getStringArray(R.array.off_days));
-        spinner.setText();
+
+
 
 
         // String[] items = (user.getSelectedDays().split(","));
@@ -132,6 +133,9 @@ public class EditProfileActivity extends AppCompatActivity {
         if (user != null && user.getSelectedDays() != null) {
             List<String> myList = new ArrayList<String>(Arrays.asList(user.getSelectedDays().replaceAll("\'", "").split(",")));
             spinner.setSelection(myList);
+            spinner.setEnabled(false);
+        }else{
+            spinner.setText();
             spinner.setEnabled(false);
         }
 

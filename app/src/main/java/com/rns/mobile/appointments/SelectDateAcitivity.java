@@ -7,10 +7,12 @@ import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
+import android.view.KeyEvent;
 import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
+import android.view.WindowManager;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.Button;
@@ -76,9 +78,19 @@ public class SelectDateAcitivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_date_select);
+        getWindow().setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_STATE_HIDDEN);
         // book = (Button) findViewById(R.id.btnbook);
         setdate = (TextView) findViewById(R.id.selecteddate);
         reason = (EditText) findViewById(R.id.edit_reason);
+
+reason.setOnClickListener(new View.OnClickListener() {
+    @Override
+    public void onClick(View v) {
+        /*reason.setFocusable(true);
+        reason.setFocusableInTouchMode(true);*/
+        getWindow().setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_STATE_VISIBLE);
+    }
+});
         noSlots = (TextView) findViewById(R.id.notmeslots);
         long date = System.currentTimeMillis();
         SimpleDateFormat sdf = new SimpleDateFormat(Utility.DATE_FORMAT_DISPLAY);
@@ -329,6 +341,7 @@ public class SelectDateAcitivity extends AppCompatActivity {
         }
 
 
+
         if (selectedSlots != null && selectedSlots.size() > 0) {
             appointment.setAppointmentStatus(Utility.APP_STATUS_ACTIVE);
             dialog = Utility.showProgress(SelectDateAcitivity.this);
@@ -437,6 +450,7 @@ public class SelectDateAcitivity extends AppCompatActivity {
         Intent i = new Intent(SelectDateAcitivity.this, AppointmentsActivity.class);
         i.putExtra("showcancel","false");
         i.putExtra("states","1");
+        i.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP | Intent.FLAG_ACTIVITY_NEW_TASK);
         startActivity(i);
         finish();
     }

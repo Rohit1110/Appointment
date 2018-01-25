@@ -46,7 +46,7 @@ public class AppointmentsDateAdapter extends RecyclerView.Adapter<RecyclerView.V
 
     class ViewHolder1 extends RecyclerView.ViewHolder {
         private TextView description;
-        private TextView time, name, date;
+        private TextView time, name;
         View appointmentindicator;
 
         public ViewHolder1(View itemView) {
@@ -54,7 +54,7 @@ public class AppointmentsDateAdapter extends RecyclerView.Adapter<RecyclerView.V
             appointmentindicator = (View) itemView.findViewById(R.id.appointmentindicator);
             time = (TextView) itemView.findViewById(R.id.txttime);
             name = (TextView) itemView.findViewById(R.id.txtname);
-            date = (TextView) itemView.findViewById(R.id.txtdate);
+            //date = (TextView) itemView.findViewById(R.id.txtdate);
             description = (TextView) itemView.findViewById(R.id.txtdecription);
 
         }
@@ -149,7 +149,7 @@ public class AppointmentsDateAdapter extends RecyclerView.Adapter<RecyclerView.V
                         }
                     }
 
-                    gholder.date.setText(Utility.formatDate(dates, Utility.DATE_FORMAT_DISPLAY));
+                    //gholder.date.setText(Utility.formatDate(dates, Utility.DATE_FORMAT_DISPLAY));
 
 
                 }

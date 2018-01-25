@@ -55,27 +55,36 @@
             android:layout_marginLeft="5dp"
             android:orientation="horizontal"
             android:padding="6dp">
+            <android.support.design.widget.TextInputLayout
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center_vertical">
 
             <TextView
                 android:id="@+id/selecteddate"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_gravity="center_vertical"
+                android:layout_marginTop="4dp"
                 android:text="02 jan 2017"
-                android:layout_marginLeft="5dp"
-                android:textSize="20sp" />
+                android:textSize="22sp"
+                android:layout_centerHorizontal="true"
+                android:drawableLeft="@android:drawable/ic_menu_my_calendar"
+                />
+            </android.support.design.widget.TextInputLayout>
 
             <LinearLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:gravity="right">
+                android:gravity="right"
+                android:layout_gravity="center_vertical">
 
 
                 <TextView
                     android:id="@+id/txttoday"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:layout_margin="7dp"
+                    android:layout_margin="4dp"
                     android:gravity="center"
                     android:text="Today"
                     android:textSize="20sp" />
@@ -83,14 +92,14 @@
                 <TextView
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:layout_margin="10dp"
+                    android:layout_margin="4dp"
                     android:gravity="center"
                     android:text="|" />
                 <TextView
                     android:id="@+id/txttommarow"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:layout_margin="8dp"
+                    android:layout_margin="4dp"
                     android:gravity="center"
                     android:text="Tomorrow"
                     android:textSize="20sp" />
@@ -119,6 +128,7 @@
             android:layout_marginLeft="5dp"
             android:orientation="vertical">
 
+
         <EditText
             android:id="@+id/edit_reason"
             android:layout_width="match_parent"
@@ -126,7 +136,12 @@
             android:layout_marginTop="5dp"
             android:layout_marginLeft="5dp"
             android:hint="Reason for Appointment"
+            android:imeOptions="actionDone"
+            android:singleLine="true"
+
+
              />
+
 
 
 

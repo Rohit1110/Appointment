@@ -22,6 +22,8 @@ import android.provider.CalendarContract;
 import android.support.annotation.NonNull;
 import android.support.v4.content.ContextCompat;
 import android.util.Log;
+import android.view.View;
+import android.view.inputmethod.InputMethodManager;
 import android.widget.DatePicker;
 
 import com.google.gson.Gson;
@@ -35,6 +37,8 @@ import java.util.Date;
 
 import model.Appointment;
 import model.User;
+
+import static android.content.Context.INPUT_METHOD_SERVICE;
 
 /**
  * Created by Rohit on 11/27/2017.
@@ -535,6 +539,27 @@ public class Utility {
 
         return "not";
 
+    }
+
+
+
+    public static void hideSoftKeyboard(Activity activity) {
+        if(activity.getCurrentFocus()!=null) {
+            System.out.println("In hide keyboard");
+            InputMethodManager inputMethodManager = (InputMethodManager) activity.getSystemService(INPUT_METHOD_SERVICE);
+            inputMethodManager.hideSoftInputFromWindow(activity.getCurrentFocus().getWindowToken(), 0);
+        }else{
+            System.out.println("In else ");
+        }
+    }
+
+    /**
+     * Shows the soft keyboard
+     */
+    public static void showSoftKeyboard(View view,Activity activity) {
+        InputMethodManager inputMethodManager = (InputMethodManager) activity.getSystemService(INPUT_METHOD_SERVICE);
+        view.requestFocus();
+        inputMethodManager.showSoftInput(view, 0);
     }
 
 
