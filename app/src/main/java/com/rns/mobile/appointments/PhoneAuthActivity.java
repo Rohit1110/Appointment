@@ -226,7 +226,7 @@ public class PhoneAuthActivity extends AppCompatActivity implements
     }
 
     private void nextActivity() {
-        Intent intent = new Intent(PhoneAuthActivity.this, MainActivity.class);
+        Intent intent = new Intent(PhoneAuthActivity.this, WelcomeActivity.class);
         startActivity(intent);
         finish();
     }

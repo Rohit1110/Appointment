@@ -677,7 +677,7 @@ reason.setOnClickListener(new View.OnClickListener() {
         availableSlotsListView.setChoiceMode(ListView.CHOICE_MODE_MULTIPLE);
         availableSlotsListView.setAdapter(adapter);
 
-        availableSlotsListView.setOnItemClickListener(new SlotsSelected());
+       availableSlotsListView.setOnItemClickListener(new SlotsSelected());
     }
 
     private boolean slotBeforeCurrentTime(String slot) {
@@ -702,19 +702,24 @@ public class SlotsSelected implements AdapterView.OnItemClickListener {
         // TODO Auto-generated method stub
         CheckedTextView ctv = (CheckedTextView) arg1;
         String selectedSlot = ctv.getText().toString();
-        if (ctv.isChecked()) {
+       System.out.println("wwwwwwww "+arg1);
+
+       if (ctv.isChecked()) {
             if (validateSlots(selectedSlot)) {
                 selectedSlots.add(selectedSlot);
-                System.out.println(selectedSlots);
+                ctv.setChecked(true);
+                System.out.println("click slots"+selectedSlots);
                 // Toast.makeText(SelectDateAcitivity.this, "now it is unchecked", Toast.LENGTH_SHORT).show();
             } else {
+
                 ctv.setChecked(false);
                 ctv.setSelected(false);
-            }
 
+            }
         } else {
+
             selectedSlots.remove(selectedSlot);
-            System.out.println(selectedSlots);
+            System.out.println("click slots else"+selectedSlots);
             //Toast.makeText(SelectDateAcitivity.this, "now it is checked", Toast.LENGTH_SHORT).show();
         }
         setSlotsSelected();
@@ -745,8 +750,10 @@ public class SlotsSelected implements AdapterView.OnItemClickListener {
         if (Math.abs(diff) <= 0) {
             return true;
         }
-        Utility.createAlert(SelectDateAcitivity.this, "Incorrect slot selection! Please select continuous slots.");
-        return false;
+
+            Utility.createAlert(SelectDateAcitivity.this, "Incorrect slot selection! Please select continuous slots.");
+            return false;
+
     }
 
     private void setSlotsSelected() {
