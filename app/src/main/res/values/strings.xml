@@ -12,6 +12,7 @@
     <string name="bookappointment">Book Appointment </string>
     <string name="profile">Profile</string>
     <string name="filter">Filter</string>
+    <string name="share">Share App link</string>
     <!--Help strigns-->
     <string name="title_activity_welcome">Home Screen</string>
     <string name="next">NEXT</string>
@@ -29,6 +30,9 @@
 
     <string name="play_again_desc">To see the welcome slider again, goto Settings -> apps -> timede -> clear data</string>
     <string name="play_again">Play Again</string>
+    <string name="app_lilk">https://goo.gl/BBFWM7</string>
+    <string name="invitation_message">Hey. I am using TimeDe app to be more productive! I can book your time and you can book my time with this app. Use this link to donwload the app: </string>
+    <string name="invitation_title">TimeDe App</string>
 
 
     <string-array name="off_days">

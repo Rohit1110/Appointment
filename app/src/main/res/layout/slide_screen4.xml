@@ -9,13 +9,15 @@
         android:layout_centerInParent="true"
         android:gravity="center_horizontal"
         android:orientation="vertical">
-  <EditText
+  <TextView
       android:layout_width="match_parent"
       android:layout_height="wrap_content"
+      android:gravity="center"
       android:text="send App link to your friends or relatives"/>
         <Button
+            android:id="@+id/btnsend"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="send to all"/>
+            android:text="Invite friends"/>
     </LinearLayout>
 </RelativeLayout>	

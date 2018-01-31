@@ -338,6 +338,11 @@ public class AppointmentsActivity extends AppCompatActivity {
                 showDialog();
                 return true;
 
+            case R.id.actionshare:
+                //CreateAlertDialogWithRadioButtonGroup();
+                Utility.sendLink(AppointmentsActivity.this);
+                return true;
+
         }
         return false;
     }

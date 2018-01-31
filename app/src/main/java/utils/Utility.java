@@ -9,6 +9,7 @@ import android.content.ContentUris;
 import android.content.ContentValues;
 import android.content.Context;
 import android.content.DialogInterface;
+import android.content.Intent;
 import android.content.SharedPreferences;
 import android.content.pm.PackageManager;
 import android.database.Cursor;
@@ -26,7 +27,9 @@ import android.view.View;
 import android.view.inputmethod.InputMethodManager;
 import android.widget.DatePicker;
 
+import com.google.android.gms.appinvite.AppInviteInvitation;
 import com.google.gson.Gson;
+import com.rns.mobile.appointments.R;
 
 import java.io.FileOutputStream;
 import java.io.IOException;
@@ -64,6 +67,7 @@ public class Utility {
     public static final String NOTIFICATION_TYPE_NEW = "NEW_APP";
     public static final String NOTIFICATION_TYPE_CANCEL = "CANCEL_APP";
     public static final String ERROR_CONNECTION = "Error connecting server ..";
+    private static final int REQUEST_INVITE = 1;
 
 
     public static void createAlert(Context context, String message) {
@@ -540,6 +544,23 @@ public class Utility {
         return "not";
 
     }
+
+    public static void sendLink(Activity activity){
+
+        try {
+            Intent i = new Intent(Intent.ACTION_SEND);
+            i.setType("text/plain");
+            i.putExtra(Intent.EXTRA_SUBJECT, "TimeDe App");
+            String sAux = "\nHey. I am using TimeDe app to be more productive! I can book your time and you can book my time with this app. Use this link to donwload the app: \n\n";
+            sAux = sAux + "https://goo.gl/BBFWM7";
+            i.putExtra(Intent.EXTRA_TEXT, sAux);
+            activity.startActivity(Intent.createChooser(i, "choose one"));
+        } catch(Exception e) {
+            //e.toString();
+        }
+    }
+
+
 
 
 

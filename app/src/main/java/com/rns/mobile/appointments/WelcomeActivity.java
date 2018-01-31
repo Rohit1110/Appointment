@@ -1,14 +1,20 @@
 package com.rns.mobile.appointments;
 
+import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
+import android.database.Cursor;
 import android.graphics.Color;
+import android.net.Uri;
 import android.os.Build;
 import android.os.Bundle;
+import android.provider.Contacts;
+import android.provider.ContactsContract;
 import android.support.v4.view.PagerAdapter;
 import android.support.v4.view.ViewPager;
 import android.support.v7.app.AppCompatActivity;
 import android.text.Html;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -18,17 +24,24 @@ import android.widget.Button;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 
+import com.google.android.gms.appinvite.AppInviteInvitation;
+
+import java.util.ArrayList;
+
+import model.UserContact;
+
 /**
  * Created by umesh on 25-02-2017.
  */
 public class WelcomeActivity extends AppCompatActivity {
 
+    private static final int REQUEST_INVITE = 1;
     private ViewPager viewPager;
     private MyViewPagerAdapter myViewPagerAdapter;
     private LinearLayout dotsLayout;
     private TextView[] dots;
     private int[] layouts;
-    private Button btnSkip, btnNext;
+    private Button btnSkip, btnNext,btnSend;
     private PreferenceManager prefManager;
 
     @Override
@@ -133,11 +146,21 @@ public class WelcomeActivity extends AppCompatActivity {
         public void onPageSelected(int position) {
             addBottomDots(position);
 
+
             // changing the next button text 'NEXT' / 'GOT IT'
             if (position == layouts.length - 1) {
+                btnSend=(Button) viewPager.findViewById(R.id.btnsend);
+                btnSend.setOnClickListener(new View.OnClickListener() {
+                    @Override
+                    public void onClick(View v) {
+                        onInviteClicked();
+                    }
+                });
+
                 // last page. make button text to GOT IT
                 btnNext.setText(getString(R.string.start));
                 btnSkip.setVisibility(View.GONE);
+
             } else {
                 // still pages are left
                 btnNext.setText(getString(R.string.next));
@@ -203,4 +226,46 @@ public class WelcomeActivity extends AppCompatActivity {
             container.removeView(view);
         }
     }
+
+    private void onInviteClicked() {
+        Intent intent = new Intent(Intent.ACTION_PICK, ContactsContract.Contacts.CONTENT_URI);
+        startActivityForResult(intent, REQUEST_INVITE);
+
+      /*  Intent intent = new AppInviteInvitation.IntentBuilder(getString(R.string.invitation_title))
+                .setMessage(getString(R.string.invitation_message))
+                .setDeepLink(Uri.parse(getString(R.string.app_lilk)))
+
+
+                .build();
+        startActivityForResult(intent, REQUEST_INVITE);*/
+    }
+
+
+    @Override
+    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
+        super.onActivityResult(requestCode, resultCode, data);
+        Log.d("", "onActivityResult: requestCode=" + requestCode + ", resultCode=" + resultCode);
+      ArrayList<Integer> contactNumbers=new ArrayList<>();
+        if (requestCode == REQUEST_INVITE) {
+            if (resultCode == RESULT_OK) {
+                // Get the invitation IDs of all sent messages
+               /* String[] ids = AppInviteInvitation.getInvitationIds(resultCode, data);
+                for (String id : ids) {
+                    Log.d("", "onActivityResult: sent invitation " + id);
+                }*/
+
+                Uri contactData = data.getData();
+                Cursor cur =  managedQuery(contactData, null, null, null, null);
+                while (cur != null && cur.moveToNext()) {
+                    contactNumbers.add(cur.getInt(1));
+                    //System.out.println("Contact number"+contactNumbers[cur]);
+                }
+
+            } else {
+                // Sending failed or it was canceled, show failure message to the user
+                // ...
+            }
+        }
+    }
+
 }

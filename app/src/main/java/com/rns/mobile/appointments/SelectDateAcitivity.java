@@ -208,87 +208,7 @@ reason.setOnClickListener(new View.OnClickListener() {
         updateUserAppointments();
     }
 
-    /*public void startCalendar() {*//*
-        System.out.println("Started calendar ...");
-        //Date time = Utility.convertToDate(appointment.getStartTime(), appointment.getDate());
-        Calendar beginCal = Calendar.getInstance();
-        int year=2018,mnth=0,day=10,hrs=19,min=15;
-        beginCal.set(year, mnth, day, hrs, min);
-        beginCal.add(Calendar.MINUTE, REMINDER_BEFORE);
-        long startTime = beginCal.getTimeInMillis();
 
-        Calendar endCal = Calendar.getInstance();
-        endCal.set(year, mnth, day, 19,30 );
-        long endTime = endCal.getTimeInMillis();
-
-        Intent intent = new Intent(Intent.ACTION_INSERT);
-        intent.setType("vnd.android.cursor.item/event");
-
-            intent.putExtra(CalendarContract.Events.TITLE, "title rohit");
-
-        intent.putExtra(CalendarContract.Events.DESCRIPTION, "title");
-        intent.putExtra(CalendarContract.Events.EVENT_LOCATION, "pune");
-        intent.putExtra(CalendarContract.EXTRA_EVENT_BEGIN_TIME, beginCal.getTimeInMillis());
-        intent.putExtra(CalendarContract.EXTRA_EVENT_END_TIME, endCal.getTimeInMillis());
-        intent.putExtra(CalendarContract.Events.ALL_DAY, 0);
-        intent.putExtra(CalendarContract.Events.STATUS, 1);
-        intent.putExtra(CalendarContract.Events.VISIBLE, 1);
-        intent.putExtra(CalendarContract.Events.HAS_ALARM, 1);
-        intent.putExtra(CalendarContract.ACTION_EVENT_REMINDER, 1);
-        intent.putExtra(CalendarContract.Reminders.METHOD, CalendarContract.Reminders.METHOD_ALERT);
-        intent.putExtra(CalendarContract.Reminders.MINUTES, -15);
-        //intent.putExtra(CalendarContract.Events.intent.putExtra(CalendarContract.Events.RE)
-        startActivity(intent);*//*
-
-        // Date time = Utility.convertToDate(appointment.getStartTime(), appointment.getDate());
-        Calendar beginCal = Calendar.getInstance();
-        int year = 2018, mnth = 0, day = 10, hrs = 20, min = 15;
-        beginCal.set(year, mnth, day, hrs, min);
-        beginCal.add(Calendar.MINUTE, REMINDER_BEFORE);
-        long startTime = beginCal.getTimeInMillis();
-
-        Calendar endCal = Calendar.getInstance();
-        endCal.set(year, mnth, day, 20, 30);
-        long endTime = endCal.getTimeInMillis();
-
-
-        ContentResolver cr = getContentResolver();
-        ContentValues values = new ContentValues();
-
-        values.put(CalendarContract.Events.DTSTART, startTime);
-        values.put(CalendarContract.Events.TITLE, "Rohit New");
-        values.put(CalendarContract.Events.DESCRIPTION, "Calender Add");
-
-        TimeZone timeZone = TimeZone.getDefault();
-        values.put(CalendarContract.Events.EVENT_TIMEZONE, timeZone.getID());
-
-// Default calendar
-        values.put(CalendarContract.Events.CALENDAR_ID, 1);
-
-        values.put(CalendarContract.Events.RRULE, "FREQ=DAILY;UNTIL="
-                + endTime);
-// Set Period for 1 Hour
-        values.put(CalendarContract.Events.DURATION, "+P1H");
-
-        values.put(CalendarContract.Events.HAS_ALARM, 1);
-
-// Insert event to calendar
-        if (ActivityCompat.checkSelfPermission(this, android.Manifest.permission.WRITE_CALENDAR) != PackageManager.PERMISSION_GRANTED) {
-            // TODO: Consider calling
-            Uri uri = cr.insert(CalendarContract.Events.CONTENT_URI, values);
-            System.out.println("Call Calender");
-            //    ActivityCompat#requestPermissions
-            // here to request the missing permissions, and then overriding
-            //   public void onRequestPermissionsResult(int requestCode, String[] permissions,
-            //                                          int[] grantResults)
-            // to handle the case where the user grants the permission. See the documentation
-            // for ActivityCompat#requestPermissions for more details.
-            return;
-        }
-        Uri uri = cr.insert(CalendarContract.Events.CONTENT_URI, values);
-        System.out.println("Call Calender2222");
-
-    }*/
 
 
     @Override
@@ -705,20 +625,23 @@ public class SlotsSelected implements AdapterView.OnItemClickListener {
        System.out.println("wwwwwwww "+arg1);
 
        if (ctv.isChecked()) {
+           System.out.println("click text "+ctv.getText());
+           System.out.println("Conditions "+validateSlots(selectedSlot));
             if (validateSlots(selectedSlot)) {
                 selectedSlots.add(selectedSlot);
                 ctv.setChecked(true);
                 System.out.println("click slots"+selectedSlots);
                 // Toast.makeText(SelectDateAcitivity.this, "now it is unchecked", Toast.LENGTH_SHORT).show();
-            } else {
-
+            } else{
+                System.out.println("Else "+selectedSlot);
                 ctv.setChecked(false);
                 ctv.setSelected(false);
 
             }
-        } else {
+        } else{
 
             selectedSlots.remove(selectedSlot);
+            //ctv.setChecked(false);
             System.out.println("click slots else"+selectedSlots);
             //Toast.makeText(SelectDateAcitivity.this, "now it is checked", Toast.LENGTH_SHORT).show();
         }

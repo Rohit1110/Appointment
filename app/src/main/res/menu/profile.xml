@@ -12,4 +12,9 @@
         android:title="@string/filter"
         >
     </item>
+    <item
+        android:id="@+id/actionshare"
+        android:title="@string/share"
+        >
+    </item>
 </menu>
