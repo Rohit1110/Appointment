@@ -26,9 +26,13 @@ import android.widget.TextView;
 
 import com.google.android.gms.appinvite.AppInviteInvitation;
 
+import java.lang.reflect.Array;
 import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.List;
 
 import model.UserContact;
+import utils.Utility;
 
 /**
  * Created by umesh on 25-02-2017.
@@ -41,8 +45,13 @@ public class WelcomeActivity extends AppCompatActivity {
     private LinearLayout dotsLayout;
     private TextView[] dots;
     private int[] layouts;
-    private Button btnSkip, btnNext,btnSend;
+    private Button btnSkip, btnNext, btnSend;
     private PreferenceManager prefManager;
+    public static final int REQUEST_CODE_PICK_CONTACT = 1;
+    public static final int MAX_PICK_CONTACT = 10;
+    private ArrayList<String> contacts;
+    private List<String> data = new ArrayList<String>();
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -111,7 +120,7 @@ public class WelcomeActivity extends AppCompatActivity {
 
     private void addBottomDots(int currentPage) {
         dots = new TextView[layouts.length];
-        System.out.println("size of dots "+ dots.length);
+        System.out.println("size of dots " + dots.length);
 
         int[] colorsActive = getResources().getIntArray(R.array.array_dot_active);
         int[] colorsInactive = getResources().getIntArray(R.array.array_dot_inactive);
@@ -149,11 +158,12 @@ public class WelcomeActivity extends AppCompatActivity {
 
             // changing the next button text 'NEXT' / 'GOT IT'
             if (position == layouts.length - 1) {
-                btnSend=(Button) viewPager.findViewById(R.id.btnsend);
+                btnSend = (Button) viewPager.findViewById(R.id.btnsend);
                 btnSend.setOnClickListener(new View.OnClickListener() {
                     @Override
                     public void onClick(View v) {
                         onInviteClicked();
+                        //getContactsList(WelcomeActivity.this,WelcomeActivity.this);
                     }
                 });
 
@@ -189,6 +199,33 @@ public class WelcomeActivity extends AppCompatActivity {
             window.setStatusBarColor(Color.TRANSPARENT);
         }
     }
+
+    public static class Contact {
+        String cname;
+        String cnumber;
+        public Contact(String name, String phoneNumber) {
+            this.cname=name;
+            this.cnumber=phoneNumber;
+            System.out.println("Contact "+cname+" number "+phoneNumber);
+        }
+
+        public String getCname() {
+            return cname;
+        }
+
+        public void setCname(String cname) {
+            this.cname = cname;
+        }
+
+        public String getCnumber() {
+            return cnumber;
+        }
+
+        public void setCnumber(String cnumber) {
+            this.cnumber = cnumber;
+        }
+    }
+
 
     /**
      * View pager adapter
@@ -227,9 +264,67 @@ public class WelcomeActivity extends AppCompatActivity {
         }
     }
 
+    private static ArrayList<Contact> getContactsList(Context context,Activity activity) {
+        Utility.isReadContactPermissionGranted(activity);
+        if (!Utility.checkcontactPermission(activity)) {
+            return null;
+        }
+
+        ArrayList<Contact> contacts=new ArrayList<>();
+        Cursor phones = context.getContentResolver().query(ContactsContract.CommonDataKinds.Phone.CONTENT_URI, null, null, null, null);
+        while (phones.moveToNext())
+        {
+            String name=phones.getString(phones.getColumnIndex(ContactsContract.CommonDataKinds.Phone.DISPLAY_NAME));
+            String phoneNumber = phones.getString(phones.getColumnIndex(ContactsContract.CommonDataKinds.Phone.NUMBER));
+            contacts.add(new Contact(name,phoneNumber));
+        }
+
+        //new InviteSMSTask(Utility.NOTIFICATION_TYPE_NEW, contacts).execute();
+        phones.close();
+        return contacts;
+    }
+
     private void onInviteClicked() {
-        Intent intent = new Intent(Intent.ACTION_PICK, ContactsContract.Contacts.CONTENT_URI);
-        startActivityForResult(intent, REQUEST_INVITE);
+        /*Intent intent = new Intent(Intent.ACTION_PICK, ContactsContract.Contacts.CONTENT_URI);
+        startActivityForResult(intent, REQUEST_INVITE);*/
+
+       /*Intent phonebookIntent = new Intent("intent.action.INTERACTION_TOPMENU");
+        phonebookIntent.putExtra("additional", "phone-multi");
+       phonebookIntent.putExtra("maxRecipientCount", MAX_PICK_CONTACT);
+        phonebookIntent.putExtra("FromMMS", true);
+        startActivityForResult(phonebookIntent, REQUEST_CODE_PICK_CONTACT);*/
+
+
+        Cursor cursor = getContentResolver().query(ContactsContract.Contacts.CONTENT_URI,null, null, null, null);
+        while (cursor.moveToNext()) {
+            String contactId = cursor.getString(cursor.getColumnIndex(ContactsContract.Contacts._ID));
+            String hasPhone = cursor.getString(cursor.getColumnIndex(ContactsContract.Contacts.HAS_PHONE_NUMBER));
+            String name = cursor.getString(cursor.getColumnIndex(ContactsContract.Contacts.DISPLAY_NAME));
+            if("1".equals(hasPhone) || Boolean.parseBoolean(hasPhone)) {
+                // You know it has a number so now query it like this
+                Cursor phones = getContentResolver().query( ContactsContract.CommonDataKinds.Phone.CONTENT_URI, null, ContactsContract.CommonDataKinds.Phone.CONTACT_ID +" = "+ contactId, null, null);
+                while (phones.moveToNext()) {
+                    String phoneNumber = phones.getString(phones.getColumnIndex(ContactsContract.CommonDataKinds.Phone.NUMBER));
+                    int itype = phones.getInt(phones.getColumnIndex(ContactsContract.CommonDataKinds.Phone.TYPE));
+
+                    final boolean isMobile =
+                            itype == ContactsContract.CommonDataKinds.Phone.TYPE_MOBILE ||
+                                    itype == ContactsContract.CommonDataKinds.Phone.TYPE_WORK_MOBILE;
+
+                    // Do something here with 'phoneNumber' such as saving into
+                    // the List or Array that will be used in your 'ListView'.
+                    System.out.println("Mobile "+phoneNumber+ "  isMobile "+isMobile);
+
+                    new InviteSMSTask(Utility.NOTIFICATION_TYPE_NEW,phoneNumber).execute();
+                }
+
+                phones.close();
+            }
+        }
+
+
+
+
 
       /*  Intent intent = new AppInviteInvitation.IntentBuilder(getString(R.string.invitation_title))
                 .setMessage(getString(R.string.invitation_message))
@@ -238,21 +333,23 @@ public class WelcomeActivity extends AppCompatActivity {
 
                 .build();
         startActivityForResult(intent, REQUEST_INVITE);*/
+
+
     }
 
 
     @Override
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
-        super.onActivityResult(requestCode, resultCode, data);
+
         Log.d("", "onActivityResult: requestCode=" + requestCode + ", resultCode=" + resultCode);
-      ArrayList<Integer> contactNumbers=new ArrayList<>();
-        if (requestCode == REQUEST_INVITE) {
+     /* ArrayList<Integer> contactNumbers=new ArrayList<>();
+        /*if (requestCode == REQUEST_INVITE) {
             if (resultCode == RESULT_OK) {
                 // Get the invitation IDs of all sent messages
-               /* String[] ids = AppInviteInvitation.getInvitationIds(resultCode, data);
+               *//**//**//**//* String[] ids = AppInviteInvitation.getInvitationIds(resultCode, data);
                 for (String id : ids) {
                     Log.d("", "onActivityResult: sent invitation " + id);
-                }*/
+                }*//**//**//**//*
 
                 Uri contactData = data.getData();
                 Cursor cur =  managedQuery(contactData, null, null, null, null);
@@ -265,7 +362,40 @@ public class WelcomeActivity extends AppCompatActivity {
                 // Sending failed or it was canceled, show failure message to the user
                 // ...
             }
+        }*/
+
+
+        if (resultCode == RESULT_OK) {
+
+            if (requestCode == REQUEST_CODE_PICK_CONTACT) {
+
+                Bundle bundle = data.getExtras();
+
+
+                 contacts = bundle.getStringArrayList("result");
+
+
+           System.out.println("Selected contact :--"+contacts.toString());
+
+               // Log.i("TAg", "launchMultiplePhonePicker bundle.toString()= " + contactsPick.toString());
+                 Sendcontact();
+            }
         }
+        super.onActivityResult(requestCode, resultCode, data);
+    }
+
+   private void Sendcontact() {
+
+        for(int i=0;i<contacts.size();i++){
+            String newcontact=contacts.get(i).substring(contacts.get(i).lastIndexOf(";") + 1).trim().replaceAll("[\\s|\\u00A0]+", "");;
+          System.out.println("sssssssss"+contacts.get(i).replaceAll(";", ""));
+            System.out.println("sssssssss new "+newcontact.substring(newcontact.lastIndexOf(";") + 1).trim());
+
+            new InviteSMSTask(Utility.NOTIFICATION_TYPE_NEW, newcontact).execute();
+
+        }
+        System.out.println("new contact"+data.toString());
+
     }
 
 }
