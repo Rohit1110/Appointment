@@ -1,11 +1,14 @@
 package com.rns.mobile.appointments;
 
 import android.app.Activity;
+import android.app.ProgressDialog;
+import android.content.ContentResolver;
 import android.content.Context;
 import android.content.Intent;
 import android.database.Cursor;
 import android.graphics.Color;
 import android.net.Uri;
+import android.os.AsyncTask;
 import android.os.Build;
 import android.os.Bundle;
 import android.provider.Contacts;
@@ -23,6 +26,7 @@ import android.view.WindowManager;
 import android.widget.Button;
 import android.widget.LinearLayout;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.google.android.gms.appinvite.AppInviteInvitation;
 
@@ -162,7 +166,13 @@ public class WelcomeActivity extends AppCompatActivity {
                 btnSend.setOnClickListener(new View.OnClickListener() {
                     @Override
                     public void onClick(View v) {
-                        onInviteClicked();
+                        Utility.isReadContactPermissionGranted(WelcomeActivity.this);
+                        if (!Utility.checkcontactPermission(WelcomeActivity.this)) {
+                            return;
+                        }
+                        new FetchContact().execute();
+
+                       // onInviteClicked();
                         //getContactsList(WelcomeActivity.this,WelcomeActivity.this);
                     }
                 });
@@ -294,6 +304,11 @@ public class WelcomeActivity extends AppCompatActivity {
         phonebookIntent.putExtra("FromMMS", true);
         startActivityForResult(phonebookIntent, REQUEST_CODE_PICK_CONTACT);*/
 
+       /* Utility.isReadContactPermissionGranted(WelcomeActivity.this);
+        if (!Utility.checkcontactPermission(WelcomeActivity.this)) {
+            return;
+        }*/
+
 
         Cursor cursor = getContentResolver().query(ContactsContract.Contacts.CONTENT_URI,null, null, null, null);
         while (cursor.moveToNext()) {
@@ -313,9 +328,9 @@ public class WelcomeActivity extends AppCompatActivity {
 
                     // Do something here with 'phoneNumber' such as saving into
                     // the List or Array that will be used in your 'ListView'.
-                    System.out.println("Mobile "+phoneNumber+ "  isMobile "+isMobile);
+                    System.out.println("Mobile "+phoneNumber.replaceAll("\\p{P}", "").trim()+ "  isMobile "+isMobile);
 
-                    new InviteSMSTask(Utility.NOTIFICATION_TYPE_NEW,phoneNumber).execute();
+                    new InviteSMSTask(Utility.NOTIFICATION_TYPE_NEW,phoneNumber.replaceAll("\\p{P}", "").trim()).execute();
                 }
 
                 phones.close();
@@ -396,6 +411,86 @@ public class WelcomeActivity extends AppCompatActivity {
         }
         System.out.println("new contact"+data.toString());
 
+    }
+
+
+    public class FetchContact extends AsyncTask<Void, Void, Void> {
+
+        private ProgressDialog dialog;
+
+        @Override
+        protected void onPreExecute() {
+            super.onPreExecute();
+
+            dialog = new ProgressDialog(WelcomeActivity.this);
+            dialog.setMessage("Loading ..");
+            dialog.show();
+        }
+
+        @Override
+        protected Void doInBackground(Void... voids) {
+            getContactList();
+            return null;
+        }
+
+        @Override
+        protected void onPostExecute(Void aVoid) {
+            //super.onPostExecute(aVoid);
+            //Utility.hideProgress(dialog);
+            dialog.dismiss();
+        }
+    }
+
+    private void getContactList() {
+
+
+        System.out.println("### FETCHING CONTACTS ..");
+
+
+        ContentResolver cr = getContentResolver();
+
+        String[] projection = {ContactsContract.CommonDataKinds.Phone.DISPLAY_NAME, ContactsContract.CommonDataKinds.Phone.NUMBER, ContactsContract.CommonDataKinds.Phone.PHOTO_URI};
+        Cursor cur = cr.query(ContactsContract.CommonDataKinds.Phone.CONTENT_URI, projection, null, null, ContactsContract.CommonDataKinds.Phone.DISPLAY_NAME + " ASC");
+
+
+        //Cursor cur = cr.query(ContactsContract.Contacts.CONTENT_URI, null, null, null, null);
+
+        if ((cur != null ? cur.getCount() : 0) > 0) {
+            while (cur != null && cur.moveToNext()) {
+                /*String id = cur.getString(cur.getColumnIndex(ContactsContract.Contacts._ID));
+                String name = cur.getString(cur.getColumnIndex(ContactsContract.Contacts.DISPLAY_NAME));
+
+                if (cur.getInt(cur.getColumnIndex(ContactsContract.Contacts.HAS_PHONE_NUMBER)) > 0) {
+                    Cursor pCur = cr.query(ContactsContract.CommonDataKinds.Phone.CONTENT_URI, null, ContactsContract.CommonDataKinds.Phone.CONTACT_ID + " = ?", new String[]{id}, null);
+                    while (pCur.moveToNext()) {
+                        String phoneNo = pCur.getString(pCur.getColumnIndex(ContactsContract.CommonDataKinds.Phone.NUMBER));
+                        Log.i(TAG, "Name: " + name);
+                        Log.i(TAG, "Phone Number: " + phoneNo);
+                        //String  test = exam.getTestName().replaceAll("\\p{P}","");
+                        a = new UserContact(name, phoneNo.replaceAll("\\p{P}", ""));
+                        list.add(a);
+                        //adapter.notifyDataSetChanged();
+
+
+                    }
+                    filterList.addAll(list);
+                    pCur.close();
+                }*/
+                String name = cur.getString(0);
+                String phone = cur.getString(1);
+                Log.i("TAG", "Name: " + name);
+                Log.i("TAG", "Phone Number: " + phone.replaceAll("\\s", "").replaceAll("\\p{P}", ""));
+                //String  test = exam.getTestName().replaceAll("\\p{P}","");
+               // a = new UserContact(name, phone.replaceAll("\\p{P}", ""));
+                new InviteSMSTask(Utility.NOTIFICATION_TYPE_NEW,phone.replaceAll("\\s", "").replaceAll("\\p{P}", "")).execute();
+            }
+
+        }
+        if (cur != null) {
+            cur.close();
+        }
+        System.out.println("### DONE FETCHING CONTACTS ..");
+        //Utility.hideProgress(dialog);
     }
 
 }

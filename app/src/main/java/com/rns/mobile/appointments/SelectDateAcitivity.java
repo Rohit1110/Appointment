@@ -74,6 +74,7 @@ public class SelectDateAcitivity extends AppCompatActivity {
     public SmsField smsField;
 
 
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -185,6 +186,7 @@ reason.setOnClickListener(new View.OnClickListener() {
         //adapter = new ArrayAdapter<String>(this, android.R.layout.simple_list_item_multiple_choice, slotsList);
         availableSlotsListView.setChoiceMode(ListView.CHOICE_MODE_MULTIPLE);
         availableSlotsListView.setAdapter(adapter);
+
         availableSlotsListView.setOnItemClickListener(new SlotsSelected());
 
         appointment = Utility.extractAppointment(SelectDateAcitivity.this);
@@ -620,22 +622,30 @@ public class SlotsSelected implements AdapterView.OnItemClickListener {
     @Override
     public void onItemClick(AdapterView<?> arg0, View arg1, int arg2, long arg3) {
         // TODO Auto-generated method stub
+        //CheckBox chk = (CheckBox) v
         CheckedTextView ctv = (CheckedTextView) arg1;
         String selectedSlot = ctv.getText().toString();
        System.out.println("wwwwwwww "+arg1);
-
+        System.out.println("click text "+ctv.getText()+" "+ctv.isChecked());
        if (ctv.isChecked()) {
-           System.out.println("click text "+ctv.getText());
-           System.out.println("Conditions "+validateSlots(selectedSlot));
             if (validateSlots(selectedSlot)) {
-                selectedSlots.add(selectedSlot);
-                ctv.setChecked(true);
-                System.out.println("click slots"+selectedSlots);
+
+                    selectedSlots.add(selectedSlot);
+                    ctv.setChecked(true);
+                    System.out.println("click slots" + selectedSlots);
+
+
                 // Toast.makeText(SelectDateAcitivity.this, "now it is unchecked", Toast.LENGTH_SHORT).show();
             } else{
-                System.out.println("Else "+selectedSlot);
+
+                System.out.println("Else "+selectedSlot+ctv.isChecked());
                 ctv.setChecked(false);
                 ctv.setSelected(false);
+
+
+
+                System.out.println("Else after"+selectedSlot+ctv.isChecked());
+                ctv=null;
 
             }
         } else{
@@ -646,6 +656,7 @@ public class SlotsSelected implements AdapterView.OnItemClickListener {
             //Toast.makeText(SelectDateAcitivity.this, "now it is checked", Toast.LENGTH_SHORT).show();
         }
         setSlotsSelected();
+
         //removeInvalidSlots();
     }
 
