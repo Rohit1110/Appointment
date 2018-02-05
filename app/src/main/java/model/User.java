@@ -21,6 +21,8 @@ public class User {
     private String endTime;
     private String phone;
     private List<String> fcmTokens;
+    private String userName;
+    private String fullName;
 
     public String getSelectedDays() {
         return selectedDays;
@@ -94,12 +96,19 @@ public class User {
         this.phone = phone;
     }
 
-    public String getUserName() {
+    public String prepareUserName() {
         return firstName != null ? firstName : phone;
     }
 
-    public String getFullName() {
+    public String prepareFullName() {
         return Utility.getStringValue(getFirstName()) + " " + Utility.getStringValue(getLastName());
     }
 
+    public void setFullName(String fullName) {
+        this.fullName = fullName;
+    }
+
+    public void setUserName(String userName) {
+        this.userName = userName;
+    }
 }

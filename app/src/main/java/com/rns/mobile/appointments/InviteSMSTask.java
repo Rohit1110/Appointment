@@ -21,7 +21,7 @@ import utils.Utility;
 
 public class InviteSMSTask extends AsyncTask<Void, Void, Void> {
 
-    private static String GET_URL = "http://bhashsms.com/api/sendmsg.php?user=anandkore&pass=123&sender=TIMEDE&priority=ndnd&stype=normal";//"http://api.msg91.com/api/sendhttp.php" + "?sender=TIMEDE&route=4&authkey=193344AsiDSe0j5a5db681&country=91";
+    private static String GET_URL = "http://bhashsms.com/api/sendmsg.php?user=anandkore&pass=123&sender=TIMEDE&priority=sdnd&stype=normal";//"http://api.msg91.com/api/sendhttp.php" + "?sender=TIMEDE&route=4&authkey=193344AsiDSe0j5a5db681&country=91";
     private String smsType;
     private String appointment;
     private SmsField smsField;

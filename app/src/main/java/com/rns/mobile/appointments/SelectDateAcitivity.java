@@ -7,7 +7,6 @@ import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
-import android.view.KeyEvent;
 import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
@@ -186,8 +185,11 @@ reason.setOnClickListener(new View.OnClickListener() {
         //adapter = new ArrayAdapter<String>(this, android.R.layout.simple_list_item_multiple_choice, slotsList);
         availableSlotsListView.setChoiceMode(ListView.CHOICE_MODE_MULTIPLE);
         availableSlotsListView.setAdapter(adapter);
+        availableSlotsListView.setItemsCanFocus(false);
 
         availableSlotsListView.setOnItemClickListener(new SlotsSelected());
+
+
 
         appointment = Utility.extractAppointment(SelectDateAcitivity.this);
 
@@ -281,7 +283,7 @@ reason.setOnClickListener(new View.OnClickListener() {
                     appointment.setId(appointment.toString());
                     final Appointment otherUserAppointment = appointment.duplicate(userPhone);
                     if (currentUser != null) {
-                        otherUserAppointment.setName(currentUser.getFullName());
+                        otherUserAppointment.setName(currentUser.prepareFullName());
                     }
                     FirebaseUtil.db.collection(FirebaseUtil.DOC_USERS).document(appointment.getPhone()).
                             collection(FirebaseUtil.DOC_APPOINTMENTS).
@@ -598,7 +600,7 @@ reason.setOnClickListener(new View.OnClickListener() {
         adapter = new ArrayAdapter<String>(this, android.R.layout.simple_list_item_multiple_choice, filteredSlots);
         availableSlotsListView.setChoiceMode(ListView.CHOICE_MODE_MULTIPLE);
         availableSlotsListView.setAdapter(adapter);
-
+        availableSlotsListView.setItemsCanFocus(false);
        availableSlotsListView.setOnItemClickListener(new SlotsSelected());
     }
 
@@ -617,7 +619,11 @@ reason.setOnClickListener(new View.OnClickListener() {
         return false;
     }
 
+
 public class SlotsSelected implements AdapterView.OnItemClickListener {
+
+
+
 
     @Override
     public void onItemClick(AdapterView<?> arg0, View arg1, int arg2, long arg3) {
@@ -625,15 +631,17 @@ public class SlotsSelected implements AdapterView.OnItemClickListener {
         //CheckBox chk = (CheckBox) v
         CheckedTextView ctv = (CheckedTextView) arg1;
         String selectedSlot = ctv.getText().toString();
+
        System.out.println("wwwwwwww "+arg1);
         System.out.println("click text "+ctv.getText()+" "+ctv.isChecked());
+
        if (ctv.isChecked()) {
+
             if (validateSlots(selectedSlot)) {
 
                     selectedSlots.add(selectedSlot);
-                    ctv.setChecked(true);
-                    System.out.println("click slots" + selectedSlots);
 
+                    System.out.println("click slots" + selectedSlots);
 
                 // Toast.makeText(SelectDateAcitivity.this, "now it is unchecked", Toast.LENGTH_SHORT).show();
             } else{
@@ -641,11 +649,12 @@ public class SlotsSelected implements AdapterView.OnItemClickListener {
                 System.out.println("Else "+selectedSlot+ctv.isChecked());
                 ctv.setChecked(false);
                 ctv.setSelected(false);
+                availableSlotsListView.setItemChecked(arg2,false);
 
 
 
-                System.out.println("Else after"+selectedSlot+ctv.isChecked());
-                ctv=null;
+   //                System.out.println("Else after"+selectedSlot+ctv.isChecked());
+
 
             }
         } else{

@@ -21,7 +21,6 @@ import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.Toolbar;
 import android.util.Log;
 import android.view.GestureDetector;
-import android.view.Gravity;
 import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
@@ -182,7 +181,7 @@ public class AppointmentsActivity extends AppCompatActivity {
                                     public void onSuccess(Void aVoid) {
                                         System.out.println("Deleted for other user appointment =>" + currentAppointment.getId());
                                         Appointment app = currentAppointment.duplicate(currentAppointment.getPhone());
-                                        app.setName(user.getFullName());
+                                        app.setName(user.prepareFullName());
                                         new NotificationTask(app, Utility.NOTIFICATION_TYPE_CANCEL).sendNotification();
                                     }
                                 }).addOnFailureListener(new OnFailureListener() {
@@ -283,7 +282,7 @@ public class AppointmentsActivity extends AppCompatActivity {
                             public void onSuccess(Void aVoid) {
                                 System.out.println("Deleted for other user appointment =>" + currentAppointment.getId());
                                 Appointment app = currentAppointment.duplicate(currentAppointment.getPhone());
-                                app.setName(user.getFullName());
+                                app.setName(user.prepareFullName());
                                 new NotificationTask(app, Utility.NOTIFICATION_TYPE_CANCEL).sendNotification();
                             }
                         }).addOnFailureListener(new OnFailureListener() {

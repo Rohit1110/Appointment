@@ -1,6 +1,9 @@
 package com.rns.mobile.appointments;
 
+import android.app.AlertDialog;
+import android.app.Dialog;
 import android.app.ProgressDialog;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.os.Build;
@@ -79,18 +82,45 @@ public class MainActivity extends AppCompatActivity {
         });
     }
 
+
+
     private void goToHome() {
-        Utility.saveStringToSharedPreferences(new Gson().toJson(user), Utility.INTENT_VAR_USER, MainActivity.this);
-        //Save FCM Token
-        saveFCMToken();
+        AlertDialog.Builder dialog = new AlertDialog.Builder(MainActivity.this);
+        dialog.setCancelable(false);
+        dialog.setTitle("App Invitations");
+        dialog.setMessage("Are you sure you want to Invite ypour friends?" );
+        dialog.setPositiveButton("Yes", new DialogInterface.OnClickListener() {
+            @Override
+            public void onClick(DialogInterface dialog, int id) {
+                //Action for "Yes".
+                Intent i = new Intent(MainActivity.this, InviteActivity.class);
+                startActivity(i);
 
-        Intent i = new Intent(MainActivity.this, AppointmentsActivity.class);
-        i.putExtra(Utility.INTENT_VAR_USER, new Gson().toJson(user));
-        i.putExtra("showcancel","false");
-        i.putExtra("states","1");
+            }
+        })
+                .setNegativeButton("No ", new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialog, int which) {
+                        //Action for "Cancel".
+                        Utility.saveStringToSharedPreferences(new Gson().toJson(user), Utility.INTENT_VAR_USER, MainActivity.this);
+                        //Save FCM Token
+                        saveFCMToken();
 
-        startActivity(i);
-        finish();
+                        Intent i = new Intent(MainActivity.this, AppointmentsActivity.class);
+                        i.putExtra(Utility.INTENT_VAR_USER, new Gson().toJson(user));
+                        i.putExtra("showcancel","false");
+                        i.putExtra("states","1");
+
+                        startActivity(i);
+                        finish();
+                    }
+                });
+
+        final AlertDialog alert = dialog.create();
+        alert.show();
+
+
+
     }
 
     private void saveFCMToken() {
