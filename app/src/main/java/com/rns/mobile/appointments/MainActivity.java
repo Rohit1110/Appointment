@@ -5,6 +5,7 @@ import android.app.Dialog;
 import android.app.ProgressDialog;
 import android.content.DialogInterface;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.content.pm.PackageManager;
 import android.os.Build;
 import android.os.Bundle;
@@ -27,6 +28,7 @@ import utils.Utility;
 
 public class MainActivity extends AppCompatActivity {
 
+    private static final String MY_PREFS_NAME = "mypref";
     private String phoneNumber;
     private User user;
     private ProgressDialog dialog;
@@ -85,39 +87,70 @@ public class MainActivity extends AppCompatActivity {
 
 
     private void goToHome() {
-        AlertDialog.Builder dialog = new AlertDialog.Builder(MainActivity.this);
-        dialog.setCancelable(false);
-        dialog.setTitle("App Invitations");
-        dialog.setMessage("Are you sure you want to Invite ypour friends?" );
-        dialog.setPositiveButton("Yes", new DialogInterface.OnClickListener() {
-            @Override
-            public void onClick(DialogInterface dialog, int id) {
-                //Action for "Yes".
-                Intent i = new Intent(MainActivity.this, InviteActivity.class);
-                startActivity(i);
+        SharedPreferences prefs=getSharedPreferences(MY_PREFS_NAME,0);
+        String dontask=prefs.getString("selected", "");
 
-            }
-        })
-                .setNegativeButton("No ", new DialogInterface.OnClickListener() {
-                    @Override
-                    public void onClick(DialogInterface dialog, int which) {
-                        //Action for "Cancel".
-                        Utility.saveStringToSharedPreferences(new Gson().toJson(user), Utility.INTENT_VAR_USER, MainActivity.this);
-                        //Save FCM Token
-                        saveFCMToken();
 
-                        Intent i = new Intent(MainActivity.this, AppointmentsActivity.class);
-                        i.putExtra(Utility.INTENT_VAR_USER, new Gson().toJson(user));
-                        i.putExtra("showcancel","false");
-                        i.putExtra("states","1");
+        System.out.println("Dont ask "+dontask);
+        if(!dontask.equals("yes")) {
+            CharSequence[] array = {"Don't show again","Show"};
+            AlertDialog.Builder dialog = new AlertDialog.Builder(MainActivity.this);
+            dialog.setCancelable(false);
+            dialog.setTitle("App Invitations");
+            dialog.setMessage("Are you sure you want to Invite your friends?");
+            dialog.setSingleChoiceItems(array, 0, new DialogInterface.OnClickListener() {
+                @Override
+                public void onClick(DialogInterface dialog, int which) {
+                    //Utility.saveStringToSharedPreferences("selected ", "yes", MainActivity.this);
 
-                        startActivity(i);
-                        finish();
-                    }
-                });
 
-        final AlertDialog alert = dialog.create();
-        alert.show();
+                }
+            });
+            dialog.setPositiveButton("Yes", new DialogInterface.OnClickListener() {
+                @Override
+                public void onClick(DialogInterface dialog, int id) {
+                    //Action for "Yes".
+                    SharedPreferences sp=getSharedPreferences(MY_PREFS_NAME,0);
+                    SharedPreferences.Editor edit=sp.edit();
+                    edit.putString("selected","yes");
+                    edit.apply();
+                    Intent i = new Intent(MainActivity.this, InviteActivity.class);
+                    i.putExtra(Utility.INTENT_VAR_USER, new Gson().toJson(user));
+                    startActivity(i);
+
+                }
+            })
+                    .setNegativeButton("No ", new DialogInterface.OnClickListener() {
+                        @Override
+                        public void onClick(DialogInterface dialog, int which) {
+                            //Action for "Cancel".
+                            Utility.saveStringToSharedPreferences(new Gson().toJson(user), Utility.INTENT_VAR_USER, MainActivity.this);
+                            //Save FCM Token
+                            saveFCMToken();
+
+                            Intent i = new Intent(MainActivity.this, AppointmentsActivity.class);
+                            i.putExtra(Utility.INTENT_VAR_USER, new Gson().toJson(user));
+                            i.putExtra("showcancel", "false");
+                            i.putExtra("states", "1");
+
+                            startActivity(i);
+                            finish();
+                        }
+                    });
+
+            final AlertDialog alert = dialog.create();
+            alert.show();
+
+        }else {
+            Intent i = new Intent(MainActivity.this, AppointmentsActivity.class);
+            i.putExtra(Utility.INTENT_VAR_USER, new Gson().toJson(user));
+            i.putExtra("showcancel", "false");
+            i.putExtra("states", "1");
+
+            startActivity(i);
+            finish();
+
+        }
 
 
 

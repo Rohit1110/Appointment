@@ -7,6 +7,7 @@ package model;
 public class InviteContact {
     private String name;
     private String phone;
+    private boolean isSelected;
 
     public InviteContact(String name, String number) {
       System.out.println("In Model "+name);
@@ -29,6 +30,14 @@ public class InviteContact {
 
     public void setPhone(String phone) {
         this.phone = phone;
+    }
+
+    public boolean isSelected() {
+        return isSelected;
+    }
+
+    public void setSelected(boolean selected) {
+        isSelected = selected;
     }
 }
 

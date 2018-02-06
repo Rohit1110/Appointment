@@ -192,7 +192,7 @@ public class Utility {
         return null;
     }
 
-    private static String getSharedString(Context context, String key) {
+    public static String getSharedString(Context context, String key) {
         SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(context);
         return prefs.getString(key, null);
     }

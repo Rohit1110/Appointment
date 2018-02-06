@@ -10,8 +10,11 @@
     tools:showIn="@layout/activity_main">
     <Button
         android:id="@+id/sendinvitebtn"
-        android:layout_width="wrap_content"
+        android:layout_width="match_parent"
         android:layout_height="wrap_content"
+        android:background="@color/colorPrimary"
+        android:layout_marginTop="@dimen/card_margin"
+        android:textColor="@android:color/white"
         android:text="send"/>
     <android.support.v7.widget.RecyclerView
         android:id="@+id/invite_reclyclerview"

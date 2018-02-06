@@ -9,6 +9,7 @@ import android.view.ViewGroup;
 import android.widget.CheckBox;
 import android.widget.CompoundButton;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.rns.mobile.appointments.R;
 
@@ -102,21 +103,29 @@ public class InviteContactListAdapter extends RecyclerView.Adapter<InviteContact
 
     @Override
     public void onBindViewHolder(final ViewHolderinvteContact holder, int position) {
-         System.out.println("onBindViewHolder");
+        final int pos = position;
+
         InviteContact inviteContact = item.get(position);
         holder.name.setText(inviteContact.getName());
         holder.phone.setText(inviteContact.getPhone());
         holder.contactCheck.setOnCheckedChangeListener(null);
-        holder.contactCheck.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener(){
+        holder.contactCheck.setChecked(item.get(position).isSelected());
 
+        holder.contactCheck.setTag(item.get(position));
+        holder.contactCheck.setOnClickListener(new View.OnClickListener() {
+            public void onClick(View v) {
+                CheckBox cb = (CheckBox) v;
+                InviteContact contact = (InviteContact) cb.getTag();
 
-            @Override
-            public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
-               if( holder.contactCheck.isChecked()){
-                   
-               }
+                contact.setSelected(cb.isChecked());
+                item.get(pos).setSelected(cb.isChecked());
+
+              /*  Toast.makeText(
+                        v.getContext(),
+                        "Clicked on Checkbox: " + cb.getText() + " is "
+                                + cb.isChecked(), Toast.LENGTH_LONG).show();*/
             }
-        } );
+        });
         System.out.println("name in Adapter " + inviteContact.getName());
     }
 
@@ -130,6 +139,10 @@ public class InviteContactListAdapter extends RecyclerView.Adapter<InviteContact
     @Override
     public int getItemCount() {
         return item.size();
+    }
+
+    public List<InviteContact> getStudentist() {
+        return item;
     }
 
 

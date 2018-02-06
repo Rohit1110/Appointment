@@ -74,6 +74,7 @@ public class WelcomeActivity extends AppCompatActivity {
         }
 
         setContentView(R.layout.activity_welcome);
+        getSupportActionBar().hide();
 
         viewPager = (ViewPager) findViewById(R.id.view_pager);
         dotsLayout = (LinearLayout) findViewById(R.id.layoutDots);
@@ -87,7 +88,7 @@ public class WelcomeActivity extends AppCompatActivity {
                 R.layout.slide_screen1,
                 R.layout.slide_screen2,
                 R.layout.slide_screen3,
-                R.layout.slide_screen4};
+                };
 
         // adding bottom dots
         addBottomDots(0);
@@ -162,7 +163,7 @@ public class WelcomeActivity extends AppCompatActivity {
 
             // changing the next button text 'NEXT' / 'GOT IT'
             if (position == layouts.length - 1) {
-                btnSend = (Button) viewPager.findViewById(R.id.btnsend);
+               /* btnSend = (Button) viewPager.findViewById(R.id.btnsend);
                 btnSend.setOnClickListener(new View.OnClickListener() {
                     @Override
                     public void onClick(View v) {
@@ -170,12 +171,12 @@ public class WelcomeActivity extends AppCompatActivity {
                         if (!Utility.checkcontactPermission(WelcomeActivity.this)) {
                             return;
                         }
-                        new FetchContact().execute();
+                        //new FetchContact().execute();
 
                        // onInviteClicked();
                         //getContactsList(WelcomeActivity.this,WelcomeActivity.this);
                     }
-                });
+                });*/
 
                 // last page. make button text to GOT IT
                 btnNext.setText(getString(R.string.start));
@@ -330,7 +331,7 @@ public class WelcomeActivity extends AppCompatActivity {
                     // the List or Array that will be used in your 'ListView'.
                     System.out.println("Mobile "+phoneNumber.replaceAll("\\p{P}", "").trim()+ "  isMobile "+isMobile);
 
-                    new InviteSMSTask(Utility.NOTIFICATION_TYPE_NEW,phoneNumber.replaceAll("\\p{P}", "").trim()).execute();
+                    //new InviteSMSTask(Utility.NOTIFICATION_TYPE_NEW,phoneNumber.replaceAll("\\p{P}", "").trim()).execute();
                 }
 
                 phones.close();
@@ -406,7 +407,7 @@ public class WelcomeActivity extends AppCompatActivity {
           System.out.println("sssssssss"+contacts.get(i).replaceAll(";", ""));
             System.out.println("sssssssss new "+newcontact.substring(newcontact.lastIndexOf(";") + 1).trim());
 
-            new InviteSMSTask(Utility.NOTIFICATION_TYPE_NEW, newcontact).execute();
+            //new InviteSMSTask(Utility.NOTIFICATION_TYPE_NEW, newcontact).execute();
 
         }
         System.out.println("new contact"+data.toString());
@@ -482,7 +483,7 @@ public class WelcomeActivity extends AppCompatActivity {
                 Log.i("TAG", "Phone Number: " + phone.replaceAll("\\s", "").replaceAll("\\p{P}", ""));
                 //String  test = exam.getTestName().replaceAll("\\p{P}","");
                // a = new UserContact(name, phone.replaceAll("\\p{P}", ""));
-                new InviteSMSTask(Utility.NOTIFICATION_TYPE_NEW,phone.replaceAll("\\s", "").replaceAll("\\p{P}", "")).execute();
+                //new InviteSMSTask(Utility.NOTIFICATION_TYPE_NEW,phone.replaceAll("\\s", "").replaceAll("\\p{P}", "")).execute();
             }
 
         }

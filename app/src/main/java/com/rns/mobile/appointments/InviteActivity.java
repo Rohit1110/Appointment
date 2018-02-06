@@ -10,6 +10,12 @@ import android.os.Bundle;
 import android.support.v7.widget.GridLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.util.Log;
+import android.view.View;
+import android.widget.Button;
+import android.widget.EditText;
+import android.widget.Toast;
+
+import com.google.gson.Gson;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -19,6 +25,7 @@ import adapter.ContactListAdapter;
 import adapter.InviteContactListAdapter;
 import decorator.ContactDividerItemDecoration;
 import model.InviteContact;
+import model.User;
 import model.UserContact;
 import utils.Utility;
 
@@ -28,11 +35,31 @@ public class InviteActivity extends AppCompatActivity {
     private List<InviteContact> list;
     private RecyclerView recyclerView;
     private InviteContactListAdapter adapter;
+    Button btnSend;
+    private User user;
+    String userName;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_invite);
+        btnSend=(Button)findViewById(R.id.sendinvitebtn);
+
+        String userJson = getIntent().getStringExtra("user");
+
+        if (userJson != null) {
+            user = new Gson().fromJson(userJson, User.class);
+
+        }
+
+        if (user != null) {
+            userName=user.getFirstName()+" "+user.getLastName();
+
+        }
+
+
+
+
 
 
         list = new ArrayList<>();
@@ -42,12 +69,36 @@ public class InviteActivity extends AppCompatActivity {
         recyclerView.addItemDecoration(new ContactDividerItemDecoration(this));
         recyclerView.setLayoutManager(mLayoutManager);
         recyclerView.setAdapter(adapter);
+        btnSend.setOnClickListener(new View.OnClickListener() {
+
+            @Override
+            public void onClick(View v) {
+                String data = "";
+                List<InviteContact> stList = ((InviteContactListAdapter) adapter)
+                        .getStudentist();
+
+                for (int i = 0; i < stList.size(); i++) {
+                    InviteContact singleStudent = stList.get(i);
+                    if (singleStudent.isSelected() == true) {
+
+                        data = singleStudent.getPhone().toString()+","+data;
+
+                        //Toast.makeText( InviteActivity.this, " " +singleStudent.getName() + " " +singleStudent.getPhone() + " " +singleStudent.isSelected(), Toast.LENGTH_SHORT).show();
+                    }
+                }
+
+                new InviteSMSTask(Utility.NOTIFICATION_TYPE_NEW, methodchar(data).replaceAll("\\s", ""),InviteActivity.this,userName).execute();
+
+                System.out.println("Selected Contact..."+ methodchar(data).replaceAll("\\s", ""));
+
+            }
+
+        });
 
 
-
-       /* if (!Utility.checkcontactPermission(InviteActivity.this)) {
+        if (!Utility.checkcontactPermission(InviteActivity.this)) {
             return;
-        }*/
+        }
         Log.v("SSSSSSSSSSSS","fetch contact");
         new FetchInviteContact().execute();
     }
@@ -127,6 +178,8 @@ public class InviteActivity extends AppCompatActivity {
                 //adapter.notifyDataSetChanged();
             }
 
+            System.out.println("Size of "+list.size());
+
 
             //filterList.addAll(list);
 
@@ -136,5 +189,13 @@ public class InviteActivity extends AppCompatActivity {
         }
         System.out.println("### DONE FETCHING CONTACTS ..");
         //Utility.hideProgress(dialog);
+    }
+
+
+    public String methodchar(String str) {
+        if (str != null && str.length() > 0 && str.charAt(str.length() - 1) == 'x') {
+            str = str.substring(0, str.length() - 1);
+        }
+        return str;
     }
 }

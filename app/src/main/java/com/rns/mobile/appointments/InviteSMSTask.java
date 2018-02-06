@@ -1,6 +1,10 @@
 package com.rns.mobile.appointments;
 
+import android.app.Activity;
+import android.content.Intent;
 import android.os.AsyncTask;
+
+import com.google.gson.Gson;
 
 import java.io.BufferedReader;
 import java.io.InputStreamReader;
@@ -25,16 +29,19 @@ public class InviteSMSTask extends AsyncTask<Void, Void, Void> {
     private String smsType;
     private String appointment;
     private SmsField smsField;
-    private String number;
+    private String number,user;
+    private Activity activity;
 
 /*  http://bhashsms.com/api/sendmsg.php?user=7350182285&pass=********&sender=Sender ID&phone=MobileNo1,MobileNo2..&text=Test SMS&priority=Priority&stype=smstype
 
 Note : smstype - normal/flash/unicode , Priority - ndnd/dnd , Mobile Number without 91*/
 
-    public InviteSMSTask(String type, String appointment) {
+    public InviteSMSTask(String type, String appointment,Activity activity,String user) {
         System.out.println("Call SMS");
         this.smsType = type;
         this.appointment = appointment;
+        this.activity=activity;
+        this.user=user;
 
 
     }
@@ -56,7 +63,7 @@ Note : smstype - normal/flash/unicode , Priority - ndnd/dnd , Mobile Number with
 
 
             String mobiles = "&phone=" + appointment;
-            String message = "&text=Hey.I am using TimeDe app to be more productive! I can book your time and you can book my time with this app. Use this link to donwload the app: https://goo.gl/BBFWM7" ;
+            String message = "&text=Hi this "+user+". I am using TimeDe app to be more productive! I can book your time and you can book my time with this app. Use this link to donwload the app: https://goo.gl/BBFWM7" ;
 
             if(Utility.NOTIFICATION_TYPE_NEW.equalsIgnoreCase(smsType)) {
 
@@ -95,6 +102,12 @@ Note : smstype - normal/flash/unicode , Priority - ndnd/dnd , Mobile Number with
                     response.append(inputLine);
                 }
                 in.close();
+
+                Intent i =new Intent(activity,AppointmentsActivity.class);
+                i.putExtra("showcancel","false");
+                i.putExtra("states","1");
+                activity.startActivity(i);
+                activity.finish();
 
                 // print result
                 System.out.println(".... NOTIFICATION SENT SUCCESSFULLY! ..." + response.toString());
