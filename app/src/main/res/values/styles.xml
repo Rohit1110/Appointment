@@ -9,6 +9,14 @@
         <item name="android:actionOverflowButtonStyle">@style/MyActionButtonOverflow</item>
     </style>
 
+    <style name="tagEditText">
+      <!--  <item name="android:layout_margin">5dp</item>
+        <item name="textBackgroundRadius">3dp</item>-->
+        <item name="textBackgroundColor">@color/colorPrimary</item>
+
+        <item name="textSize">5sp</item>
+    </style>
+
     <style name="AppTheme.NoActionBar">
         <item name="windowActionBar">false</item>
         <item name="windowNoTitle">true</item>

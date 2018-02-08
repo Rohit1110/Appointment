@@ -6,6 +6,7 @@ import android.content.ContentResolver;
 import android.content.Context;
 import android.content.Intent;
 import android.database.Cursor;
+import android.graphics.Color;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.provider.ContactsContract;
@@ -24,15 +25,20 @@ import android.view.MotionEvent;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
+import android.widget.TextView;
 
 import com.google.gson.Gson;
+import com.ryanpope.tagedittext.TagEditText;
+import com.wefika.flowlayout.FlowLayout;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Locale;
 import java.util.concurrent.CopyOnWriteArrayList;
 
 import adapter.ContactListAdapter;
 import decorator.ContactDividerItemDecoration;
+import mabbas007.tagsedittext.TagsEditText;
 import model.Appointment;
 import model.UserContact;
 import utils.Utility;
@@ -51,6 +57,10 @@ public class SearchAppointmentActivity extends AppCompatActivity {
     private Activity ctx;
     private boolean hideicon = true;
     private UserContact selectedContact;
+    TagEditText tagEditText;
+    List<String> selectcontact;
+    String number="";
+
 
 
     @Override
@@ -59,11 +69,24 @@ public class SearchAppointmentActivity extends AppCompatActivity {
 
         //isReadContactPermissionGranted();
         ctx = this;
+        selectcontact=new ArrayList<>();
 
         setContentView(R.layout.activity_search_appointment);
 
 
         System.out.println("### SEARCH ACTIVITY LOADED ###");
+        tagEditText=(TagEditText) findViewById(R.id.tx_tag);
+        tagEditText.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                number=tagEditText.getText().toString();
+            }
+        });
+
+
+
+        //final FlowLayout chipsBoxLayout;
+        //chipsBoxLayout = (FlowLayout)findViewById(R.id.chips_box_layout);
 
         //  next = (Button) findViewById(R.id.btnnxt);
         search = (EditText) findViewById(R.id.editsearch);
@@ -74,6 +97,7 @@ public class SearchAppointmentActivity extends AppCompatActivity {
         RecyclerView.LayoutManager mLayoutManager = new GridLayoutManager(this, 1);
         recyclerView_contact.addItemDecoration(new ContactDividerItemDecoration(this));
         recyclerView_contact.setLayoutManager(mLayoutManager);
+
         search.addTextChangedListener(new TextWatcher() {
             @Override
             public void beforeTextChanged(CharSequence s, int start, int count, int after) {
@@ -99,6 +123,8 @@ public class SearchAppointmentActivity extends AppCompatActivity {
                     if (search.getText().toString().length() >= 10) {
                         hideicon = false;
                         invalidateOptionsMenu();
+
+
                     }
                 }
             }
@@ -126,12 +152,21 @@ public class SearchAppointmentActivity extends AppCompatActivity {
                 //Values are passing to activity & to fragment as well
               /*  Toast.makeText(SearchAppointmentActivity.this, "Single Click on position        :" + position,
                         Toast.LENGTH_SHORT).show();*/
+
                 selectedContact = filterList.get(position);
                 /*Toast.makeText(SearchAppointmentActivity.this, "Single Click on position        :" + selectedContact.getPhone(),
                         Toast.LENGTH_SHORT).show();*/
-                search.setText(selectedContact.getPhone());
+                number= selectedContact.getName().replaceAll("\\s", "")+" "+number;
+                search.setText(number);
                 hideicon = false;
                 invalidateOptionsMenu();
+               Updatetext(number);
+                hideicon = false;
+                invalidateOptionsMenu();
+
+
+
+
             }
 
             @Override
@@ -162,6 +197,13 @@ public class SearchAppointmentActivity extends AppCompatActivity {
 
         //getContactList();
 
+    }
+
+    private void Updatetext(String number1) {
+        search.setText("");
+        tagEditText.setText("");
+        tagEditText.setText(number);
+        number=tagEditText.getText().toString();
     }
 
     @Override

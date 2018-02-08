@@ -9,10 +9,11 @@ public class InviteContact {
     private String phone;
     private boolean isSelected;
 
-    public InviteContact(String name, String number) {
+    public InviteContact(String name, String number,boolean isSelected) {
       System.out.println("In Model "+name);
         this.name = name;
         this.phone = number;
+        this.isSelected=isSelected;
 
     }
 

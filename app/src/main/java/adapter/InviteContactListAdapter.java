@@ -74,7 +74,7 @@ public class InviteContactListAdapter extends RecyclerView.Adapter<InviteContact
     public InviteContactListAdapter(Context mContext, List<InviteContact> item){
         this.mContext = mContext;
         this.item = item;
-       // this.filterList = new List<UserContact>();
+
         // we copy the original list to the filter list and use it for setting row values
 
         System.out.println("item list:" + item);
@@ -120,7 +120,7 @@ public class InviteContactListAdapter extends RecyclerView.Adapter<InviteContact
                 contact.setSelected(cb.isChecked());
                 item.get(pos).setSelected(cb.isChecked());
 
-              /*  Toast.makeText(
+                /*Toast.makeText(
                         v.getContext(),
                         "Clicked on Checkbox: " + cb.getText() + " is "
                                 + cb.isChecked(), Toast.LENGTH_LONG).show();*/

@@ -97,7 +97,7 @@ public class MainActivity extends AppCompatActivity {
             AlertDialog.Builder dialog = new AlertDialog.Builder(MainActivity.this);
             dialog.setCancelable(false);
             dialog.setTitle("App Invitations");
-            dialog.setMessage("Are you sure you want to Invite your friends?");
+            dialog.setMessage("Invite your contacts to book your time through this app?");
             dialog.setSingleChoiceItems(array, 0, new DialogInterface.OnClickListener() {
                 @Override
                 public void onClick(DialogInterface dialog, int which) {

@@ -109,7 +109,10 @@ public class ContactListAdapter extends RecyclerView.Adapter<ContactListAdapter.
 
 
 
-
+    public void updateList(List<UserContact> list){
+        item = list;
+        notifyDataSetChanged();
+    }
 
 
     @Override

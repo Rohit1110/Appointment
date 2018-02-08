@@ -16,10 +16,20 @@
         android:layout_marginTop="@dimen/card_margin"
         android:textColor="@android:color/white"
         android:text="send"/>
+
+    <EditText
+        android:id="@+id/txt_contact_search"
+        android:layout_below="@+id/sendinvitebtn"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:hint="Search contact"
+        android:imeOptions="actionDone"
+        android:singleLine="true"
+        />
     <android.support.v7.widget.RecyclerView
         android:id="@+id/invite_reclyclerview"
         android:layout_marginTop="@dimen/card_margin"
-        android:layout_below="@+id/sendinvitebtn"
+        android:layout_below="@+id/txt_contact_search"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:clipToPadding="false"

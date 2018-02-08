@@ -552,7 +552,7 @@ public class Utility {
             Intent i = new Intent(Intent.ACTION_SEND);
             i.setType("text/plain");
             i.putExtra(Intent.EXTRA_SUBJECT, "TimeDe App");
-            String sAux = "\nHey. I am using TimeDe app to be more productive! I can book your time and you can book my time with this app. Use this link to donwload the app: \n\n";
+            String sAux = "\nHey. I am using TimeDe app to be more productive! I can book your time and you can book my time with this app. Use this link to download the app: \n\n";
             sAux = sAux + "https://goo.gl/BBFWM7";
             i.putExtra(Intent.EXTRA_TEXT, sAux);
             activity.startActivity(Intent.createChooser(i, "choose one"));

@@ -12,7 +12,7 @@
     <ImageView
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:src="@mipmap/helper_screen2"
+        android:src="@drawable/a2"
         android:layout_marginBottom="@dimen/card_margin"
         />
 </android.support.design.widget.CoordinatorLayout>
