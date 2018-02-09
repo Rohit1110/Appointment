@@ -116,8 +116,8 @@ public class InviteContactListAdapter extends RecyclerView.Adapter<InviteContact
             public void onClick(View v) {
                 CheckBox cb = (CheckBox) v;
                 InviteContact contact = (InviteContact) cb.getTag();
-
                 contact.setSelected(cb.isChecked());
+
                 item.get(pos).setSelected(cb.isChecked());
 
                 /*Toast.makeText(

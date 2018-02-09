@@ -10,6 +10,15 @@
             android:layout_width="match_parent"
             android:layout_height="match_parent"
             >
+         <!-- <CheckBox
+              android:id="@+id/chk_contact"
+              android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_toRightOf="@+id/txt_user_contactname"
+
+                android:layout_marginTop="10dp"
+
+                />-->
 
             <TextView
                 android:id="@+id/txt_user_contactname"

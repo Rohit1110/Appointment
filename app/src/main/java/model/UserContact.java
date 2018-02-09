@@ -8,11 +8,20 @@ public class UserContact {
 
     private String name;
     private String phone;
+    private boolean isSelected;
 
     public UserContact(String name, String number) {
         this.name = name;
         this.phone = number;
 
+    }
+
+    public boolean isSelected() {
+        return isSelected;
+    }
+
+    public void setSelected(boolean selected) {
+        isSelected = selected;
     }
 
     public String getName() {

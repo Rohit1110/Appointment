@@ -1,5 +1,7 @@
 package model;
 
+import java.util.List;
+
 /**
  * Created by Rohit on 12/26/2017.
  */
@@ -13,6 +15,7 @@ public class Appointment {
     private String date;
     private String id;
     private String appointmentStatus;
+    private List<ActiveContact> contactList;
 
     public String getAppointmentStatus() {
         return appointmentStatus;
@@ -22,7 +25,13 @@ public class Appointment {
         this.appointmentStatus = appointmentStatus;
     }
 
+    public List<ActiveContact> getContactList() {
+        return contactList;
+    }
 
+    public void setContactList(List<ActiveContact> contactList) {
+        this.contactList = contactList;
+    }
 
     public String getId() {
         return id;

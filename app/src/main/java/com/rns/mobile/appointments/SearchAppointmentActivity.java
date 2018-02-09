@@ -39,11 +39,12 @@ import java.util.concurrent.CopyOnWriteArrayList;
 import adapter.ContactListAdapter;
 import decorator.ContactDividerItemDecoration;
 import mabbas007.tagsedittext.TagsEditText;
+import model.ActiveContact;
 import model.Appointment;
 import model.UserContact;
 import utils.Utility;
 
-public class SearchAppointmentActivity extends AppCompatActivity {
+public class SearchAppointmentActivity extends AppCompatActivity  {
     private Button next;
     private EditText search;
     private String TAG = "Appointment Search";
@@ -51,8 +52,10 @@ public class SearchAppointmentActivity extends AppCompatActivity {
     RecyclerView recyclerView_contact;
     private ContactListAdapter adapter;
     private List<UserContact> list;
+    private List<ActiveContact> activeList;
     private List<UserContact> filterList;
     private UserContact a;
+    private ActiveContact activeContact;
     //private ProgressDialog dialog;
     private Activity ctx;
     private boolean hideicon = true;
@@ -93,6 +96,7 @@ public class SearchAppointmentActivity extends AppCompatActivity {
         recyclerView_contact = (RecyclerView) findViewById(R.id.contact_reclyclerview);
         list = new CopyOnWriteArrayList<>();
         filterList = new CopyOnWriteArrayList<>();
+        activeList=new ArrayList<>();
         adapter = new ContactListAdapter(this, list);
         RecyclerView.LayoutManager mLayoutManager = new GridLayoutManager(this, 1);
         recyclerView_contact.addItemDecoration(new ContactDividerItemDecoration(this));
@@ -120,12 +124,12 @@ public class SearchAppointmentActivity extends AppCompatActivity {
                 if (isNumeric(s.toString())) {
 
 
-                    if (search.getText().toString().length() >= 10) {
+                    /*if (search.getText().toString().length() >= 10) {
                         hideicon = false;
                         invalidateOptionsMenu();
 
 
-                    }
+                    }*/
                 }
             }
         });
@@ -153,14 +157,23 @@ public class SearchAppointmentActivity extends AppCompatActivity {
               /*  Toast.makeText(SearchAppointmentActivity.this, "Single Click on position        :" + position,
                         Toast.LENGTH_SHORT).show();*/
 
+
                 selectedContact = filterList.get(position);
                 /*Toast.makeText(SearchAppointmentActivity.this, "Single Click on position        :" + selectedContact.getPhone(),
                         Toast.LENGTH_SHORT).show();*/
                 number= selectedContact.getName().replaceAll("\\s", "")+" "+number;
                 search.setText(number);
-                hideicon = false;
-                invalidateOptionsMenu();
-               Updatetext(number);
+                activeContact=new ActiveContact(selectedContact.getName(),selectedContact.getPhone().replaceAll("\\s", ""));
+
+                activeList.add(activeContact);
+               /* hideicon = false;
+                invalidateOptionsMenu();*/
+                Updatetext(number);
+                //adapter.Delete(position);
+
+              list.remove(position);
+                adapter.notifyItemRemoved(position);
+               // adapter.notifyDataSetChanged();
                 hideicon = false;
                 invalidateOptionsMenu();
 
@@ -238,6 +251,9 @@ public class SearchAppointmentActivity extends AppCompatActivity {
                 }
                 if (selectedContact != null && selectedContact.getName() != null) {
                     appointment.setName(selectedContact.getName());
+                }
+                if(activeList!=null&& activeList.size()>0){
+                    appointment.setContactList(activeList);
                 }
                 appointment.setPhone(phone);
                 System.out.println("Selected appointment is =>" + appointment);
