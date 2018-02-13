@@ -2,6 +2,7 @@ package adapter;
 
 import android.content.Context;
 import android.support.v7.widget.RecyclerView;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -9,9 +10,11 @@ import android.widget.TextView;
 
 import com.rns.mobile.appointments.R;
 
+import java.util.Arrays;
 import java.util.Date;
 import java.util.List;
 
+import model.ActiveContact;
 import model.Appointment;
 import recyclerAdapter.EventItem;
 import recyclerAdapter.HeaderItem;
@@ -101,11 +104,21 @@ public class AppointmentsDateAdapter extends RecyclerView.Adapter<RecyclerView.V
                 ViewHolder1 gholder = (ViewHolder1) holder;
                 // your logic here
 
-                if (event.getEvent().getName() != null && !event.getEvent().getName().trim().equals(""))
+                if (event.getEvent().getName() != null && !event.getEvent().getName().trim().equals("") && event.getEvent().getContactList()==null)
 
                 {
                     gholder.name.setText(event.getEvent().getName());
-                } else
+                } else if(event.getEvent().getContactList()!=null&& event.getEvent().getContactList().size()>0){
+                    System.out.println("list items: "+event.getEvent().getContactList().toString());
+
+
+                    //System.out.println("SSSSSSSSSSSS"+Utility.getContactNames(event.getEvent()));
+                    String names=Utility.getContactNames(event.getEvent());
+                    gholder.name.setText(names.substring(0, names.length() - 1));
+
+                }
+
+                else
 
                 {
                     gholder.name.setText(event.getEvent().getPhone());

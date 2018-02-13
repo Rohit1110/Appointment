@@ -22,7 +22,8 @@ public class FirebaseUtil {
 
 
     //Docs
-    public static final String DOC_USERS = "users";
+    //public static final String DOC_USERS = "users";
+    public static final String DOC_USERS = "usersdemo";
     public static final String DOC_APPOINTMENTS = "appointments";
     public static final String DOC_CONFIG = "configuration";
 

@@ -65,12 +65,13 @@ public class Appointment {
         this.date = date;
     }
 
-    public Appointment(String name, String start, String end,String id) {
+    public Appointment(String name, String start, String end,String id,List<ActiveContact> contactList) {
 
         this.name = name;
         this.startTime = start;
         this.endTime = end;
         this.id =id;
+        this.contactList=contactList;
     }
 
     public String getStartTime() {

@@ -47,6 +47,7 @@ import java.util.TreeMap;
 
 import adapter.AppointmentsDateAdapter;
 import decorator.SimpleDividerItemDecoration;
+import model.ActiveContact;
 import model.Appointment;
 import model.User;
 import recyclerAdapter.EventItem;
@@ -379,30 +380,59 @@ public class AppointmentsActivity extends AppCompatActivity {
         System.out.println("call one");
         list.clear();
         if (documentSnapshots != null && !documentSnapshots.isEmpty()) {
-            System.out.println("Appointments snapshot completed!");
+            System.out.println("Appointments snapshot completed!"+documentSnapshots.toString());
             showNoAppointments(false);
+            Appointment appointments=null;
             for (DocumentSnapshot doc : documentSnapshots) {
-                Appointment appointment = doc.toObject(Appointment.class);
+                 System.out.println("In loop "+doc.getData().get("contactList"));
+                 //appointment=Utility.setData(doc,appointment)
+                appointments = new Appointment();
+                if(doc.getString("name")!=null) {
+                    appointments.setName(doc.getString("name"));
+                }
+                if(doc.getString("startTime")!=null) {
+                    appointments.setStartTime(doc.getString("startTime"));
+                }
+                if(doc.getString("endTime")!=null) {
+                    appointments.setEndTime(doc.getString("endTime"));
+                }
+                if(doc.getString("phone")!=null) {
+                    appointments.setPhone(doc.getString("phone"));
+                }
+                if(doc.getString("date")!=null) {
+                    appointments.setDate(doc.getString("date"));
+                }
+                if(doc.getString("appointmentStatus")!=null) {
+                    appointments.setAppointmentStatus(doc.getString("appointmentStatus"));
+                }
+                if(doc.get("contactList")!=null) {
+                    appointments.setContactList((List<ActiveContact>) doc.getData().get("contactList"));
+                }
 
-                if (appointment == null) {
+
+
+
+
+                //Appointment appointment = doc.toObject(Appointment.class);
+                if (appointments == null) {
                     continue;
                 }
-                if (Utility.APP_STATUS_CANCELLED.equals(appointment.getAppointmentStatus()) && !showcacel) {
+                if (Utility.APP_STATUS_CANCELLED.equals(appointments.getAppointmentStatus()) && !showcacel) {
                     continue;
 
                 }
-                if (!Utility.APP_STATUS_CANCELLED.equals(appointment.getAppointmentStatus()) && showcacel) {
+                if (!Utility.APP_STATUS_CANCELLED.equals(appointments.getAppointmentStatus()) && showcacel) {
                     continue;
 
                 }
-                if (filterDate != null && appointment.getDate() != null && !appointment.getDate().equals(filterDate)) {
+                if (filterDate != null && appointments.getDate() != null && !appointments.getDate().equals(filterDate)) {
                     continue;
                 }
-                appointment.setId(doc.getId());
+                appointments.setId(doc.getId());
                 /*HeaderItem header = new HeaderItem(doc.getDate("date"));
                 list.add(header);*/
-                list.add(appointment);
-                Utility.addAppointmentsToCalender(AppointmentsActivity.this, appointment);
+                list.add(appointments);
+                Utility.addAppointmentsToCalender(AppointmentsActivity.this, appointments);
 
             }
 

@@ -171,8 +171,8 @@ public class SearchAppointmentActivity extends AppCompatActivity  {
                 Updatetext(number);
                 //adapter.Delete(position);
 
-              list.remove(position);
-                adapter.notifyItemRemoved(position);
+             /* list.remove(position);
+                adapter.notifyItemRemoved(position);*/
                // adapter.notifyDataSetChanged();
                 hideicon = false;
                 invalidateOptionsMenu();
@@ -362,8 +362,8 @@ public class SearchAppointmentActivity extends AppCompatActivity  {
                     // If there is no search value, then add all original list items to filter list
                     if (TextUtils.isEmpty(text)) {
 
-                        hideicon = true;
-                        invalidateOptionsMenu();
+                        /*hideicon = true;
+                        invalidateOptionsMenu();*/
 
                         filterList.addAll(list);
 

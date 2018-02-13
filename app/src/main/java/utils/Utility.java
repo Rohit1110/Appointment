@@ -38,9 +38,13 @@ import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.Calendar;
 import java.util.Date;
+import java.util.List;
+import java.util.Map;
 
+import model.ActiveContact;
 import model.Appointment;
 import model.User;
+import model.UserContact;
 
 import static android.content.Context.INPUT_METHOD_SERVICE;
 
@@ -601,50 +605,46 @@ public class Utility {
         }
     }
 
-    /*public static void CreateDialog(Activity activity)
-    {
-        public Dialog onCreateDialog(Bundle savedInstanceState) {
-        mSelectedItems = new ArrayList();
-        AlertDialog.Builder builder = new AlertDialog.Builder(getActivity());
+    public static String getContactNames(Appointment appointment) {
+        if(appointment == null || appointment.getContactList() == null || appointment.getContactList().size() == 0) {
+            return "";
+        }
+        StringBuilder builder = new StringBuilder();
+        for(int  i = 0; i < appointment.getContactList().size(); i++) {
+            Map<String, String> contact = (Map<String, String>) appointment.getContactList().get(i);
+            System.out.println("Hash MAP value =>" + contact);
+            if(contact.get("contact") != null) {
+                builder.append(contact.get("contact")).append(",");
+            } else if (contact.get("number") != null) {
+                 builder.append(contact.get("number"));
+            }
+        }
 
-        builder.setTitle("This is list choice dialog box");
-   .setMultiChoiceItems(R.array.toppings, null,
-                new DialogInterface.OnMultiChoiceClickListener() {
-                    @Override
-                    public void onClick(DialogInterface dialog, int which, boolean isChecked) {
+       /* for(Map<String, String> contact: appointment.getContactList()) {
+            if(contact.getContact() != null) {
+                builder.append(contact.getContact()).append(",");
+            } else if (contact.getNumber() != null) {
+                builder.append(contact.getContact()).append(",");
+            }
+        }*/
 
-                        if (isChecked) {
-                            // If the user checked the item, add it to the selected items
-                            mSelectedItems.add(which);
-                        }
+        return builder.toString();
+    }
+    public static String getContactNames(List<ActiveContact> contactList) {
 
-                        else if (mSelectedItems.contains(which)) {
-                            // Else, if the item is already in the array, remove it
-                            mSelectedItems.remove(Integer.valueOf(which));
-                        }
-                    }
-                })
-
-                // Set the action buttons
-                .setPositiveButton(R.string.ok, new DialogInterface.OnClickListener() {
-                    @Override
-                    public void onClick(DialogInterface dialog, int id) {
-                        // User clicked OK, so save the mSelectedItems results somewhere
-                        // or return them to the component that opened the dialog
-
-                    }
-                })
-
-                .setNegativeButton(R.string.cancel, new DialogInterface.OnClickListener() {
-                    @Override
-                    public void onClick(DialogInterface dialog, int id) {
-                    }
-                });
-        return builder.create();
-    }*/
+        StringBuilder builder = new StringBuilder();
+        for(ActiveContact contact: contactList) {
+            if(contact.getContact() != null) {
+                builder.append(contact.getContact()).append(",");
+            } else if (contact.getNumber() != null) {
+                builder.append(contact.getContact()).append(",");
+            }
+        }
 
 
-    //}
+        return builder.toString();
+   }
+
 
 
 
