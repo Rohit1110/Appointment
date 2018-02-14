@@ -14,6 +14,11 @@ public class ActiveContact {
         System.out.println("Active contact name "+contact+" number "+number);
     }
 
+    public ActiveContact() {
+
+    }
+
+
     public String getContact() {
         return contact;
     }

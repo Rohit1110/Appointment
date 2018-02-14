@@ -104,11 +104,11 @@ public class AppointmentsDateAdapter extends RecyclerView.Adapter<RecyclerView.V
                 ViewHolder1 gholder = (ViewHolder1) holder;
                 // your logic here
 
-                if (event.getEvent().getName() != null && !event.getEvent().getName().trim().equals("") && event.getEvent().getContactList()==null)
+                /*if (event.getEvent().getName() != null && !event.getEvent().getName().trim().equals("") && event.getEvent().getContactList()==null)
 
                 {
                     gholder.name.setText(event.getEvent().getName());
-                } else if(event.getEvent().getContactList()!=null&& event.getEvent().getContactList().size()>0){
+                } else*/ if(event.getEvent().getContactList()!=null&& event.getEvent().getContactList().size()>0){
                     System.out.println("list items: "+event.getEvent().getContactList().toString());
 
 

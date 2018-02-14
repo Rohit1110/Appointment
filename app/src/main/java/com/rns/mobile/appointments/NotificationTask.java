@@ -1,7 +1,9 @@
 package com.rns.mobile.appointments;
 
 import android.os.AsyncTask;
+import android.support.annotation.NonNull;
 
+import com.google.android.gms.tasks.OnFailureListener;
 import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.firebase.firestore.DocumentSnapshot;
 import com.google.gson.Gson;
@@ -40,11 +42,13 @@ public class NotificationTask extends AsyncTask<Void, Void, Void> {
         this.type = type;
         this.appointment = appointment;
         tokens = new ArrayList<>();
+        System.out.println("SSSSSSSSSSS in Notification" + " sss");
     }
 
 
     @Override
     protected Void doInBackground(Void... voids) {
+        System.out.println("in doingbackground");
         try {
 
             send();
@@ -58,6 +62,7 @@ public class NotificationTask extends AsyncTask<Void, Void, Void> {
     }
 
     private void send() throws IOException {
+        System.out.println("In Send notification");
         URL obj = new URL(POST_URL);
         HttpURLConnection con = (HttpURLConnection) obj.openConnection();
         con.setRequestMethod("POST");
@@ -71,7 +76,7 @@ public class NotificationTask extends AsyncTask<Void, Void, Void> {
 
         String name = appointment.getName() != null ? appointment.getName() : appointment.getPhone();
 
-       // String postData = "{\"name\":\"" + name + "\",\"type\":\"" + type + "\",\"appointmentId\":\"" + appointment.getId() + "\"," + "\"startTime\":\"" + appointment.getStartTime() + "\",\"endTime\":\"" + appointment.getEndTime() + "\",\"date\":\"" + appointment.getDate() + "\"}";
+        // String postData = "{\"name\":\"" + name + "\",\"type\":\"" + type + "\",\"appointmentId\":\"" + appointment.getId() + "\"," + "\"startTime\":\"" + appointment.getStartTime() + "\",\"endTime\":\"" + appointment.getEndTime() + "\",\"date\":\"" + appointment.getDate() + "\"}";
 
         //String postString = "{ \"data\":" + postData + ", \"registration_ids\" : \"" + new Gson().toString(tokens) + "\"}";
 
@@ -109,20 +114,37 @@ public class NotificationTask extends AsyncTask<Void, Void, Void> {
     }
 
     public void sendNotification() {
-        FirebaseUtil.db.collection(FirebaseUtil.DOC_USERS).document(appointment.getPhone()).get().addOnSuccessListener(new OnSuccessListener<DocumentSnapshot>() {
-            @Override
-            public void onSuccess(DocumentSnapshot documentSnapshot) {
-                if (documentSnapshot != null && documentSnapshot.exists()) {
+        System.out.println("In sendnotification AAAA" + appointment.getContactList().size());
+        for (int i = 0; i < appointment.getContactList().size(); i++) {
+            final int finalI = i;
+            FirebaseUtil.db.collection(FirebaseUtil.DOC_USERS).document("+91"+appointment.getContactList().get(i).getNumber()).get().addOnSuccessListener(new OnSuccessListener<DocumentSnapshot>() {
+                @Override
+                public void onSuccess(DocumentSnapshot documentSnapshot) {
+                    System.out.println("in on sucesss " + appointment.getContactList().get(finalI).getNumber());
+                    //System.out.println("fcmtoken " + documentSnapshot.getString("fcmTokens"));
+                    if (documentSnapshot != null && documentSnapshot.exists()) {
 
-                    User user = documentSnapshot.toObject(User.class);
-                    if (user != null && user.getFcmTokens() != null && user.getFcmTokens().size() > 0) {
-                        tokens = user.getFcmTokens();
-                        execute();
+
+                        User user = documentSnapshot.toObject(User.class);
+                        if (user != null && user.getFcmTokens() != null && user.getFcmTokens().size() > 0) {
+
+                            tokens = user.getFcmTokens();
+                            System.out.println("getFcmTokens " + tokens);
+                            execute();
+                        } else {
+                            System.out.println("SSSSSSSSSSSSSS AAAA");
+                        }
+
                     }
-
                 }
-            }
-        });
 
+            }).addOnFailureListener(new OnFailureListener() {
+                @Override
+                public void onFailure(@NonNull Exception e) {
+                    System.out.println("Failed to get FCmtoken");
+                }
+            });
+
+        }
     }
 }

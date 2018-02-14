@@ -99,6 +99,7 @@ public class EditProfileActivity extends AppCompatActivity {
         etStartTime = (Spinner) findViewById(R.id.et_start_time);
 
         etEndTime = (Spinner) findViewById(R.id.et_end_time);
+        spinner = (MultiSelectionSpinner) findViewById(R.id.spinner_off_days);
 
 
         ArrayAdapter<String> fromAdapter = new ArrayAdapter<String>(this, android.R.layout.simple_spinner_item, Utility.TIME_SLOTS);
@@ -108,6 +109,7 @@ public class EditProfileActivity extends AppCompatActivity {
         if (user != null && user.getStartTime() != null) {
             etStartTime.setSelection(Arrays.asList(Utility.TIME_SLOTS).indexOf(user.getStartTime()));
             etStartTime.setEnabled(false);
+            spinner.setEnabled(false);
         }
 
         ArrayAdapter<String> toAdapter = new ArrayAdapter<String>(this, android.R.layout.simple_spinner_item, Utility.TIME_SLOTS);
@@ -119,7 +121,7 @@ public class EditProfileActivity extends AppCompatActivity {
             etEndTime.setEnabled(false);
         }
 
-        spinner = (MultiSelectionSpinner) findViewById(R.id.spinner_off_days);
+
 
 
 
@@ -136,7 +138,7 @@ public class EditProfileActivity extends AppCompatActivity {
             spinner.setEnabled(false);
         }else{
             spinner.setText();
-            spinner.setEnabled(false);
+            //spinner.setEnabled(false);
         }
 
     /*    btnSaveProfile = (Button) findViewById(R.id.btn_save_profile);

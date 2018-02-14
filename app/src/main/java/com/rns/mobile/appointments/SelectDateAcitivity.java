@@ -1,5 +1,6 @@
 package com.rns.mobile.appointments;
 
+import android.app.Activity;
 import android.app.DatePickerDialog;
 import android.app.ProgressDialog;
 import android.content.Intent;
@@ -48,6 +49,7 @@ import model.ActiveContact;
 import model.Appointment;
 import model.SmsField;
 import model.User;
+import model.UserContact;
 import utils.FirebaseUtil;
 import utils.Utility;
 
@@ -277,10 +279,10 @@ public class SelectDateAcitivity extends AppCompatActivity {
         final User currentUser = Utility.getUserFromSharedPrefs(SelectDateAcitivity.this);
         if (selectedSlots != null && selectedSlots.size() > 0) {
             appointment.setAppointmentStatus(Utility.APP_STATUS_ACTIVE);
-            appointment.setName(currentUser.prepareFullName());
+            //appointment.setName(currentUser.prepareFullName());
             dialog = Utility.showProgress(SelectDateAcitivity.this);
             FirebaseUtil.db.collection(FirebaseUtil.DOC_USERS).document(userPhone).
-                    collection(FirebaseUtil.DOC_APPOINTMENTS).document(appointment.toString()).set(appointment).addOnSuccessListener(new OnSuccessListener<Void>() {
+                    collection(FirebaseUtil.DOC_APPOINTMENTS).document(appointments.toString()).set(appointment).addOnSuccessListener(new OnSuccessListener<Void>() {
                 @Override
                 public void onSuccess(Void aVoid) {
                     System.out.println("Completed Booking for user!!!" + userPhone);
@@ -288,36 +290,57 @@ public class SelectDateAcitivity extends AppCompatActivity {
                     System.out.println("Appointment added successfully!!" + appointment);
 
 
-
-
                     appointment.setId(appointment.toString());
-                    final Appointment otherUserAppointment = appointment.duplicate(userPhone);
 
-                    if (currentUser != null) {
-                        otherUserAppointment.setName(currentUser.prepareFullName());
-                        otherUserAppointment.setContactList(appointment.getContactList());
-                    }
-                    for (int i = 0; i < appointment.getContactList().size(); i++) {
-                        final int finalI = i;
-                        FirebaseUtil.db.collection(FirebaseUtil.DOC_USERS).document("+91"+appointment.getContactList().get(i).getNumber()).
+                    for (final ActiveContact contact : appointment.getContactList()) {
+
+                        if(contact.getNumber() == null) {
+                            continue;
+                        }
+                        final Appointment otherUserAppointment = appointment.duplicate(userPhone);
+                        if (currentUser != null) {
+                            //otherUserAppointment.setName(currentUser.prepareFullName());
+                            //otherUserAppointment.setContactList(appointments.getContactList());
+                            List<ActiveContact> contactList = new ArrayList<>();
+                            for(ActiveContact userContact: appointment.getContactList()) {
+                                if(userContact.getNumber() != null && !userContact.getNumber().equals(contact.getNumber())) {
+                                    contactList.add(userContact);
+                                }
+                            }
+                            ActiveContact currentContact = new ActiveContact();
+                            currentContact.setNumber(currentUser.getPhone());
+                            currentContact.setContact(currentUser.prepareFullName());
+                            contactList.add(currentContact);
+                            otherUserAppointment.setContactList(contactList);
+                            System.out.println("New contactlist "+contactList);
+                        }
+
+                        FirebaseUtil.db.collection(FirebaseUtil.DOC_USERS).document("+91" + contact.getNumber()).
                                 collection(FirebaseUtil.DOC_APPOINTMENTS).
                                 document(appointment.toString()).set(otherUserAppointment).addOnSuccessListener(new OnSuccessListener<Void>() {
 
 
                             @Override
                             public void onSuccess(Void aVoid) {
-                                System.out.println("Completed booking for other user!!!" + appointment.getContactList().get(finalI).getNumber());
+                                System.out.println("Completed booking for other user!!!" + contact.getNumber());
                                 Utility.hideProgress(dialog);
                                 System.out.println("Appointment added successfully!!" + otherUserAppointment);
                                 Appointment duplicate = null;
-                                for (int i = 0; i < appointment.getContactList().size(); i++)
+                                /*for (Appointment duplicate: appointment.getContactList()) {
+                                    duplicate = appointment.duplicate(duplicate.getNumber());
+                                }*/
+
+                                for (int i = 0; i < appointment.getContactList().size(); i++){
                                     duplicate = appointment.duplicate(appointment.getContactList().get(i).getNumber());
+                                }
+
 //                                duplicate.setName(otherUserAppointment.getContactList().get(finalI).getContact());
-                                duplicate.setContactList(appointment.getContactList());
-                                System.out.println("duplicate "+duplicate);
+                               duplicate.setContactList(appointment.getContactList());
+                                duplicate.setName(currentUser.prepareFullName());
+                                System.out.println("duplicate " + duplicate.getContactList());
                                 new NotificationTask(duplicate, Utility.NOTIFICATION_TYPE_NEW).sendNotification();
                                 final Appointment finalDuplicate = duplicate;
-                                System.out.println("Final duplicate "+finalDuplicate);
+                                System.out.println("Final duplicate " + finalDuplicate);
                                 FirebaseUtil.db.collection(FirebaseUtil.DOC_CONFIG).document("ehJdPUDH9lAz50qPK2Hw").get().addOnCompleteListener(new OnCompleteListener<DocumentSnapshot>() {
 
                                     @Override
@@ -327,7 +350,7 @@ public class SelectDateAcitivity extends AppCompatActivity {
                                             DocumentSnapshot document = task.getResult();
                                             if (document != null) {
                                                 smsField = document.toObject(SmsField.class);
-                                               new SMSTask(Utility.NOTIFICATION_TYPE_NEW, appointment, smsField).execute();
+                                                new SMSTask(Utility.NOTIFICATION_TYPE_NEW, finalDuplicate, smsField).execute();
                                                 Log.d("TAG", "DocumentSnapshot data: " + task.getResult().getData());
                                             } else {
                                                 Log.d("TAG", "No such document");
@@ -459,9 +482,9 @@ public class SelectDateAcitivity extends AppCompatActivity {
 //                Appointment appointment = doc.toObject(Appointment.class);
                 System.out.println("Doc print " + doc.getData());
                 appointments = new Appointment();
-               /* if (doc.getString("name") != null) {
+                if (doc.getString("name") != null) {
                     appointments.setName(doc.getString("name"));
-                }*/
+                }
                 if (doc.getString("startTime") != null) {
                     appointments.setStartTime(doc.getString("startTime"));
                 }
@@ -514,7 +537,7 @@ public class SelectDateAcitivity extends AppCompatActivity {
     private void blockOtherUserSlots() {
         // for (int i = 0; i < appointment.getContactList().size(); i++) {
         System.out.println("ASsssss" + appointment.getContactList().size());
-        System.out.println("Blocking other user slots ..11" + appointments);
+        System.out.println("Blocking other user slots ..1" + appointments.getName());
         if (appointment != null && appointment.getContactList() != null) {
             if (!appointment.getPhone().trim().contains("+")) {
                 appointment.setPhone(Utility.COUNTRY_CODE + appointment.getPhone());

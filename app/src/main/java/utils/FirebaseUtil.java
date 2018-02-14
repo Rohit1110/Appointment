@@ -14,7 +14,7 @@ import com.google.firebase.firestore.QuerySnapshot;
 
 public class FirebaseUtil {
 
-    public static String TEST_PHONE = "+918956711498";
+    public static String TEST_PHONE = "+917276856723";
 
     public static FirebaseAuth mAuth = FirebaseAuth.getInstance();
     public static FirebaseFirestore db = FirebaseFirestore.getInstance();
