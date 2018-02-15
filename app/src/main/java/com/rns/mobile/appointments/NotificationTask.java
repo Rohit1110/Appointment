@@ -114,13 +114,13 @@ public class NotificationTask extends AsyncTask<Void, Void, Void> {
     }
 
     public void sendNotification() {
-        System.out.println("In sendnotification AAAA" + appointment.getContactList().size());
-        for (int i = 0; i < appointment.getContactList().size(); i++) {
-            final int finalI = i;
-            FirebaseUtil.db.collection(FirebaseUtil.DOC_USERS).document("+91"+appointment.getContactList().get(i).getNumber()).get().addOnSuccessListener(new OnSuccessListener<DocumentSnapshot>() {
+        System.out.println("In sendnotification AAAA" + appointment.getPhone());
+        //for (int i = 0; i < appointment.getContactList().size(); i++) {
+            //final int finalI = i;
+            FirebaseUtil.db.collection(FirebaseUtil.DOC_USERS).document("+91"+appointment.getPhone()).get().addOnSuccessListener(new OnSuccessListener<DocumentSnapshot>() {
                 @Override
                 public void onSuccess(DocumentSnapshot documentSnapshot) {
-                    System.out.println("in on sucesss " + appointment.getContactList().get(finalI).getNumber());
+                    System.out.println("in on sucesss " + appointment.getPhone());
                     //System.out.println("fcmtoken " + documentSnapshot.getString("fcmTokens"));
                     if (documentSnapshot != null && documentSnapshot.exists()) {
 
@@ -145,6 +145,6 @@ public class NotificationTask extends AsyncTask<Void, Void, Void> {
                 }
             });
 
-        }
+        //}
     }
 }

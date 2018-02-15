@@ -177,12 +177,15 @@ public class AppointmentsActivity extends AppCompatActivity {
                             public void onSuccess(Void aVoid) {
                                 Utility.deleteAppointmentFromCalendar(AppointmentsActivity.this, currentAppointment);
                                 //Delete other users appointment
-                                FirebaseUtil.db.collection(FirebaseUtil.DOC_USERS).document(currentAppointment.getPhone()).collection(FirebaseUtil.DOC_APPOINTMENTS).document(currentAppointment.getId()).update("appointmentStatus", Utility.APP_STATUS_CANCELLED).addOnSuccessListener(new OnSuccessListener<Void>() {
+                               /* FirebaseUtil.db.collection(FirebaseUtil.DOC_USERS).document(currentAppointment.getPhone()).collection(FirebaseUtil.DOC_APPOINTMENTS).document(currentAppointment.getId()).update("appointmentStatus", Utility.APP_STATUS_CANCELLED).addOnSuccessListener(new OnSuccessListener<Void>() {
                                     @Override
                                     public void onSuccess(Void aVoid) {
-                                        System.out.println("Deleted for other user appointment =>" + currentAppointment.getId());
-                                        Appointment app = currentAppointment.duplicate(currentAppointment.getPhone());
-                                        app.setName(user.prepareFullName());
+                                        Appointment app=null;
+                                        for(ActiveContact userContact: currentAppointment.getContactList()) {
+                                            System.out.println("Deleted for other user appointment =>" + currentAppointment.getId());
+                                             app = currentAppointment.duplicate(userContact.getNumber());
+                                            app.setName(user.prepareFullName());
+                                        }
                                         new NotificationTask(app, Utility.NOTIFICATION_TYPE_CANCEL).sendNotification();
                                     }
                                 }).addOnFailureListener(new OnFailureListener() {
@@ -190,7 +193,18 @@ public class AppointmentsActivity extends AppCompatActivity {
                                     public void onFailure(@NonNull Exception e) {
                                         Log.w("EDIT", "Error deleting other user App", e);
                                     }
-                                });
+                                });*/
+
+                                Appointment app=null;
+                                for(ActiveContact userContact: currentAppointment.getContactList()) {
+                                    System.out.println("Deleted for other user appointment =>" + currentAppointment.getId());
+                                    app = currentAppointment.duplicate(userContact.getNumber());
+                                    app.setName(user.prepareFullName());
+                                }
+                                new NotificationTask(currentAppointment, Utility.NOTIFICATION_TYPE_CANCEL).sendNotification();
+
+
+
                             }
                         }).addOnFailureListener(new OnFailureListener() {
                             @Override
@@ -261,7 +275,7 @@ public class AppointmentsActivity extends AppCompatActivity {
         });
     }
 
-    private void AlertforDoubleclick(int position, Appointment appointment) {
+    private void AlertforDoubleclick(int position, final Appointment appointment) {
         //Toast.makeText(AppointmentsActivity.this,""+position,Toast.LENGTH_LONG).show();
         currentAppointment = appointment;
         //id = currentAppointment.getId();
@@ -278,7 +292,7 @@ public class AppointmentsActivity extends AppCompatActivity {
                     public void onSuccess(Void aVoid) {
                         Utility.deleteAppointmentFromCalendar(AppointmentsActivity.this, currentAppointment);
                         //Delete other users appointment
-                        FirebaseUtil.db.collection(FirebaseUtil.DOC_USERS).document(currentAppointment.getPhone()).collection(FirebaseUtil.DOC_APPOINTMENTS).document(currentAppointment.getId()).update("appointmentStatus", Utility.APP_STATUS_CANCELLED).addOnSuccessListener(new OnSuccessListener<Void>() {
+                       /* FirebaseUtil.db.collection(FirebaseUtil.DOC_USERS).document(currentAppointment.getPhone()).collection(FirebaseUtil.DOC_APPOINTMENTS).document(currentAppointment.getId()).update("appointmentStatus", Utility.APP_STATUS_CANCELLED).addOnSuccessListener(new OnSuccessListener<Void>() {
                             @Override
                             public void onSuccess(Void aVoid) {
                                 System.out.println("Deleted for other user appointment =>" + currentAppointment.getId());
@@ -291,7 +305,19 @@ public class AppointmentsActivity extends AppCompatActivity {
                             public void onFailure(@NonNull Exception e) {
                                 Log.w("EDIT", "Error deleting other user App", e);
                             }
-                        });
+                        });*/
+
+                        for(int  i = 0; i < appointment.getContactList().size(); i++) {
+                            Map<String, String> contact = (Map<String, String>) appointment.getContactList().get(i);
+                            System.out.println("Hash MAP value =>" + contact);
+                            Appointment app = appointment.duplicate(contact.get("number"));
+                            app.setName(user.prepareFullName());
+                            new NotificationTask(app, Utility.NOTIFICATION_TYPE_CANCEL).sendNotification();
+
+                        }
+
+
+
                     }
                 }).addOnFailureListener(new OnFailureListener() {
                     @Override
