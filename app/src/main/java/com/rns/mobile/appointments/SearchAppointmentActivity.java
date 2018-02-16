@@ -41,6 +41,7 @@ import decorator.ContactDividerItemDecoration;
 import mabbas007.tagsedittext.TagsEditText;
 import model.ActiveContact;
 import model.Appointment;
+import model.User;
 import model.UserContact;
 import utils.Utility;
 
@@ -163,8 +164,23 @@ public class SearchAppointmentActivity extends AppCompatActivity  {
                         Toast.LENGTH_SHORT).show();*/
                 number= selectedContact.getName().replaceAll("\\s", "")+" "+number;
                 search.setText(number);
-                activeContact=new ActiveContact(selectedContact.getName(),selectedContact.getPhone().replaceAll("\\s", ""));
+                String phone =Utility.removeAllSpaces(selectedContact.getPhone());
+                if (phone.length() > Utility.PHONE_MAX_LENGTH) {
+                    phone = phone.substring(phone.length() - Utility.PHONE_MAX_LENGTH);
+                }
+                if (phone != null && !phone.trim().contains(Utility.COUNTRY_CODE)) {
+                    phone = Utility.COUNTRY_CODE + phone;
+                }
 
+                activeContact=new ActiveContact(selectedContact.getName(),selectedContact.getPhone().replaceAll("\\s", ""));
+/*String phone = Utility.removeAllSpaces(search.getText().toString());
+                //Select last 10 digits to avoid 0 or anything else in phone number
+                if (phone.length() > Utility.PHONE_MAX_LENGTH) {
+                    phone = phone.substring(phone.length() - Utility.PHONE_MAX_LENGTH);
+                }
+                if (phone != null && !phone.trim().contains(Utility.COUNTRY_CODE)) {
+                    phone = Utility.COUNTRY_CODE + phone;
+                }*/
                 activeList.add(activeContact);
                /* hideicon = false;
                 invalidateOptionsMenu();*/

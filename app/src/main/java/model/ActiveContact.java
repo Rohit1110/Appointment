@@ -7,6 +7,7 @@ package model;
 public class ActiveContact {
     private String contact;
     private String number;
+    private String status;
 
     public ActiveContact(String contact, String number) {
         this.contact = contact;
@@ -18,6 +19,13 @@ public class ActiveContact {
 
     }
 
+    public String getStatus() {
+        return status;
+    }
+
+    public void setStatus(String status) {
+        this.status = status;
+    }
 
     public String getContact() {
         return contact;

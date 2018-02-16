@@ -208,6 +208,7 @@ public class SelectDateAcitivity extends AppCompatActivity {
             if (appointment.getContactList() != null) {
 
                 //appointmentPhone.setText(appointment.getContactList().toString());
+
                 for (int i = 0; i < appointment.getContactList().size(); i++) {
                     System.out.println("SSSSSSSSSSSSS" + appointment.getContactList().get(i).getContact());
                     names = names + "," + appointment.getContactList().get(i).getContact();
@@ -296,7 +297,7 @@ public class SelectDateAcitivity extends AppCompatActivity {
 
                     for (final ActiveContact contact : appointment.getContactList()) {
 
-                        if(contact.getNumber() == null) {
+                        if (contact.getNumber() == null) {
                             continue;
                         }
                         final Appointment otherUserAppointment = appointment.duplicate(userPhone);
@@ -304,20 +305,19 @@ public class SelectDateAcitivity extends AppCompatActivity {
                             //otherUserAppointment.setName(currentUser.prepareFullName());
                             //otherUserAppointment.setContactList(appointments.getContactList());
                             List<ActiveContact> contactList = new ArrayList<>();
-                            for(ActiveContact userContact: appointment.getContactList()) {
-                                if(userContact.getNumber() != null && !userContact.getNumber().equals(contact.getNumber())) {
-                                    System.out.println("Current User Contact "+contact.getNumber());
+                            for (ActiveContact userContact : appointment.getContactList()) {
+                                if (userContact.getNumber() != null && !userContact.getNumber().equals(contact.getNumber())) {
+                                    System.out.println("Current User Contact " + userContact.getContact() + " : " + userContact.getNumber());
                                     contactList.add(userContact);
-
                                 }
-
                             }
                             ActiveContact currentContact = new ActiveContact();
-                            currentContact.setNumber(currentUser.getPhone());
+                            System.out.println("Curr user phone=>" + userPhone);
+                            currentContact.setNumber(userPhone);
                             currentContact.setContact(currentUser.prepareFullName());
                             contactList.add(currentContact);
                             otherUserAppointment.setContactList(contactList);
-                            System.out.println("New contactlist "+contactList);
+                            System.out.println("New contactlist " + contactList);
                         }
 
                         FirebaseUtil.db.collection(FirebaseUtil.DOC_USERS).document("+91" + contact.getNumber()).
@@ -335,39 +335,38 @@ public class SelectDateAcitivity extends AppCompatActivity {
                                     duplicate = appointment.duplicate(duplicate.getNumber());
                                 }*/
 
-                                for (ActiveContact ap: appointment.getContactList()){
+                                for (ActiveContact ap : appointment.getContactList()) {
                                     duplicate = appointment.duplicate(ap.getNumber());
 
 
+                                    //duplicate.setNumber(otherUserAppointment.getContactList().get(finalI).getContact());
+                                    duplicate.setContactList(appointment.getContactList());
+                                    duplicate.setName(currentUser.prepareFullName());
+                                    System.out.println("duplicate " + duplicate.getContactList());
+                                    new NotificationTask(duplicate, Utility.NOTIFICATION_TYPE_NEW).sendNotification();
+                                    final Appointment finalDuplicate = duplicate;
+                                    System.out.println("Final duplicate " + finalDuplicate);
 
-                                //duplicate.setNumber(otherUserAppointment.getContactList().get(finalI).getContact());
-                               duplicate.setContactList(appointment.getContactList());
-                                duplicate.setName(currentUser.prepareFullName());
-                                System.out.println("duplicate " + duplicate.getContactList());
-                                new NotificationTask(duplicate, Utility.NOTIFICATION_TYPE_NEW).sendNotification();
-                                final Appointment finalDuplicate = duplicate;
-                                System.out.println("Final duplicate " + finalDuplicate);
+                                    FirebaseUtil.db.collection(FirebaseUtil.DOC_CONFIG).document("ehJdPUDH9lAz50qPK2Hw").get().addOnCompleteListener(new OnCompleteListener<DocumentSnapshot>() {
 
-                                FirebaseUtil.db.collection(FirebaseUtil.DOC_CONFIG).document("ehJdPUDH9lAz50qPK2Hw").get().addOnCompleteListener(new OnCompleteListener<DocumentSnapshot>() {
+                                        @Override
+                                        public void onComplete(@NonNull Task<DocumentSnapshot> task) {
+                                            if (task.isSuccessful()) {
 
-                                    @Override
-                                    public void onComplete(@NonNull Task<DocumentSnapshot> task) {
-                                        if (task.isSuccessful()) {
-
-                                            DocumentSnapshot document = task.getResult();
-                                            if (document != null) {
-                                                smsField = document.toObject(SmsField.class);
-                                                new SMSTask(Utility.NOTIFICATION_TYPE_NEW, finalDuplicate, smsField).execute();
-                                                Log.d("TAG", "DocumentSnapshot data: " + task.getResult().getData());
+                                                DocumentSnapshot document = task.getResult();
+                                                if (document != null) {
+                                                    smsField = document.toObject(SmsField.class);
+                                                    new SMSTask(Utility.NOTIFICATION_TYPE_NEW, finalDuplicate, smsField).execute();
+                                                    Log.d("TAG", "DocumentSnapshot data: " + task.getResult().getData());
+                                                } else {
+                                                    Log.d("TAG", "No such document");
+                                                }
                                             } else {
-                                                Log.d("TAG", "No such document");
+                                                Log.d("TAG", "get failed with ", task.getException());
                                             }
-                                        } else {
-                                            Log.d("TAG", "get failed with ", task.getException());
                                         }
-                                    }
 
-                                });
+                                    });
                                 }
 
                                 Utility.hideProgress(dialog);
@@ -378,7 +377,7 @@ public class SelectDateAcitivity extends AppCompatActivity {
                                 addOnFailureListener(new OnFailureListener() {
                                     @Override
                                     public void onFailure(@NonNull Exception e) {
-                                       Utility.hideProgress(dialog);
+                                        Utility.hideProgress(dialog);
                                         Utility.createAlert(SelectDateAcitivity.this, Utility.ERROR_CONNECTION);
                                         System.out.println("Appointment failed to add => " + e);
                                         e.printStackTrace();
@@ -431,7 +430,7 @@ public class SelectDateAcitivity extends AppCompatActivity {
 
 
     private void updateUserSlots(User user) {
-        System.out.println("user name "+user.getStartTime());
+        System.out.println("user name " + user.getStartTime());
         if (user != null && user.getStartTime() != null && user.getEndTime() != null) {
             Set<String> validSlots = new HashSet<>();
             for (String slot : Utility.TIME_SLOTS) {
@@ -503,6 +502,9 @@ public class SelectDateAcitivity extends AppCompatActivity {
                /* if (doc.getString("phone") != null) {
                     appointments.setPhone(doc.getString("phone"));
                 }*/
+                if (doc.getString("description") != null) {
+                    appointments.setDescription(doc.getString("description"));
+                }
                 if (doc.getString("date") != null) {
                     appointments.setDate(doc.getString("date"));
                 }
@@ -553,54 +555,54 @@ public class SelectDateAcitivity extends AppCompatActivity {
            /* if (!appointment.getPhone().trim().contains("+")) {
                 appointment.setPhone(Utility.COUNTRY_CODE + appointment.getPhone());
             }*/
-            if (!otherContact.getNumber().trim().contains("+")) {
-                appointment.setPhone(Utility.COUNTRY_CODE + otherContact.getNumber());
-            }
-            System.out.println("## Loading profile for .. " + appointment.getPhone() + " dialog=" + dialog + " number = " + appointment.getPhone());
-            //dialog = Utility.showProgress(SelectDateAcitivity.this);
+                if (!otherContact.getNumber().trim().contains("+")) {
+                    appointment.setPhone(Utility.COUNTRY_CODE + otherContact.getNumber());
+                }
+                System.out.println("## Loading profile for .. " + appointment.getPhone() + " dialog=" + dialog + " number = " + appointment.getPhone());
+                //dialog = Utility.showProgress(SelectDateAcitivity.this);
 
 
                 // final ActiveContact con = c;
-                 FirebaseUtil.db.collection(FirebaseUtil.DOC_USERS).document(appointment.getPhone()).get().addOnCompleteListener(new OnCompleteListener<DocumentSnapshot>() {
-                     @Override
-                     public void onComplete(@NonNull Task<DocumentSnapshot> task) {
+                FirebaseUtil.db.collection(FirebaseUtil.DOC_USERS).document(appointment.getPhone()).get().addOnCompleteListener(new OnCompleteListener<DocumentSnapshot>() {
+                    @Override
+                    public void onComplete(@NonNull Task<DocumentSnapshot> task) {
 
-                         //Utility.hideProgress(dialog);
-                         if (FirebaseUtil.taskExists(task)) {
-                             System.out.println("## Done profile .." + task.getResult().exists());
-                             User otherUser = task.getResult().toObject(User.class);
-                             otherUser.setPhone(otherContact.getNumber());
-                             if (otherContact.getContact() == null) {
-                                 appointment.setName(otherUser.getFirstName() + " " + otherUser.getLastName());
-                                 appointmentPhone.setText(otherContact.getContact());
-                             }
-                             System.out.println("Appointment for =>" + otherContact.getContact());
-                             //Update slotsList based on this other users available slotsList
-                             if (isWeeklyOff(otherUser)) {
-                                 if (filteredSlots != null) {
-                                     filteredSlots.clear();
-                                 }
+                        //Utility.hideProgress(dialog);
+                        if (FirebaseUtil.taskExists(task)) {
+                            System.out.println("## Done profile .." + task.getResult().exists());
+                            User otherUser = task.getResult().toObject(User.class);
+                            otherUser.setPhone(otherContact.getNumber());
+                            if (otherContact.getContact() == null) {
+                                appointment.setName(otherUser.getFirstName() + " " + otherUser.getLastName());
+                                appointmentPhone.setText(otherContact.getContact());
+                            }
+                            System.out.println("Appointment for =>" + otherContact.getContact());
+                            //Update slotsList based on this other users available slotsList
+                            if (isWeeklyOff(otherUser)) {
+                                if (filteredSlots != null) {
+                                    filteredSlots.clear();
+                                }
 
-                                 setSlotsAdapter();
-                                 return;
-                             }
+                                setSlotsAdapter();
+                                return;
+                            }
 
-                             updateUserSlots(otherUser);
-                             updateOtherUserAppointments(otherContact.getNumber());
-                         } else {
-                             updateAvailableSlots();
-                         }
-                     }
-                 }).addOnFailureListener(new OnFailureListener() {
-                     @Override
-                     public void onFailure(@NonNull Exception e) {
-                         //Utility.hideProgress(dialog);
-                         Utility.createAlert(SelectDateAcitivity.this, Utility.ERROR_CONNECTION);
-                         System.out.println("## Error in blocking slots .." + e);
-                         e.printStackTrace();
-                     }
-                 });
-             }
+                            updateUserSlots(otherUser);
+                            updateOtherUserAppointments(otherContact.getNumber());
+                        } else {
+                            updateAvailableSlots();
+                        }
+                    }
+                }).addOnFailureListener(new OnFailureListener() {
+                    @Override
+                    public void onFailure(@NonNull Exception e) {
+                        //Utility.hideProgress(dialog);
+                        Utility.createAlert(SelectDateAcitivity.this, Utility.ERROR_CONNECTION);
+                        System.out.println("## Error in blocking slots .." + e);
+                        e.printStackTrace();
+                    }
+                });
+            }
 
 
         } else {
@@ -640,13 +642,13 @@ public class SelectDateAcitivity extends AppCompatActivity {
     private void updateOtherUserAppointments(String number) {
         //dialog = Utility.showProgress(SelectDateAcitivity.this);
 
-        System.out.println("updateOtherUserAppointments "+ number);
-        FirebaseUtil.db.collection(FirebaseUtil.DOC_USERS).document("+91"+number).collection(FirebaseUtil.DOC_APPOINTMENTS).whereEqualTo("date", appointment.getDate()).whereEqualTo("appointmentStatus", Utility.APP_STATUS_ACTIVE).
+        System.out.println("updateOtherUserAppointments " + number);
+        FirebaseUtil.db.collection(FirebaseUtil.DOC_USERS).document("+91" + number).collection(FirebaseUtil.DOC_APPOINTMENTS).whereEqualTo("date", appointment.getDate()).whereEqualTo("appointmentStatus", Utility.APP_STATUS_ACTIVE).
                 orderBy("startTime").get().addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
             @Override
             public void onComplete(@NonNull Task<QuerySnapshot> task) {
                 //Utility.hideProgress(dialog);
-               // Utility.hideProgress(dialog);
+                // Utility.hideProgress(dialog);
                 System.out.println("Done fetching users apps!" + task.getResult().size());
                 blockSlots(task);
                 updateAvailableSlots();
