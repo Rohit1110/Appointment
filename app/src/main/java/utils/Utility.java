@@ -612,9 +612,14 @@ public class Utility {
         StringBuilder builder = new StringBuilder();
         for(int  i = 0; i < appointment.getContactList().size(); i++) {
             Map<String, String> contact = (Map<String, String>) appointment.getContactList().get(i);
-            System.out.println("Hash MAP value =>" + contact);
-            if(contact.get("contact") != null) {
-                builder.append(contact.get("contact")).append(",");
+            System.out.println("Hash MAP value =>" + contact + contact.get("status"));
+            if(contact.get("contact") != null)  {
+                if(contact.get("status").equals(Utility.APP_STATUS_ACTIVE)) {
+
+                    System.out.println("Status in Util" + contact.get("status"));
+                    builder.append(contact.get("contact")).append(",");
+                }
+
             } else if (contact.get("number") != null) {
                  builder.append(contact.get("number"));
             }

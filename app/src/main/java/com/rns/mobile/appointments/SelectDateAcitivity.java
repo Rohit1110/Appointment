@@ -315,12 +315,13 @@ public class SelectDateAcitivity extends AppCompatActivity {
                             System.out.println("Curr user phone=>" + userPhone);
                             currentContact.setNumber(userPhone);
                             currentContact.setContact(currentUser.prepareFullName());
+                            currentContact.setStatus(Utility.APP_STATUS_ACTIVE);
                             contactList.add(currentContact);
                             otherUserAppointment.setContactList(contactList);
                             System.out.println("New contactlist " + contactList);
                         }
 
-                        FirebaseUtil.db.collection(FirebaseUtil.DOC_USERS).document("+91" + contact.getNumber()).
+                        FirebaseUtil.db.collection(FirebaseUtil.DOC_USERS).document(contact.getNumber()).
                                 collection(FirebaseUtil.DOC_APPOINTMENTS).
                                 document(appointment.toString()).set(otherUserAppointment).addOnSuccessListener(new OnSuccessListener<Void>() {
 
@@ -643,7 +644,7 @@ public class SelectDateAcitivity extends AppCompatActivity {
         //dialog = Utility.showProgress(SelectDateAcitivity.this);
 
         System.out.println("updateOtherUserAppointments " + number);
-        FirebaseUtil.db.collection(FirebaseUtil.DOC_USERS).document("+91" + number).collection(FirebaseUtil.DOC_APPOINTMENTS).whereEqualTo("date", appointment.getDate()).whereEqualTo("appointmentStatus", Utility.APP_STATUS_ACTIVE).
+        FirebaseUtil.db.collection(FirebaseUtil.DOC_USERS).document(number).collection(FirebaseUtil.DOC_APPOINTMENTS).whereEqualTo("date", appointment.getDate()).whereEqualTo("appointmentStatus", Utility.APP_STATUS_ACTIVE).
                 orderBy("startTime").get().addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
             @Override
             public void onComplete(@NonNull Task<QuerySnapshot> task) {

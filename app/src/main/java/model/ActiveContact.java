@@ -9,9 +9,10 @@ public class ActiveContact {
     private String number;
     private String status;
 
-    public ActiveContact(String contact, String number) {
+    public ActiveContact(String contact, String number,String status) {
         this.contact = contact;
         this.number = number;
+        this.status=status;
         System.out.println("Active contact name "+contact+" number "+number);
     }
 

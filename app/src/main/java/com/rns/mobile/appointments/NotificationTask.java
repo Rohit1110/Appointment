@@ -117,7 +117,7 @@ public class NotificationTask extends AsyncTask<Void, Void, Void> {
         System.out.println("In sendnotification AAAA" + appointment.getPhone());
         //for (int i = 0; i < appointment.getContactList().size(); i++) {
             //final int finalI = i;
-            FirebaseUtil.db.collection(FirebaseUtil.DOC_USERS).document("+91"+appointment.getPhone()).get().addOnSuccessListener(new OnSuccessListener<DocumentSnapshot>() {
+            FirebaseUtil.db.collection(FirebaseUtil.DOC_USERS).document(appointment.getPhone()).get().addOnSuccessListener(new OnSuccessListener<DocumentSnapshot>() {
                 @Override
                 public void onSuccess(DocumentSnapshot documentSnapshot) {
                     System.out.println("in on sucesss " + appointment.getPhone());

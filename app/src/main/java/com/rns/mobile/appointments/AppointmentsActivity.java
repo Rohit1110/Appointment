@@ -332,7 +332,7 @@ public class AppointmentsActivity extends AppCompatActivity {
                                 final Map<String, String> contact = (Map<String, String>) appointment.getContactList().get(i);
                                 System.out.println("Hash MAP value =>" + contact);
 
-                                Appointment app = appointment.duplicate(contact.get("number"));
+                                final Appointment app = appointment.duplicate(contact.get("number"));
                                 app.setName(user.prepareFullName());
                                 final int finalI = i;
                                 FirebaseUtil.db.collection(FirebaseUtil.DOC_USERS).document(contact.get("number")).collection(FirebaseUtil.DOC_APPOINTMENTS).document(currentAppointment.getId()).get().addOnCompleteListener(new OnCompleteListener<DocumentSnapshot>() {
@@ -368,28 +368,90 @@ public class AppointmentsActivity extends AppCompatActivity {
                                                 currentUser.setContactList((List<ActiveContact>) task.getResult().getData().get("contactList"));
                                             }
 
-                                            List<Map<String, String>> updatedList = new ArrayList<>();
+                                            final List<Map<String, String>> updatedList = new ArrayList<>();
+
                                             for (int i = 0; i < currentUser.getContactList().size(); i++) {
                                                 Map<String, String> contact = (Map<String, String>) currentUser.getContactList().get(i);
-                                                String phone=null;
-                                                if(!contact.get("number").trim().contains("+")){
-                                                    phone=Utility.COUNTRY_CODE+contact.get("number");
+                                                String phone = null;
+
+                                                phone = contact.get("number");
+
+                                                System.out.println("Phone " + phone + " number " + phoneNumber);
+                                                if (phone.equals(phoneNumber)) {
+                                                    contact.put("status", Utility.APP_STATUS_CANCELLED);
+                                                } else {
+                                                   /* if(contact.get("status").equals(null)||!contact.get("status").equals(Utility.APP_STATUS_CANCELLED))
+                                                    {
+                                                        totalmemberlist.add(contact);
+                                                    }*/
+
                                                 }
-                                                if(phone.equals(phoneNumber))
-                                                contact.put("status", Utility.APP_STATUS_CANCELLED);
                                                 updatedList.add(contact);
+
+                                                new NotificationTask(app, Utility.NOTIFICATION_TYPE_CANCEL).sendNotification();
                                             }
 
+                                            final List<Map<String, String>> totalmemberlist = new ArrayList<>();
 
                                             FirebaseUtil.db.collection(FirebaseUtil.DOC_USERS).document(contact.get("number")).
                                                     collection(FirebaseUtil.DOC_APPOINTMENTS).document(currentUser.toString()).update("contactList", updatedList).addOnSuccessListener(new OnSuccessListener<Void>() {
 
                                                 @Override
                                                 public void onSuccess(Void aVoid) {
+                                                    FirebaseUtil.db.collection(FirebaseUtil.DOC_USERS).document(contact.get("number")).collection(FirebaseUtil.DOC_APPOINTMENTS).document(currentAppointment.getId()).get().addOnCompleteListener(new OnCompleteListener<DocumentSnapshot>() {
+
+
+                                                        @Override
+                                                        public void onComplete(@NonNull Task<DocumentSnapshot> task) {
+                                                            if (task.getResult() != null && task.getResult().exists()) {
+
+                                                                Appointment currentUser = new Appointment();
+                                                                if (task.getResult().getString("name") != null) {
+                                                                    currentUser.setName(task.getResult().getString("name"));
+                                                                }
+                                                                if (task.getResult().getString("startTime") != null) {
+                                                                    currentUser.setStartTime(task.getResult().getString("startTime"));
+                                                                }
+                                                                if (task.getResult().getString("endTime") != null) {
+                                                                    currentUser.setEndTime(task.getResult().getString("endTime"));
+                                                                }
+
+                                                                if (task.getResult().getString("description") != null) {
+                                                                    currentUser.setDescription(task.getResult().getString("description"));
+                                                                }
+                                                                if (task.getResult().getString("date") != null) {
+                                                                    currentUser.setDate(task.getResult().getString("date"));
+                                                                }
+                                                                if (task.getResult().getString("appointmentStatus") != null) {
+                                                                    currentUser.setAppointmentStatus(task.getResult().getString("appointmentStatus"));
+                                                                }
+                                                                if (task.getResult().get("contactList") != null) {
+                                                                    currentUser.setContactList((List<ActiveContact>) task.getResult().getData().get("contactList"));
+                                                                }
+
+
+                                                                for (int i = 0; i < currentUser.getContactList().size(); i++) {
+                                                                    Map<String, String> contacts = (Map<String, String>) currentUser.getContactList().get(i);
+                                                                    System.out.println("Appointment status " + contacts.get("status"));
+                                                                    if (contacts.get("status").equals(Utility.APP_STATUS_ACTIVE)) {
+                                                                        System.out.println("Other memeber "+contacts.get("number"));
+                                                                        totalmemberlist.add(contacts);
+
+                                                                    }
+                                                                }
+                                                                CancelAppoitment(totalmemberlist, contact, appointment);
+
+
+                                                            }
+                                                        }
+                                                    });
 
 
                                                 }
                                             });
+
+
+
 
 
                                         }
@@ -424,6 +486,31 @@ public class AppointmentsActivity extends AppCompatActivity {
 
         AlertDialog alertDialog = alertDialogBuilder.create();
         alertDialog.show();
+    }
+
+    private void CancelAppoitment(List<Map<String, String>> totalmemberlist, Map<String, String> contact, final Appointment appointment) {
+        if (totalmemberlist.size() == 0) {
+            FirebaseUtil.db.collection(FirebaseUtil.DOC_USERS).document(contact.get("number")).collection(FirebaseUtil.DOC_APPOINTMENTS).document(currentAppointment.getId()).update("appointmentStatus", Utility.APP_STATUS_CANCELLED).addOnSuccessListener(new OnSuccessListener<Void>() {
+                @Override
+                public void onSuccess(Void aVoid) {
+                    System.out.println("Deleted for other user appointment =>" + currentAppointment.getId());
+
+
+                    Map<String, String> contact = (Map<String, String>) appointment.getContactList().get(0);
+                    System.out.println("Hash MAP value =>" + contact);
+                    Appointment app = appointment.duplicate(contact.get("number"));
+
+                    //Appointment app = currentAppointment.duplicate(currentAppointment.getContactList().get(0).getNumber());
+                    app.setName(user.prepareFullName());
+                    new NotificationTask(app, Utility.NOTIFICATION_TYPE_CANCEL).sendNotification();
+                }
+            }).addOnFailureListener(new OnFailureListener() {
+                @Override
+                public void onFailure(@NonNull Exception e) {
+                    Log.w("EDIT", "Error deleting other user App", e);
+                }
+            });
+        }
     }
 
     @Override

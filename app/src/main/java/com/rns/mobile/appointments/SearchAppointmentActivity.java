@@ -171,8 +171,9 @@ public class SearchAppointmentActivity extends AppCompatActivity  {
                 if (phone != null && !phone.trim().contains(Utility.COUNTRY_CODE)) {
                     phone = Utility.COUNTRY_CODE + phone;
                 }
+                System.out.println("Remove Space and Add country code "+phone);
 
-                activeContact=new ActiveContact(selectedContact.getName(),selectedContact.getPhone().replaceAll("\\s", ""));
+                activeContact=new ActiveContact(selectedContact.getName(),phone,Utility.APP_STATUS_ACTIVE);
 /*String phone = Utility.removeAllSpaces(search.getText().toString());
                 //Select last 10 digits to avoid 0 or anything else in phone number
                 if (phone.length() > Utility.PHONE_MAX_LENGTH) {
