@@ -304,9 +304,9 @@ public class AppointmentsActivity extends AppCompatActivity {
                         //Delete other users appointment
 
 
-                        System.out.println("Size of contactlis " + currentAppointment.getContactList().size());
+//                        System.out.println("Size of contactlis " + currentAppointment.getContactList().size());
 
-                        if (currentAppointment.getContactList().size() == 1) {
+                     /*   if (currentAppointment.getContactList().size() == 0) {
                             FirebaseUtil.db.collection(FirebaseUtil.DOC_USERS).document(currentAppointment.getPhone()).collection(FirebaseUtil.DOC_APPOINTMENTS).document(currentAppointment.getId()).update("appointmentStatus", Utility.APP_STATUS_CANCELLED).addOnSuccessListener(new OnSuccessListener<Void>() {
                                 @Override
                                 public void onSuccess(Void aVoid) {
@@ -327,7 +327,8 @@ public class AppointmentsActivity extends AppCompatActivity {
                                     Log.w("EDIT", "Error deleting other user App", e);
                                 }
                             });
-                        } else {
+                        } else {*/
+                        if (appointment.getContactList().size() > 0) {
                             for (int i = 0; i < appointment.getContactList().size(); i++) {
                                 final Map<String, String> contact = (Map<String, String>) appointment.getContactList().get(i);
                                 System.out.println("Hash MAP value =>" + contact);
@@ -434,7 +435,7 @@ public class AppointmentsActivity extends AppCompatActivity {
                                                                     Map<String, String> contacts = (Map<String, String>) currentUser.getContactList().get(i);
                                                                     System.out.println("Appointment status " + contacts.get("status"));
                                                                     if (contacts.get("status").equals(Utility.APP_STATUS_ACTIVE)) {
-                                                                        System.out.println("Other memeber "+contacts.get("number"));
+                                                                        System.out.println("Other memeber " + contacts.get("number"));
                                                                         totalmemberlist.add(contacts);
 
                                                                     }
@@ -449,9 +450,6 @@ public class AppointmentsActivity extends AppCompatActivity {
 
                                                 }
                                             });
-
-
-
 
 
                                         }

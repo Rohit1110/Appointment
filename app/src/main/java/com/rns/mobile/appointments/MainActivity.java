@@ -109,6 +109,8 @@ public class MainActivity extends AppCompatActivity {
             dialog.setPositiveButton("Yes", new DialogInterface.OnClickListener() {
                 @Override
                 public void onClick(DialogInterface dialog, int id) {
+
+                    saveFCMToken();
                     //Action for "Yes".
                     SharedPreferences sp=getSharedPreferences(MY_PREFS_NAME,0);
                     SharedPreferences.Editor edit=sp.edit();

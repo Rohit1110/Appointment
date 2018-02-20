@@ -11,18 +11,26 @@ import android.content.Intent;
 import android.media.RingtoneManager;
 import android.net.Uri;
 import android.os.Bundle;
+import android.support.annotation.NonNull;
 import android.support.v4.app.NotificationCompat;
 import android.util.Log;
 
 import com.firebase.jobdispatcher.FirebaseJobDispatcher;
 import com.firebase.jobdispatcher.GooglePlayDriver;
 import com.firebase.jobdispatcher.Job;
+import com.google.android.gms.tasks.OnCompleteListener;
+import com.google.android.gms.tasks.Task;
+import com.google.firebase.firestore.DocumentSnapshot;
 import com.google.firebase.messaging.FirebaseMessagingService;
 import com.google.firebase.messaging.RemoteMessage;
 
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Map;
 
+import model.ActiveContact;
 import model.Appointment;
+import utils.FirebaseUtil;
 import utils.Utility;
 
 public class MyFirebaseMessagingService extends FirebaseMessagingService {
@@ -127,10 +135,10 @@ public class MyFirebaseMessagingService extends FirebaseMessagingService {
 
         String time = date + " " + startTime;
         System.out.println("Notification received from =>" + name);
-        Appointment appointment = new Appointment();
+        final Appointment appointment = new Appointment();
 
         Intent intent = new Intent(this, AppointmentsActivity.class);
-        Bundle b= new Bundle();
+        Bundle b = new Bundle();
         if (Utility.NOTIFICATION_TYPE_NEW.equals(type)) {
             title = "New appointment";
             message = "Appointment booked for you by " + name + " starting at " + time;
@@ -142,25 +150,70 @@ public class MyFirebaseMessagingService extends FirebaseMessagingService {
             Utility.addAppointmentsToCalender(getApplicationContext(), appointment);
            /* b.putBoolean("showcanceled",false);
             b.putInt("state",1);*/
-            showcanceled="false";
-            state="1";
+            showcanceled = "false";
+            state = "1";
         } else if (Utility.NOTIFICATION_TYPE_CANCEL.equals(type)) {
             title = "Appointment cancelled";
             message = "Your appointment starting at " + time + " is cancelled by " + name;
-            showcanceled="true";
-            state="2";
+            showcanceled = "true";
+            state = "2";
 
             appointment.setId(appointmentId);
-            Utility.deleteAppointmentFromCalendar(getApplicationContext(), appointment);
-            System.out.println("Appointment Deleted!!");
+            String userPhone = FirebaseUtil.getMobile();
+            final List<Map<String, String>> totalmemberlist = new ArrayList<>();
+
+            FirebaseUtil.db.collection(FirebaseUtil.DOC_USERS).document(userPhone).collection(FirebaseUtil.DOC_APPOINTMENTS).document(appointmentId).get().addOnCompleteListener(new OnCompleteListener<DocumentSnapshot>() {
+
+                @Override
+                public void onComplete(@NonNull Task<DocumentSnapshot> task) {
+
+                    Appointment currentUser = new Appointment();
+                    if (task.getResult().getString("name") != null) {
+                        currentUser.setName(task.getResult().getString("name"));
+                    }
+                    if (task.getResult().getString("startTime") != null) {
+                        currentUser.setStartTime(task.getResult().getString("startTime"));
+                    }
+                    if (task.getResult().getString("endTime") != null) {
+                        currentUser.setEndTime(task.getResult().getString("endTime"));
+                    }
+
+                    if (task.getResult().getString("description") != null) {
+                        currentUser.setDescription(task.getResult().getString("description"));
+                    }
+                    if (task.getResult().getString("date") != null) {
+                        currentUser.setDate(task.getResult().getString("date"));
+                    }
+                    if (task.getResult().getString("appointmentStatus") != null) {
+                        currentUser.setAppointmentStatus(task.getResult().getString("appointmentStatus"));
+                    }
+                    if (task.getResult().get("contactList") != null) {
+                        currentUser.setContactList((List<ActiveContact>) task.getResult().getData().get("contactList"));
+                    }
+
+                    for (int i = 0; i < currentUser.getContactList().size(); i++) {
+                        Map<String, String> contacts = (Map<String, String>) currentUser.getContactList().get(i);
+                        System.out.println("Appointment status " + contacts.get("status"));
+                        if (contacts.get("status").equals(Utility.APP_STATUS_ACTIVE)) {
+                            System.out.println("Other memeber " + contacts.get("number"));
+                            totalmemberlist.add(contacts);
+
+                        }
+
+                    }
+
+                    DeleteCalenderEvent(totalmemberlist,appointment);
+                }
+            });
+
+
         }
 
 
-
         intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
-        intent.putExtra("states",state);
-        intent.putExtra("showcancel",showcanceled );
-        System.out.println("Show cancel in firebase "+ showcanceled+ " staes in firebase "+state);
+        intent.putExtra("states", state);
+        intent.putExtra("showcancel", showcanceled);
+        System.out.println("Show cancel in firebase " + showcanceled + " staes in firebase " + state);
 
         PendingIntent pendingIntent = PendingIntent.getActivity(this, 0 /* Request code */, intent, PendingIntent.FLAG_ONE_SHOT);
 
@@ -169,6 +222,14 @@ public class MyFirebaseMessagingService extends FirebaseMessagingService {
         NotificationManager notificationManager = (NotificationManager) getSystemService(Context.NOTIFICATION_SERVICE);
 
         notificationManager.notify(0 /* ID of notification */, notificationBuilder.build());
+    }
+
+    private void DeleteCalenderEvent(List<Map<String, String>> totalmemberlist,Appointment appointment) {
+        System.out.println("Size of totalmember "+totalmemberlist.size());
+        if(totalmemberlist.size()==0){
+            Utility.deleteAppointmentFromCalendar(getApplicationContext(), appointment);
+            System.out.println("Appointment Deleted!!");
+        }
     }
 
     private static final String APP_KEY = "key=AAAACMqZO2Y:APA91bFvKzS7o72_2hf-zA5jqc9hKfCUQcT-qvo_p3lsrKNGYrN6QmLKWdbqe48dwoSD53kn7Q2d-jnlDvjtZyM57vmgkU1vI_ZERkkkEVpZzDm3VzgunyGzPDa1pB1LbD0AGGBFdgNA";

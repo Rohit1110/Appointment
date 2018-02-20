@@ -115,7 +115,9 @@ public class AppointmentsDateAdapter extends RecyclerView.Adapter<RecyclerView.V
                     //System.out.println("SSSSSSSSSSSS"+Utility.getContactNames(event.getEvent()));
 
                     String names=Utility.getContactNames(event.getEvent());
-                    gholder.name.setText(names.substring(0, names.length() - 1));
+                    if(!names.equals(null)&& names.length()>0) {
+                        gholder.name.setText(names.substring(0, names.length() - 1));
+                    }
                     //gholder.name.setText(names);
 
                 }
