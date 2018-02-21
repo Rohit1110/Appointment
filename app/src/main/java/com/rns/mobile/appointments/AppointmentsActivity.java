@@ -328,7 +328,7 @@ public class AppointmentsActivity extends AppCompatActivity {
                                 }
                             });
                         } else {*/
-                        if (appointment.getContactList().size() > 0) {
+                        if (appointment.getContactList()!=null && appointment.getContactList().size() > 0) {
                             for (int i = 0; i < appointment.getContactList().size(); i++) {
                                 final Map<String, String> contact = (Map<String, String>) appointment.getContactList().get(i);
                                 System.out.println("Hash MAP value =>" + contact);

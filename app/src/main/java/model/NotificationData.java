@@ -1,5 +1,7 @@
 package model;
 
+import java.util.List;
+
 /**
  * Created by Admin on 15/01/2018.
  */
@@ -12,6 +14,8 @@ public class NotificationData {
     private String startTime;
     private String endTime;
     private String date;
+    private List<ActiveContact> contactList;
+    private String description;
 
     public NotificationData(Appointment app, String type) {
         setName(app.getName());
@@ -19,7 +23,10 @@ public class NotificationData {
         setDate(app.getDate());
         setStartTime(app.getStartTime());
         setEndTime(app.getEndTime());
+        setContactList(app.getContactList());
+        setDescription(app.getDescription());
         setType(type);
+
     }
 
     public NotificationData() {
@@ -71,5 +78,22 @@ public class NotificationData {
 
     public void setDate(String date) {
         this.date = date;
+    }
+
+    public List<ActiveContact> getContactList() {
+        return contactList;
+    }
+
+    public void setContactList(List<ActiveContact> contactList) {
+        this.contactList = contactList;
+        System.out.println("contact list notificationdata "+contactList);
+    }
+
+    public String getDescription() {
+        return description;
+    }
+
+    public void setDescription(String description) {
+        this.description = description;
     }
 }

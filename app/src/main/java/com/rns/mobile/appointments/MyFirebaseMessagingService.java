@@ -128,13 +128,19 @@ public class MyFirebaseMessagingService extends FirebaseMessagingService {
         String endTime = data.get("endTime");
         String type = data.get("type");
         String appointmentId = data.get("appointmentId");
+        String description=data.get("description");
+
+
+
+
+
 
         if (appointmentId == null || type == null) {
             return;
         }
 
         String time = date + " " + startTime;
-        System.out.println("Notification received from =>" + name);
+        System.out.println("Notification received from =>" + name+description);
         final Appointment appointment = new Appointment();
 
         Intent intent = new Intent(this, AppointmentsActivity.class);
@@ -145,6 +151,8 @@ public class MyFirebaseMessagingService extends FirebaseMessagingService {
             appointment.setStartTime(startTime);
             appointment.setEndTime(endTime);
             appointment.setName(name);
+           //appointment.setContactList((List<ActiveContact>) data.get("contactList"));
+            appointment.setDescription(description);
             appointment.setId(appointmentId);
             appointment.setDate(date);
             Utility.addAppointmentsToCalender(getApplicationContext(), appointment);
@@ -152,6 +160,7 @@ public class MyFirebaseMessagingService extends FirebaseMessagingService {
             b.putInt("state",1);*/
             showcanceled = "false";
             state = "1";
+           // System.out.println("Receive notification "+appointment.getContactList().get(0).getContact());
         } else if (Utility.NOTIFICATION_TYPE_CANCEL.equals(type)) {
             title = "Appointment cancelled";
             message = "Your appointment starting at " + time + " is cancelled by " + name;

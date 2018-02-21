@@ -277,6 +277,9 @@ public class SelectDateAcitivity extends AppCompatActivity {
         if (!reason.getText().toString().equals("")) {
             appointment.setDescription(reason.getText().toString());
             System.out.println("Reason =>" + reason.getText().toString());
+        }else{
+            reason.setError("Please write reason");
+            return;
         }
 
         final User currentUser = Utility.getUserFromSharedPrefs(SelectDateAcitivity.this);
@@ -343,6 +346,7 @@ public class SelectDateAcitivity extends AppCompatActivity {
                                     //duplicate.setNumber(otherUserAppointment.getContactList().get(finalI).getContact());
                                     duplicate.setContactList(appointment.getContactList());
                                     duplicate.setName(currentUser.prepareFullName());
+                                    duplicate.setDescription(appointment.getDescription());
                                     System.out.println("duplicate " + duplicate.getContactList());
                                     new NotificationTask(duplicate, Utility.NOTIFICATION_TYPE_NEW).sendNotification();
                                     final Appointment finalDuplicate = duplicate;
@@ -556,9 +560,9 @@ public class SelectDateAcitivity extends AppCompatActivity {
            /* if (!appointment.getPhone().trim().contains("+")) {
                 appointment.setPhone(Utility.COUNTRY_CODE + appointment.getPhone());
             }*/
-                if (!otherContact.getNumber().trim().contains("+")) {
-                    appointment.setPhone(Utility.COUNTRY_CODE + otherContact.getNumber());
-                }
+                /*if (!otherContact.getNumber().trim().contains("+")) {*/
+                    appointment.setPhone(otherContact.getNumber());
+               /*}*/
                 System.out.println("## Loading profile for .. " + appointment.getPhone() + " dialog=" + dialog + " number = " + appointment.getPhone());
                 //dialog = Utility.showProgress(SelectDateAcitivity.this);
 

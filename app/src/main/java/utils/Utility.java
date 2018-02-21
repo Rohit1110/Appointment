@@ -347,12 +347,15 @@ public class Utility {
             eventValues.put("calendar_id", 1); // id, We need to choose from
             // our mobile for primary its 1
             String names = "";
-            for(ActiveContact activeContact : appointment.getContactList())
+           /* for(ActiveContact activeContact : appointment.getContactList())
             {
                 names =activeContact.getContact()+","+names;
                // gholder.name.setText(names.substring(0, names.length() - 1));
-            }
-            eventValues.put("title", names.substring(0, names.length() - 1));
+                System.out.println("Get Contact list  "+activeContact.getContact());
+            }*/
+
+            System.out.println("Get Descriptions  "+appointment.getDescription());
+            eventValues.put("title", appointment.getDescription());
             eventValues.put("description", appointment.getDescription());
             eventValues.put("eventLocation", "");
 

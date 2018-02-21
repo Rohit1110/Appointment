@@ -64,7 +64,7 @@ Note : smstype - normal/flash/unicode , Priority - ndnd/dnd , Mobile Number with
 
 
            // String mobiles = "&phone=" + appointment;
-            String mobiles = "&mobiles=" + appointment;
+            String mobiles = "&phone=" + appointment;
             String message = "&text=Hi this "+user+". I am using TimeDe app to be more productive! I can book your time and you can book my time with this app. Use this link to download the app: https://goo.gl/BBFWM7" ;
 
             if(Utility.NOTIFICATION_TYPE_NEW.equalsIgnoreCase(smsType)) {
