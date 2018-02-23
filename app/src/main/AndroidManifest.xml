@@ -8,19 +8,17 @@
     <uses-permission android:name="android.permission.READ_CALENDAR" />
     <uses-permission android:name="android.permission.WRITE_CALENDAR" />
     <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE" />
+    <uses-permission android:name="android.permission.CALL_PHONE" />
 
     <application
         android:allowBackup="true"
         android:icon="@mipmap/timede"
         android:label="@string/app_name"
+        android:largeHeap="true"
         android:roundIcon="@mipmap/timede"
         android:supportsRtl="true"
-        android:largeHeap="true"
         android:theme="@style/AppTheme">
-        <activity android:name=".MainActivity">
-
-
-        </activity>
+        <activity android:name=".MainActivity"></activity>
         <activity android:name=".PhoneAuthActivity">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
@@ -37,27 +35,28 @@
         <activity
             android:name=".AppointmentsActivity"
             android:label="@string/title_activity_main2"
-            android:theme="@style/AppTheme.NoActionBar"
-           ></activity>
+            android:theme="@style/AppTheme.NoActionBar" />
         <activity
             android:name=".BookAppointmentActivity"
             android:label="@string/bookappointment" />
         <activity
             android:name=".EditProfileActivity"
-            android:label="@string/profile"></activity>
-        <activity android:name=".WelcomeActivity"
-            >
-           <!-- <intent-filter>
+            android:label="@string/profile" />
+        <activity android:name=".WelcomeActivity">
+
+            <!--
+                <intent-filter>
                             <action android:name="android.intent.action.MAIN" />
 
                             <category android:name="android.intent.category.LAUNCHER" />
-                        </intent-filter>-->
+                        </intent-filter>
+            -->
 
-           </activity>
+        </activity>
 
         <receiver
             android:name=".AlarmReciever"
-            android:exported="true"></receiver>
+            android:exported="true" />
 
         <service android:name=".MyFirebaseMessagingService">
             <intent-filter>
@@ -92,7 +91,8 @@
             android:name="com.google.firebase.messaging.default_notification_color"
             android:resource="@color/colorAccent" />
         AndroidManifest.xml
-        <activity android:name=".InviteActivity"></activity>
+        <activity android:name=".InviteActivity" />
+        <activity android:name=".AppointmentDetails"></activity>
     </application>
 
 </manifest>

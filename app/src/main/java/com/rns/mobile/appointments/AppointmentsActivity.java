@@ -69,7 +69,7 @@ public class AppointmentsActivity extends AppCompatActivity {
     private ProgressDialog dialog;
     private String TAG = "Appointments Activity";
     String id;
-    private Appointment currentAppointment, cappointnent;
+    private Appointment currentAppointment, cappointnent,appointmentid;
     private SimpleAdapter mAdapter;
     private View button;
     AlertDialog alertDialog1;
@@ -148,7 +148,12 @@ public class AppointmentsActivity extends AppCompatActivity {
 
             @Override
             public void onClick(View view, int position) {
-                Toast.makeText(AppointmentsActivity.this, "Press and Hold to Cancel this Appointment", Toast.LENGTH_LONG).show();
+                AppointmentsDateAdapter adapter = (AppointmentsDateAdapter) recyclerView.getAdapter();
+                appointmentid=adapter.getAppointment(position);
+               // Toast.makeText(AppointmentsActivity.this, "Press and Hold to Cancel this Appointment", Toast.LENGTH_LONG).show();
+                Intent i = new Intent(AppointmentsActivity.this,AppointmentDetails.class);
+                i.putExtra("appointmentid",appointmentid.getId());
+                startActivity(i);
             }
 
             @Override

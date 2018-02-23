@@ -27,7 +27,7 @@
 
     <TextView
         android:id="@+id/txtname"
-        android:layout_width="wrap_content"
+        android:layout_width="300dp"
         android:layout_height="wrap_content"
         android:layout_alignParentLeft="true"
         android:layout_alignParentTop="true"
@@ -60,6 +60,8 @@
         android:layout_below="@+id/txtname"
         android:text="description"
         android:textColor="#757575" />
+
+
 
    <!-- <TextView
         android:id="@+id/txtdate"

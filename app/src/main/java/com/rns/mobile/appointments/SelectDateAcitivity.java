@@ -277,7 +277,7 @@ public class SelectDateAcitivity extends AppCompatActivity {
         if (!reason.getText().toString().equals("")) {
             appointment.setDescription(reason.getText().toString());
             System.out.println("Reason =>" + reason.getText().toString());
-        }else{
+        } else {
             reason.setError("Please write reason");
             return;
         }
@@ -561,14 +561,14 @@ public class SelectDateAcitivity extends AppCompatActivity {
                 appointment.setPhone(Utility.COUNTRY_CODE + appointment.getPhone());
             }*/
                 /*if (!otherContact.getNumber().trim().contains("+")) {*/
-                    appointment.setPhone(otherContact.getNumber());
+                appointment.setPhone(otherContact.getNumber());
                /*}*/
                 System.out.println("## Loading profile for .. " + appointment.getPhone() + " dialog=" + dialog + " number = " + appointment.getPhone());
                 //dialog = Utility.showProgress(SelectDateAcitivity.this);
 
 
                 // final ActiveContact con = c;
-                FirebaseUtil.db.collection(FirebaseUtil.DOC_USERS).document(appointment.getPhone()).get().addOnCompleteListener(new OnCompleteListener<DocumentSnapshot>() {
+                FirebaseUtil.db.collection(FirebaseUtil.DOC_USERS).document(otherContact.getNumber()).get().addOnCompleteListener(new OnCompleteListener<DocumentSnapshot>() {
                     @Override
                     public void onComplete(@NonNull Task<DocumentSnapshot> task) {
 
@@ -577,23 +577,25 @@ public class SelectDateAcitivity extends AppCompatActivity {
                             System.out.println("## Done profile .." + task.getResult().exists());
                             User otherUser = task.getResult().toObject(User.class);
                             otherUser.setPhone(otherContact.getNumber());
-                            if (otherContact.getContact() == null) {
+                            if (otherContact.getNumber() == null) {
                                 appointment.setName(otherUser.getFirstName() + " " + otherUser.getLastName());
-                                appointmentPhone.setText(otherContact.getContact());
+                                appointmentPhone.setText(otherContact.getNumber());
                             }
-                            System.out.println("Appointment for =>" + otherContact.getContact());
+                            System.out.println("Appointment for =>" + otherContact.getNumber());
                             //Update slotsList based on this other users available slotsList
                             if (isWeeklyOff(otherUser)) {
                                 if (filteredSlots != null) {
                                     filteredSlots.clear();
+
                                 }
 
                                 setSlotsAdapter();
+
                                 return;
                             }
 
                             updateUserSlots(otherUser);
-                            updateOtherUserAppointments(otherContact.getNumber());
+                            updateOtherUserAppointments(appointment.getPhone());
                         } else {
                             updateAvailableSlots();
                         }
