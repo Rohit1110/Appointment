@@ -74,6 +74,7 @@ public class SelectDateAcitivity extends AppCompatActivity {
     private EditText reason;
     TextView noSlots;
     public SmsField smsField;
+    boolean isoffday = false;
     Appointment appointments = null;
 
 
@@ -105,6 +106,7 @@ public class SelectDateAcitivity extends AppCompatActivity {
             public void onClick(View v) {
                /* DialogFragment newFragment = new SelectDateFragment();
                 newFragment.show(getFragmentManager(), "DatePicker");*/
+
                 final Calendar calendar = Calendar.getInstance();
                 int yy = calendar.get(Calendar.YEAR);
                 int mm = calendar.get(Calendar.MONTH);
@@ -118,6 +120,7 @@ public class SelectDateAcitivity extends AppCompatActivity {
                         try {
                             dates = sdf.parse(selectedDateString);
                             if (dates != null) {
+                                isoffday = false;
                                 setdate.setText(new SimpleDateFormat(Utility.DATE_FORMAT_DISPLAY).format(dates));
                             }
                         } catch (ParseException e) {
@@ -141,6 +144,7 @@ public class SelectDateAcitivity extends AppCompatActivity {
         today.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
+                isoffday = false;
                 today.setTextColor(getResources().getColor(R.color.colorAccent));
                 tomorrow.setTextColor(getResources().getColor(R.color.album_title));
                 long date = System.currentTimeMillis();
@@ -157,6 +161,7 @@ public class SelectDateAcitivity extends AppCompatActivity {
         tomorrow.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
+                isoffday = false;
                 tomorrow.setTextColor(getResources().getColor(R.color.colorAccent));
                 today.setTextColor(getResources().getColor(R.color.album_title));
 
@@ -568,34 +573,46 @@ public class SelectDateAcitivity extends AppCompatActivity {
 
 
                 // final ActiveContact con = c;
+
+
                 FirebaseUtil.db.collection(FirebaseUtil.DOC_USERS).document(otherContact.getNumber()).get().addOnCompleteListener(new OnCompleteListener<DocumentSnapshot>() {
                     @Override
                     public void onComplete(@NonNull Task<DocumentSnapshot> task) {
 
                         //Utility.hideProgress(dialog);
                         if (FirebaseUtil.taskExists(task)) {
-                            System.out.println("## Done profile .." + task.getResult().exists());
+                            System.out.println("## Done profile .." + task.getResult().getString("firstName"));
                             User otherUser = task.getResult().toObject(User.class);
+
                             otherUser.setPhone(otherContact.getNumber());
+
                             if (otherContact.getNumber() == null) {
                                 appointment.setName(otherUser.getFirstName() + " " + otherUser.getLastName());
                                 appointmentPhone.setText(otherContact.getNumber());
                             }
                             System.out.println("Appointment for =>" + otherContact.getNumber());
+
                             //Update slotsList based on this other users available slotsList
                             if (isWeeklyOff(otherUser)) {
+
                                 if (filteredSlots != null) {
                                     filteredSlots.clear();
+                                    System.out.println("in else iiiii " + filteredSlots);
 
                                 }
-
+                                System.out.println("Is weekof else" + isWeeklyOff(otherUser) + " slotes " + otherUser.getFirstName());
                                 setSlotsAdapter();
+
 
                                 return;
                             }
+                            System.out.println("Is weekof today" + isWeeklyOff(otherUser) + " slotes " + otherUser.getFirstName());
+                            if (!isoffday) {
+                                updateUserSlots(otherUser);
 
-                            updateUserSlots(otherUser);
-                            updateOtherUserAppointments(appointment.getPhone());
+                                //updateOtherUserAppointments(appointment.getPhone());
+                                updateOtherUserAppointments(otherContact.getNumber());
+                            }
                         } else {
                             updateAvailableSlots();
                         }
@@ -624,6 +641,8 @@ public class SelectDateAcitivity extends AppCompatActivity {
 
 
     private boolean isWeeklyOff(User otherUser) {
+        System.out.println("week off days " + otherUser.getSelectedDays());
+
         if (otherUser == null || otherUser.getSelectedDays() == null || otherUser.getSelectedDays().trim().length() == 0) {
             return false;
         }
@@ -634,9 +653,12 @@ public class SelectDateAcitivity extends AppCompatActivity {
         }
 
         Calendar cal = Calendar.getInstance();
+        System.out.println("is weekly date " + appointment.getDate());
         cal.setTime(Utility.formatDate(appointment.getDate(), Utility.DATE_FORMAT_USED));
         String[] mTestArray = getResources().getStringArray(R.array.off_days);
         String today = mTestArray[cal.get(Calendar.DAY_OF_WEEK) - 1];
+
+        System.out.println("is weekly date " + today);
 
         for (String day : days) {
             if (day.equalsIgnoreCase(today)) {
@@ -704,17 +726,25 @@ public class SelectDateAcitivity extends AppCompatActivity {
     }
 
     private void setSlotsAdapter() {
+        isoffday = true;
 
-        if (filteredSlots.size() <= 0) {
+        System.out.println("Size of filterslots " + filteredSlots);
+
+        if (filteredSlots == null || filteredSlots.size() == 0) {
             Utility.hideProgress(dialog);
             noSlots.setVisibility(View.VISIBLE);
+
+
             noSlots.setText("No slots are available on this date");
+
+        } else {
+
+            adapter = new ArrayAdapter<String>(this, android.R.layout.simple_list_item_multiple_choice, filteredSlots);
+            availableSlotsListView.setChoiceMode(ListView.CHOICE_MODE_MULTIPLE);
+            availableSlotsListView.setAdapter(adapter);
+            availableSlotsListView.setItemsCanFocus(false);
+            availableSlotsListView.setOnItemClickListener(new SlotsSelected());
         }
-        adapter = new ArrayAdapter<String>(this, android.R.layout.simple_list_item_multiple_choice, filteredSlots);
-        availableSlotsListView.setChoiceMode(ListView.CHOICE_MODE_MULTIPLE);
-        availableSlotsListView.setAdapter(adapter);
-        availableSlotsListView.setItemsCanFocus(false);
-        availableSlotsListView.setOnItemClickListener(new SlotsSelected());
     }
 
     private boolean slotBeforeCurrentTime(String slot) {
